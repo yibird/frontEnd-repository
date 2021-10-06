@@ -4,8 +4,8 @@ language: node_js
 node_js:
   - 12
 # 运行脚本命令时是否需要sudo权限,下面配置表示运行脚本命令时需要sudo权限
-sudo: required    
+# sudo: required    
 # before_install是travis提供的工作周期函数,before_install在安装阶段之前触发
-before_install: sudo npm install 
+before_install: npm install 
 # 指定要运行的脚本,如果script为true时表示不执行任何脚本,下面配置表示运行hello.sh脚本文件
 script: hello.sh
