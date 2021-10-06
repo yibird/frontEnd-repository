@@ -1,0 +1,15 @@
+{
+  "name": "frontend-repository",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:yibird/frontEnd-repository.git",
+  "author": "zchengfeng <2684837849@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "devDependencies": {
+    "vuepress": "^2.0.0-beta.26"
+  }
+}

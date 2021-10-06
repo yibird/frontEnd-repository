@@ -1,0 +1,11 @@
+# 运行环境,travis支持31种编程语言运行环境,下面指定运行环境为node_js
+language: node_js
+# 执行node_js运行环境的版本,通过node -v 可查看本机node版本
+node_js:
+  - 12
+# 运行脚本命令时是否需要sudo权限,下面配置表示运行脚本命令时需要sudo权限
+sudo: required    
+# before_install是travis提供的工作周期函数,before_install在安装阶段之前触发
+before_install: sudo yarn 
+# 指定要运行的脚本,如果script为true时表示不执行任何脚本,下面配置表示运行hello.sh脚本文件
+script: hello.sh
