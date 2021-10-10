@@ -13,5 +13,5 @@ deploy:
   target_brach: gh-pages
   keep_history: true
   on:
-    branch: master
+    branch: main
 
