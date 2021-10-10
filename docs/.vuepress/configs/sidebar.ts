@@ -15,7 +15,7 @@ export default [
    },
    {
      text:"JavaScript",
-     link: '/foo/',
+     // link: '/foo/',
      children: [
        {
           text: '类型(Type)',
