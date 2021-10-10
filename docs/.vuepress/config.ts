@@ -5,7 +5,7 @@ import { navbar, sidebar } from './configs'
 
 
 export default defineUserConfig<DefaultThemeOptions>({
-    base: 'https://yibird.github.io/frontEnd-repository/',
+    base: '/frontEnd-repository/',
     title:"前端知识库",
     description:"路漫漫其修远兮,吾将上下而求索!",
     head: [
