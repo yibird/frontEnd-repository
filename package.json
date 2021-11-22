@@ -10,6 +10,10 @@
     "docs:build": "vuepress build docs"
   },
   "devDependencies": {
-    "vuepress": "^2.0.0-beta.26"
+    "@vue/component-compiler-utils": "^3.3.0",
+    "@vuepress/plugin-active-header-links": "^2.0.0-beta.27",
+    "@vuepress/plugin-nprogress": "^2.0.0-beta.27",
+    "@vuepress/shared-utils": "^1.8.2",
+    "vuepress": "^2.0.0-beta.27"
   }
 }
