@@ -428,3 +428,52 @@ console.log(parseFloat("")); // NaN
 ### JavaScript 中浮点数精度问题
 
 ### Symbol 与 BigInt
+
+#### Symbol
+
+Symbol 是 ES6 引入了一种新的原始数据类型,表示独一无二的值。Symbol 具有如下特点:
+
+- Symbol 存储的值是唯一的。即 Symbol('a')和 Symbol('a')是不相等的。
+- 无法使用 new 操作符实例化 Symbol,new Symbol()是不合法的。
+- Symbol 值无法参与运算,无法隐士转成字符串,会报 TypeError。
+- 作为对象属性无法用.运算符,但是可以使用方括号[]。
+- 作为对象属性,无法被循环遍历，如 for...in、for...of,也不会被 Object.keys()、Object.getOwnPropertyNames()、JSON.stringify()返回。
+- Object.getOwnPropertySymbols()方法,可以获取对象的所有 Symbol 属性名。
+- Reflect.ownKeys()可以返回所有类型的键名,包括常规键名和 Symbol 键名。
+
+Symbol 的应用场景:
+
+- **模拟私有属性**。由于 Symbol 作为对象属性时不参与遍历,就像对象不存在这个属性一样,同时又可以使用 Object.getOwnPropertySymbols()返回,就像私有属性一样。
+- **消除魔法字符串**。魔术字符串是指在代码中多次出现,与代码形成强耦合的某一字符串或数值,不利于将来的修改和维护。
+
+```jsx
+// 假设需要做一个tab切换,"basic"和"super"都是与业务代码无关的魔法字符,可以使用Symbol代替
+if (type === "basic") {
+  return <Basic />;
+}
+if (type === "super") {
+  return <Super />;
+}
+
+// 使用Symbol消除魔法字符串
+const types = {
+  basic: Symbol(),
+  super: Symbol(),
+};
+if(type === types.basic){
+  return return <Basic />;
+}
+if (type === types.super) {
+  return <Super />;
+}
+```
+
+- **防止属性名称冲突**。当向一个全局对象中添加属性时,不明确对象是否包含该属性,很容易发生属性覆盖。而使用 Symbol 作为对象属性可以避免这个问题,整因为它的独一无二的特性。
+
+```js
+var globalObj = { name: "haha" };
+globalObj["name"] = "hehe"; // 覆盖name属性值
+
+var symbolName = Symbol("name");
+globalObj[symbolName] = "xixi"; // {name:'hehe',Symbol(name):'xixi'} 不会覆盖,Symbol是唯一的
+```

@@ -539,6 +539,41 @@ console.log(fn(arr)); // [1, 2, 3, 4, 5, 6,7, 8, 9, 10, 11, 12,13, 14]
 
 ### 手写解析 URL 参数函数
 
+#### 通过 URLSearchParams()获取 URL 参数
+
+```js
+/*
+ * window.location.search可以获取查询参数(不包含?号),假设window.location.search为
+ * user=z%E4%B9%98%E9%A3%8E&age=18。
+ */
+const urlSearchParams = new URLSearchParams(window.location.search);
+// 将键值对列表转换为一个对象
+const params = Object.fromEntries(urlSearchParams.entries()); // {user: 'z乘风', age: '18'}
+```
+
+#### 通过 split()获取 URL 参数
+
+```js
+function getParams(url) {
+  const res = {};
+  // 判断是否有查询参数
+  if (url.includes("?")) {
+    // 以?号分割得到数组最后二个元素
+    const str = url.split("?")[1];
+    // 分割&号得到参数数组
+    const arr = str.split("&");
+    arr.forEach((item) => {
+      const key = item.split("=")[0];
+      const value = item.split("=")[1];
+      res[key] = decodeURIComponent(value); // 解码
+    });
+  }
+  return res;
+}
+const url = "https://www.baidu.com/?user=z%E4%B9%98%E9%A3%8E&age=18";
+console.log(getParams(url)); // {user: 'z乘风', age: '18'}
+```
+
 ### 手写发布订阅
 
 发布订阅模式是开发中最为常见最有精髓的设计模式,例如在 Vue2.x 中的 EventBus、$on、$emit、$off,其实现原理是在其内部维护一个事件列表,存储已订阅的事件,当订阅事件时会将事件添加到事件列表,并向对应事件添加回调函数。当发布事件后会获取事件列表中事件对应的回调函数列表,并遍历回调函数列表挨个执行回调函数。
@@ -657,6 +692,42 @@ function asyncTo<E = Error, T = any>(promise: Promise<any>, fn?: () => void) {
     })
   );
 }
+```
+
+### 异步请求控制并发数
+
+```js
+const limitRequest = (urls = [], limit = 0) => {
+  return new Promise((resolve, reject) => {
+    const len = urls.length;
+    let count = 0;
+    const start = async () => {
+      const url = urls.shift();
+      if (url) {
+        try {
+          // 请求
+          await axios.post(url);
+          if (count === len - 1) {
+            // 如果是最后一个任务
+            resolve();
+          } else {
+            count++;
+            // 当前任务执行成功启动下一个任务
+            start();
+          }
+        } catch (err) {
+          count++;
+          // 当前任务执行成功启动下一个任务
+          start();
+        }
+      }
+    };
+    while (limit > 0) {
+      start();
+      limit -= 1;
+    }
+  });
+};
 ```
 
 ### 手写 trim()
