@@ -1,18 +1,18 @@
-### 1.创建数组的四种方式
+## 1.创建数组的四种方式
 
-#### 1.1 字面量创建数组
+### 1.1 字面量创建数组
 
 ```js
 const arr = ["Java", "JavaScript", "Golang"];
 ```
 
-#### 1.2 通过 Array 实例化数组
+### 1.2 通过 Array 实例化数组
 
 ```js
 const arr = Array("Java", "JavaScript", "Golang");
 ```
 
-#### 1.3 创建数组并赋值
+### 1.3 创建数组并赋值
 
 ```js
 const arr = new Array();
@@ -21,13 +21,13 @@ arr[1] = "JavaScript";
 arr[2] = "Golang";
 ```
 
-#### 1.4 通过 Array.of()创建数组
+### 1.4 通过 Array.of()创建数组
 
 ```js
 const arr = Array.of("Java", "JavaScript", "Golang");
 ```
 
-### 2.数组 Api
+## 2.数组 Api
 
 ```js
 /**
@@ -75,7 +75,7 @@ const arr = Array.of("Java", "JavaScript", "Golang");
 console.log(Array.prototype);
 ```
 
-#### 2.1 Array.prototype.at()
+### 2.1 Array.prototype.at()
 
 at(index):该方法接受一个整数值并返回该索引处的项目,允许正整数和负整数,负整数从数组中的最后一项开始计数,index 默认值为 0。
 
@@ -87,7 +87,7 @@ console.log(arr.at(2)); // Golang
 console.log(arr.at(-2)); // TypeScript
 ```
 
-#### 2.2 Array.prototype.concat()
+### 2.2 Array.prototype.concat()
 
 concat(arr...):连接一个或多个数组,返回连接后的数组,不会改变原数组。
 
@@ -100,7 +100,7 @@ console.log(arr1.concat(arr2, arr3), arr1); // [1,2,3,4,5,6,7,8,9] [1,2,3]
 console.log(["Java", "JavaScript"].concat(["Golang"], ["TypeScript"])); // ['Java','JavaScript','Golang','TypeScript']
 ```
 
-#### 2.3 Array.prototype.copyWithin()
+### 2.3 Array.prototype.copyWithin()
 
 copyWithin(target,start,end):将数组的一部分浅复制到同一数组中的另一个位置,并在不修改其长度的情况下返回它,此方法会改变原数组。
 
@@ -116,7 +116,7 @@ console.log(arr.copyWithin(0, 2, 4), arr); // ['c', 'd', 'c', 'd', 'e'] ['c', 'd
 console.log(["a", "b", "c", "d", "e"].copyWithin(2, 2, 4)); // ['a', 'c', 'd', 'd', 'e']
 ```
 
-#### 2.4 Array.prototype.entries()
+### 2.4 Array.prototype.entries()
 
 entries():返回一个新的 Array Iterator 对象,该对象包含数组中每个索引的键/值对。
 
@@ -141,7 +141,7 @@ for (const [key, item] of arr.entries()) {
 }
 ```
 
-#### 2.5 Array.prototype.every()
+### 2.5 Array.prototype.every()
 
 every(callback(element,index,arr),thisArg):测试数组内所有元素是否都能通过 callback 函数的测试,若全部通过则返回 true,否则返回 false。
 
@@ -157,7 +157,7 @@ console.log(arr2.every((item) => item > 10)); // true
 console.log(arr3.every((item) => Boolean(item))); // false
 ```
 
-#### 2.6 Array.prototype.fill()
+### 2.6 Array.prototype.fill()
 
 fill(value,start,end):用一个固定值填充一个数组从起始索引到终止索引的全部元素(不含终止索引)。value 为填充数组元素的值,start(可选,默认为 0)填充的起始索引,end(可选,默认为 arr.length)填充的终止索引,此方法会改变原数组。
 
@@ -169,7 +169,7 @@ console.log([1, 2, 3].fill(4, -3, -2)); // [4,2,3]
 console.log([1, 2, 3].fill(4, NaN, NaN)); // [1,2,3]
 ```
 
-#### 2.7 Array.prototype.filter()
+### 2.7 Array.prototype.filter()
 
 filter(callback(element,index,array),thisArg):创建一个新数组,其数组包含通过 callback 函数实现的测试的所有元素。
 
@@ -194,7 +194,7 @@ console.log(filterItems("an")); // ['banana','mango','orange']
 constle.log([0, 1, false, 2, "", 3].filter(Boolean)); // [1,2,3]
 ```
 
-#### 2.8 Array.prototype.find()
+### 2.8 Array.prototype.find()
 
 find(callback(element,index,array),thisArg):返回数组中满足 callback 函数条件的第一个元素的值,否则返回 undefined。
 
@@ -213,7 +213,7 @@ console.log(arr.find((item) => item.age > 18)); // {name: '张三', age: 19}
 console.log(arr.find((item) => item.age > 66)); // undefined
 ```
 
-#### 2.9 Array.prototype.findIndex()
+### 2.9 Array.prototype.findIndex()
 
 find(callback(element,index,array),thisArg):返回数组中满足 callback 函数条件的第一个元素的下标,否则返回 -1。
 
@@ -232,7 +232,7 @@ console.log(arr.findIndex((item) => item.age > 18)); // 0
 console.log(arr.findIndex((item) => item.age > 66)); // -1
 ```
 
-#### 2.10 Array.prototype.flat
+### 2.10 Array.prototype.flat
 
 flat(depth):方法会按照一个可指定的深度递归遍历数组,并将所有元素与遍历到的子数组中的元素合并为一个新数组返回。
 简单来说将一个多维数组根据指定深度(depth)将数组拍平,depth 为拍平的深度,默认值为 1,当 depth 为 Infinity 时,
@@ -277,9 +277,9 @@ console.log(arr1.flatDeep()); // [1, 2, 3, 1, 2, 3, 4, [2,3,4]]
 console.log(arr1.flatDeep(Infinity)); // [1, 2, 3, 1, 2, 3, 4, 2, 3, 4]
 ```
 
-### 3.数组添加元素的 6 种方式
+## 3.数组添加元素的 6 种方式
 
-#### 3.1 push()尾部添加元素
+### 3.1 push()尾部添加元素
 
 ```js
 const arr = [1];
@@ -287,7 +287,7 @@ arr.push(2, 3);
 console.log(arr); // [1,2,3]
 ```
 
-#### 3.2 unshift()头部添加元素
+### 3.2 unshift()头部添加元素
 
 ```js
 const arr = [3];
@@ -295,7 +295,7 @@ arr.unshift(1, 2);
 console.log(arr); // [1,2,3]
 ```
 
-#### 3.3 concat()连接数组
+### 3.3 concat()连接数组
 
 ```js
 const arr = [1];
@@ -303,7 +303,7 @@ const newArr = arr.concat([2, 3]);
 console.log(newArr); // [1,2,3]
 ```
 
-#### 3.4 splice()指定位置添加/删除元素
+### 3.4 splice()指定位置添加/删除元素
 
 ```js
 const arr = [1];
@@ -311,7 +311,7 @@ arr.splice(arr.length, 0, 2, 3);
 console.log(arr); // [1,2,3]
 ```
 
-#### 3.5 splice()指定位置添加/删除元素
+### 3.5 splice()指定位置添加/删除元素
 
 ```js
 const arr = [1];
@@ -319,7 +319,7 @@ const newArr = [...arr, 2, 3];
 console.log(newArr); // [1,2,3]
 ```
 
-#### 3.6 Array.length
+### 3.6 Array.length
 
 ```js
 const arr = [1];
@@ -328,9 +328,9 @@ arr[arr.length] = 3;
 console.log(arr); // [1,2,3]
 ```
 
-### 4.数组删除元素的 4 种方式
+## 4.数组删除元素的 4 种方式
 
-#### 4.1 伪删除将元素设置为 null
+### 4.1 伪删除将元素设置为 null
 
 ```js
 const arr = [1, 2, 3, 4, 5];
@@ -339,7 +339,7 @@ arr[2] = null;
 console.log(arr); // [1,2,null,4,5]
 ```
 
-#### 4.2 splice()删除指定下标元素
+### 4.2 splice()删除指定下标元素
 
 ```js
 const arr = [1, 2, 3, 4, 5];
@@ -348,7 +348,7 @@ console.log(arr.splice(2, 1)); // [3]
 console.log(arr); // [1,2,4,5]
 ```
 
-#### 4.3 shift()删除首个元素
+### 4.3 shift()删除首个元素
 
 ```js
 const arr = [1, 2, 3, 4, 5];
@@ -356,7 +356,7 @@ const arr = [1, 2, 3, 4, 5];
 console.log(arr.shift()); // 1
 ```
 
-#### 4.4 pop()删除数组最后一个元素
+### 4.4 pop()删除数组最后一个元素
 
 ```js
 const arr = [1, 2, 3, 4, 5];
@@ -365,16 +365,16 @@ console.log(arr.pop()); // 5
 console.log(arr); // [1,2,3,4]
 ```
 
-### 5.数组去重
+## 5.数组去重
 
-#### 5.1 使用 set 不允许重复元素的特性
+### 5.1 使用 set 不允许重复元素的特性
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2];
 console.log(Array.from(new Set(arr))); // [1,2,3,4]
 ```
 
-#### 5.2 创建一个新数组,使用 indexOf()includes()或判断新数组是否存在指定元素,如果不存在就添加元素
+### 5.2 创建一个新数组,使用 indexOf()includes()或判断新数组是否存在指定元素,如果不存在就添加元素
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2];
@@ -397,7 +397,7 @@ for (let i = 0; i < arr.length; i++) {
 console.log(newArray); // [1, 2, 3, 4]
 ```
 
-#### 5.3 通过对象键名不允许重复的特性去重
+### 5.3 通过对象键名不允许重复的特性去重
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2];
@@ -413,7 +413,7 @@ for (let i = 0; i < arr.length; i++) {
 console.log(objArr); //[1, 2, 3, 4]
 ```
 
-#### 5.4 利用 filter 去重
+### 5.4 利用 filter 去重
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2];
@@ -422,9 +422,9 @@ console.log(
 ); // [1, 2, 3, 4]
 ```
 
-### 6.数组相关题目
+## 6.数组相关题目
 
-#### 6.1 已知如下数组，编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组。
+### 6.1 已知如下数组，编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组。
 
 ```js
 var arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
@@ -464,3 +464,9 @@ const sort = (a, b) => a - b;
 console.log(arr.flat().unique().sort(sort));
 //[1, 2, 3, 4, 5, 6,7, 8, 9, 10, 11, 12,13, 14]
 ```
+
+## 7.数组技巧
+
+### 7.1 通过 Reduce 实现 compose(组合)函数
+
+### 7.2 通过 reduceReight 实现 pipe(管道)函数

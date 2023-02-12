@@ -2,7 +2,7 @@
 
 ### Ajax 和 Fetch 介绍
 
-前端向后端发起 Http 请求分为 Ajax 和 Fetch 两种方式。Ajax 是一种用于创建快速动态网页的技术,具有局部刷新的特性极大的提升了用户的体验性,避免资源浪费。其缺点是当请求操作嵌套过多时就会产生回调地狱,所以通常在开发中利用 Promise 对 Ajax 工具进行再次封装便于使用。Axios 是前端领域最为流行的 Http 请求工具库,它是一个简洁高效的请求库,具有支持 NODE 端和浏览器端、Promise、拦截器与数据处理的等特性,Axios 在浏览器端底层基于 XML HttpRequest 对象处理请求,在 Node 端基于 NodeJS 的 Http 模块处理请求;Axios 不仅简单易用,而且还兼容好,最低兼容 IE7。
+前端向后端发起 Http 请求分为 Ajax 和 Fetch 两种方式。Ajax 是一种用于创建快速动态网页的技术,具有局部刷新的特性极大的提升了用户的体验性,避免资源浪费。其缺点是当请求操作嵌套过多时就会产生回调地狱,所以通常在开发中利用 Promise 对 Ajax 工具进行再次封装便于使用。
 
 Fetch API 提供了一个 JavaScript 接口,用于访问和操作 HTTP 管道的一些具体部分,例如请求和响应。它还提供了一个全局 fetch() 方法(fetch 函数挂载在 window 对象下,所以 NODEJS 无法直接使用 fetch),该方法提供了一种简单,合理的方式来跨网络异步获取资源。Fetch 还利用了 Promise 特性,fetch()返回一个 Promise,通过 Promise 链式调用完美避开了回调地狱。
 
@@ -10,6 +10,12 @@ Fetch API 提供了一个 JavaScript 接口,用于访问和操作 HTTP 管道的
 
 - fetch()返回的 promise 将不会拒绝 http 的错误状态,即使响应状态码是 404 或者 500。
 - 在默认情况下 fetch 不会接受或者发送 cookies。不能接受跨域 cookies,也不能发起跨域回话。
+
+#### 常用网络工具介绍
+
+- **Axios**:Axios 是前端领域最为流行的 Http 请求工具库,它是一个简洁高效的请求库,具有支持 NODE 端和浏览器端、Promise、拦截器与数据处理的等特性,Axios 在浏览器端底层基于 XML HttpRequest 对象处理请求,在 Node 端基于 NodeJS 的 Http 模块处理请求;Axios 不仅简单易用,而且还兼容好,最低兼容 IE7。
+- **umi-request**:网络请求库,基于 fetch 封装, 兼具 fetch 与 axios 的特点,旨在为开发者提供一个统一的 api 调用方式,简化使用,并提供诸如缓存,超时,字符编码处理,错误处理等常用功能。
+- **fly**:一个支持所有 JavaScript 运行环境的基于 Promise 的、支持请求转发、强大的 http 请求库。可以让您在多个端上尽可能大限度的实现代码复用。目前 Fly.js 支持的平台包括:Node.js 、微信小程序 、Weex 、React Native 、Quick App 和浏览器。
 
 ### Ajax 实现原理
 
@@ -134,6 +140,154 @@ xhr.onreadystatechange = function () {
 ```
 
 #### 5.使用 Promise 封装 XMLHttpRequest
+
+```ts
+export type Method = "get" | "GET" | "options" | "OPTIONS" | "post" | "POST";
+
+enum ResponseType {
+  // 原始二进制数据缓冲区
+  ARRAY_BUFFER = "arraybuffer",
+  // 文档
+  DOCUMENT = "document",
+  // json对象
+  JSON = "json",
+  // 文本
+  TEXT = "text",
+  // 二进制流
+  STREAM = "stream",
+  // blob
+  BLOB = "blob",
+}
+
+enum ContentType {
+  // JSON数据格式
+  JSON = "application/json;charset=utf-8",
+  // FORM表单数据格式
+  FORM = "application/x-www-form-urlencoded;charset=utf-8",
+  // XML数据格式
+  XML = "application/xml;charset=utf-8",
+  // 二进制流数据格式,一般用于文件下载
+  STREAM = "application/octet-stream;charset=utf-8",
+  // pdf数据格式
+  PDF = "application/pdf;charset=utf-8",
+  // word数据格式
+  WORD = "application/msword;charset=utf-8",
+  // html数据格式
+  TEXT = "text/html;charset=utf-8",
+}
+
+interface RequestConfig {
+  url?: string;
+  method?: Method;
+  data?: Record<string, any>;
+  headers?: Record<string, any>;
+  timeout?: number;
+  baseUrl?: string;
+  responseType?: ResponseType;
+  withCredentials?: boolean;
+}
+
+const stringify = (data: Record<string, any>) => {
+  let params = "";
+  const arr = Object.keys(data);
+  if (arr.length === 0) return params;
+  arr.forEach((key) => {
+    params += `${key}=${data[key]}`;
+  });
+  return params.slice(0, -1);
+};
+
+/**
+ * 检查url是否是绝对url
+ * @param url url地址
+ * @returns 是否是绝对url
+ */
+const isURL = (url: string) => {
+  return /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\\/?%&=]*)?/.test(url);
+};
+
+export const xhr = new XMLHttpRequest() || window.XMLHttpRequest;
+const defaultConfig: RequestConfig = {
+  method: "GET",
+  data: {},
+  timeout: 0,
+  baseUrl: "",
+  headers: {
+    "content-type": ContentType.JSON,
+  },
+  responseType: ResponseType.JSON,
+  withCredentials: false,
+};
+
+export const request = (config?: RequestConfig) => {
+  const { url, method, data, headers, timeout, baseUrl, withCredentials } = {
+    ...defaultConfig,
+    ...config,
+  } as Required<RequestConfig>;
+  const isGet = ["get", "GET"].includes(method);
+  const isPost = ["post", "POST"].includes(method);
+
+  // 拼接baseUrl,拼接get请求参数
+  let requestURL = isURL(url) ? url : baseUrl + url;
+  // 拼接get请求参数
+  requestURL = isGet ? url + "?" + stringify(data!) : url;
+  // 打开请求
+  xhr.open(method!, requestURL, true);
+  // 遍历设置请求头
+
+  Object.keys(headers).forEach((key) => {
+    xhr.setRequestHeader(key, headers[key]);
+  });
+  isPost && xhr.setRequestHeader("content-type", ContentType.FORM);
+
+  // 设置请求超时时间
+  xhr.timeout = timeout;
+  // 设置跨域请求时是否需要使用凭证
+  xhr.withCredentials = withCredentials;
+  // 发送请求,对post请求参数处理
+  xhr.send(isPost ? stringify(data) : "");
+
+  return new Promise((resolve, reject) => {
+    // 监听readyState属性变化
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        resolve(xhr.responseText);
+      }
+    };
+    // 当请求遇到错误时,将触发error 事件
+    xhr.onerror = (e: ProgressEvent) => {
+      reject(new Error(`${e.type}:request was aborted`));
+    };
+  });
+};
+
+// 测试
+setTimeout(() => {
+  request({
+    url: "https://jsonplaceholder.typicode.com/todos/1",
+  })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, 1000);
+
+setTimeout(() => {
+  request({
+    url: "https://jsonplaceholder.typicode.com/posts",
+    method: "POST",
+    data: { name: "z乘风", age: 18 },
+  })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, 3000);
+```
 
 ### Fetch
 
@@ -385,9 +539,174 @@ timeoutPromise(10, fetchPromise)
   .catch((err) => console.log("err:", err));
 ```
 
+### Axios 封装
+
 ### 扩展:终止重复请求
 
 重复请求是指发送后由于业务处理或者网络阻塞等原因,导致发送相同 URL 和 METHOD 的请求,例如点击按钮发送请求,短时间点击按钮 10 次,假设点击 10 次后第一次的请求仍未响应完成,则前 9 次都属于重复请求,这些请求都是无效的,中止这些无效请求可以避免资源浪费,减少服务器压力和防止网络阻塞。
+
+在 Web 中 `AbortController` 是最为常见的终止请求方案,各个请求库和 Fetch 都可以通过 AbortController 取消请求。`AbortController` 接口表示一个控制器对象,允许中止一个或多个 Web 请求,截止目前`AbortController`仍是实验性的,且兼容性较差。`AbortController` 的 API:
+
+- AbortController():用于创建一个新的 AbortController,使用 AbortSignal 对象可以完成与 DOM 请求的通信。
+- signal:返回一个 AbortSignal 对象实例(AbortSignal 表示一个信号对象),它可以用来 with/abort 一个 Web(网络)请求。
+- about():中止一个尚未完成的 Web(网络)请求,这能够中止 fetch 请求及任何响应体的消费和流。
+
+AbortController 的使用步骤:首先通过 AbortController()构造函数来创建一个 controller 实例,然后通过 AbortController.signal 属性获取到它的关联对象 AbortSignal 的引用,在发起请求时将 AbortController.signal 作为请求选项参数传入,并与请求关联起来,此时就可以使用 AbortController.abort()中止与之关联的请求。
+
+#### XMLHttpRequest 中止请求
+
+XMLHttpRequest 对象通过 `about()`终止请求。
+
+```ts
+setTimeout(() => {
+  request({
+    url: "https://jsonplaceholder.typicode.com/todos/1",
+  })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  xhr.abort(); // 中止请求
+}, 1000);
+
+setTimeout(() => {
+  request({
+    url: "https://jsonplaceholder.typicode.com/posts",
+    method: "POST",
+    data: { name: "z乘风", age: 18 },
+  })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, 3000);
+```
+
+![prototype](../assets/images/request01.png)
+
+#### Fetch 中止请求
+
+通过 `AbortController` 中止 Fetch 请求。
+
+```ts
+// 实例化AbortController对象
+const controller = new AbortController();
+// 获取signal(信号)
+const signal = controller.signal;
+fetch("https://jsonplaceholder.typicode.com/posts/1", {
+  signal,
+})
+  .then((response) => response.json())
+  .then((json) => console.log(json));
+controller.abort(); // 中止请求
+```
+
+![prototype](../assets/images/request02.png)
+
+#### Axios 中止请求
+
+在 Axios 中止请求分为 `AbortController` 和 `CancelToken` 两种方式。对于 Axios v0.22.0 及以上版本,官方推荐使用 `AbortController` 取消请求,`CancelToken` 从 v0.22.0 开始已被弃用,官方不推荐在 v0.22.0 及以上版本中使用。
+
+##### AbortController 中止 Axios 请求
+
+```ts
+import axios from "axios";
+// 实例化AbortController对象
+const controller = new AbortController();
+// 获取signal(信号)
+const signal = controller.signal;
+axios("https://jsonplaceholder.typicode.com/posts/1", {
+  signal,
+}).then((res) => {
+  console.log(res);
+});
+controller.abort(); // 中止请求
+```
+
+![prototype](../assets/images/request03.png)
+
+##### CancelToken 中止 Axios 请求
+
+```ts
+/*
+ * 方式1:通过source()工厂方法创建一个Cannel Token
+ */
+import axios from "axios";
+const CancelToken = axios.CancelToken;
+// 通过CancelToken.source 工厂方法创建一个 cancel token
+const source = CancelToken.source();
+axios("https://jsonplaceholder.typicode.com/posts/1", {
+  cancelToken: source.token,
+})
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    if (axios.isCancel(err)) {
+      console.log("Request canceled", err.message);
+    }
+  });
+// 中止请求,参数可选
+source.cancel("cancel request");
+```
+
+```ts
+/*
+ * 方式2:通过传递一个 executor 函数到 CancelToken 的构造函数来创建
+ * 一个 cancel token
+ */
+import axios, { Canceler } from "axios";
+const CancelToken = axios.CancelToken;
+let cancel: Canceler;
+axios("https://jsonplaceholder.typicode.com/posts/1", {
+  cancelToken: new CancelToken(function executor(c) {
+    // executor 函数接收一个 cancel 函数作为参数
+    cancel = c;
+  }),
+})
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    if (axios.isCancel(err)) {
+      console.log("Request canceled", err.message);
+    }
+  });
+
+cancel!("cancel request"); // 中止请求
+```
+
+![prototype](../assets/images/request04.png)
+
+#### umi-request 中断请求
+
+```ts
+// 按需决定是否使用 polyfill,该依赖支持事件处理的abortcontroller的垫片
+import "yet-another-abortcontroller-polyfill";
+import Request from "umi-request";
+
+const controller = new AbortController(); // 创建一个控制器
+// 返回一个 AbortSignal 对象实例，它可以用来 with/abort 一个 DOM 请求
+const { signal } = controller;
+signal.addEventListener("abort", () => {
+  console.log("aborted!");
+});
+
+Request("/api/response_after_1_sec", {
+  // 这将信号和控制器与获取请求相关联然后允许我们通过调用 AbortController.abort() 中止请求
+  signal,
+});
+
+// 取消请求
+setTimeout(() => {
+  // 中止一个尚未完成的DOM请求。这能够中止 fetch 请求,任何响应Body的消费者和流。
+  controller.abort();
+}, 100);
+```
 
 ### 扩展:拦截请求
 

@@ -112,7 +112,7 @@ console.log(ast.render);
 - beforeMount():在挂载到实例之前被调用,相关的 render()函数首次执行。
 - mounted():挂载到实例之后调用,el 选项的 Dom 节点被新创建的 vm.$el 替换,并挂载到实例之后被调用,此时数据开始在 Dom 节点上渲染,注意:后续的钩子函数都是需要外部的触发才能执行。
 - beforeUpdate():实例数据发生变化之前调用。
-- updated():实例数据发生变化后调用
+- updated():实例数据发生变化后调用。
 - beforeDestroy:实例销毁之前被调用。
 - destroyed:实例销毁之后被调用。
 
@@ -142,7 +142,7 @@ watch:
 - $emit()子传父。
 - $refs获取组件实例,$children 获取子实例,$parent获取父实例,$root 获取根实例(包含所有组件实例集合)。
 - $attrs获取未在组件props定义的所有prop,$listeners 获取父组件通过 v-on 传递的事件侦听器。
-- provide 与 inject。通过 provide 在祖父组件定义属性,在子孙组件使用 inject 注入所需的属性。
+- provide 与 inject。通过 provide 在祖父组件定义属性,在子孙组件使用 inject 注入所需属性实现跨层级组件通讯。
 - 事件总线(Event Bus)。本质上实现了发布订阅 API 挂载到 Vue 原型上实现组件通讯,其缺点是发布订阅需成对出现、难维护、复用性差,订阅事件时需手动销毁监听,否则事件会执行多次。
 - Vuex。利用第三方状态管理工具解决组件通讯问题,由于 Vuex 存储的状态会在刷新页面后丢失,可以通过 Vuex-persistedstate 这个库进行持久化。
 - Web Storage(包含 Session Storage 和 LocalStorage)。通过浏览器存储解决组件通讯。
@@ -283,3 +283,14 @@ mounted(){
 - 对于大数据列表可以通过虚拟列表仅显示可视数据,避免渲染所有数据。
 - 合理使用防抖节流。
 - 启用服务端渲染(SSR)或预渲染。
+
+### Vue3 与 Vue2 的区别?
+
+### Vue3 watch 与 watchEffect 的区别？
+
+- watch 是惰性的,第一次页面渲染时的时候并不会执行,只有监听的数据变化的时候才会执行。
+- watch 的参数可以获取当前值和原始值。
+- 可以侦听多个数据的变化,用一个侦听起承载。
+- watchEffect 无惰性,页面的首次渲染就会立即执行。
+- watchEffect 会自动检测内部代码,代码中有依赖便会执行。
+- watchEffect 不能获取之前数据的值,只能获取当前值。

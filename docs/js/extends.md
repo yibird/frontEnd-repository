@@ -1,4 +1,4 @@
-### 1.原型链继承
+## 1.原型链继承
 
 继承的本质就是复制,即重写原型对象,代之以一个新类型的实例。原型链继承是基于 JS 原型机制实现的继承方式,在原型机制中构造函数、原型和实例之间的关系为:每个构造函数都有一个原型对象,原型对象都包含一个指向构造函数的指针,而实例都包含一个原型对象的指针,即`原型对象.constructor === 构造函数`,`实例对象.prototype === 其原型对象`。
 
@@ -51,7 +51,7 @@ var sub02 = new Sub();
 console.log(sub02.languages); // ["Java", "JavaScript", "Go", "Rust"]
 ```
 
-### 2.构造函数继承
+## 2.构造函数继承
 
 使用父类的构造函数来增强子类实例,等同于复制父类的实例给子类(不使用原型)。
 
@@ -79,7 +79,7 @@ console.log(sub02.languages); // ['Java', 'JavaScript', 'Go']
 - 只能继承父类的实例属性和方法,不能继承父类原型上的属性和方法。
 - 无法实现复用,每个子类都有父类实例函数的副本,影响性能。
 
-### 3.组合继承
+## 3.组合继承
 
 组合继承是原型链继承与构造函数继承的组合,用原型链实现对原型属性和方法的继承,用借用构造函数技术来实现实例属性的继承。
 
@@ -129,7 +129,7 @@ console.log(instance02.getAge()); // 22
 - 第二次调用 SuperType():给 instance1 写入两个属性 name 和 languages。
   实例对象 instance1 上的两个属性就屏蔽了其原型对象 Sub.prototype 的两个同名属性。所以，组合模式的缺点就是在使用子类创建实例对象时,其原型中会存在两份相同的属性/方法。
 
-### 4.原型式继承
+## 4.原型式继承
 
 原型式继承实现是利用一个空对象作为中介,将某个对象直接赋值给空对象构造函数的原型。
 
@@ -163,7 +163,7 @@ console.log(person.friends); // ['Shelby', 'Court', 'Van', 'Rob', 'Barbie']
 - 原型链继承多个实例的引用类型属性指向相同,存在篡改的可能。
 - 无法传递参数。
 
-### 5.寄生式继承
+## 5.寄生式继承
 
 寄生式继承实现核心在于原型式继承的基础上,增强对象,返回构造函数。
 
@@ -197,7 +197,7 @@ p.sayHi(); // "hello"
 - 原型链继承多个实例的引用类型属性指向相同,存在篡改的可能。
 - 无法传递参数
 
-### 6.寄生组合式继承(ES5 推荐继承方案)
+## 6.寄生组合式继承(ES5 推荐继承方案)
 
 寄生组合式继承实现原理是结合借用构造函数传递参数和寄生模式实现继承。
 
@@ -243,7 +243,7 @@ console.log(instance2.languages); // ['Java', 'JavaScript', 'Go', 'TypeScript']
 
 寄生组合式继承的高效率体现在它只调用了一次父类构造函数(即只调用一个一次 Super 构造函数),并且因此避免了在 Sub.prototype 上创建不必要的、多余的属性。于此同时,原型链还能保持不变;因此,还能够正常使用 instanceof 和 isPrototypeOf()。寄生组合式继承是 ES6 最成熟的继承方式,也是现在库实现的方法。
 
-### 7.混入方式继承多个对象
+## 7.混入方式继承多个对象
 
 ```js
 function SuperClass() {
@@ -281,7 +281,7 @@ console.log(my.getOtherName()); // "otherName"
 
 Object.assign 会把 OtherSuperClass 原型上的函数拷贝到 MyClass 原型上,使 MyClass 的所有实例都可用 OtherSuperClass 的方法。
 
-### 8.ES6 类继承 extends
+## 8.ES6 类继承 extends
 
 extends 关键字由 ES6 提供,主要用于类声明或者类表达式中,以创建一个类,该类是另一个类的子类。其中 constructor 表示构造函数，一个类中只能有一个构造函数,有多个会报出 SyntaxError 错误,如果没有显式指定构造方法,则会添加默认的 constructor 方法。
 
@@ -371,7 +371,7 @@ instance2.languages.push("TypeScript");
 console.log(instance2.languages); // ['Java', 'JavaScript', 'Go', 'TypeScript']
 ```
 
-### 9.总结
+## 9.总结
 
 (1).函数声明和类声明的区别。函数声明会提升,类声明不会。首先需要声明你的类,然后访问它,否则像下面的代码会抛出一个 ReferenceError。
 

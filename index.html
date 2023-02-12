@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+</html>
+<script>
+  // const worker = new Worker("./worker.js");
+  // // 监听脚本文件通过postMessage()发送的数据,e是一个MessageEvent对象
+  // worker.onmessage = (e) => {
+  //   // {type: 'worker', message: 'hello web worker'}
+  //   console.log(JSON.parse(e.data));
+  //   // 主线程向Worker线程发送数据
+  //   worker.postMessage(JSON.stringify({ message: "worker i love you!" }));
+  // };
+  // // 监听运行脚本时产生的错误,e是一个ErrorEvent对象
+  // worker.onerror = (e) => {
+  //   console.log(e);
+  // };
+  // function computeMaxCallStackSize() {
+  //   try {
+  //     return 1 + computeMaxCallStackSize();
+  //   } catch (e) {
+  //     // Call stack overflow
+  //     return 1;
+  //   }
+  // }
+
+  Array.prototype.myReduce = function (callback, initialValue) {
+    if (!Array.isArray(this)) throw new Error("Reduce does not exist in array");
+    if (callback && typeof callback !== "function") {
+      throw new Error(`${callback} is not a function`);
+    }
+    const len = this.length;
+    if (len === 0 && initialValue === "undefined") {
+      throw new Error("Reduce of empty array with no initial value");
+    }
+    initialValue = initialValue || this[0];
+    for (let i = 1; i < len; i++) {
+      initialValue = callback(initialValue, this[i], i - 1, this);
+    }
+
+    return initialValue;
+  };
+
+  // 测试
+  const result = [1, 2, 3].myReduce((prev, next, currentIndex, array) => {
+    console.log(prev, next, currentIndex, array);
+    return prev + next;
+  });
+  console.log(result); // 6
+  // [1, 2, 3].reduce((prev, next, currentIndex, array) => {
+  //   console.log(prev, next);
+  // });
+</script>
