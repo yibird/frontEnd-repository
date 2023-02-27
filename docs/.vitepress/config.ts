@@ -30,7 +30,7 @@ const themeConfig: DefaultTheme.Config = {
 };
 
 export default defineConfig({
-  base: "../",
+  base: "/frontEnd-repository/",
   title: "前端学习路线",
   description: "一个前端知识库",
   head,
