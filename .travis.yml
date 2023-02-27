@@ -4,14 +4,13 @@ language: node_js
 node_js:
   - 12
 script:
-  - npm run docs:build
+  - npm run build
 deploy:
   privoder: pages
   skip_cleanup: true
-  local_dir: docs/.vuepress/dist
+  local_dir: docs/.vitepress/dist
   github_token: $GITHUB_TOKEN
   target_brach: gh-pages
   keep_history: true
   on:
     branch: main
-
