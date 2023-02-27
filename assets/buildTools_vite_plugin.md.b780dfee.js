@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./app.352f6789.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"buildTools/vite/plugin.md","lastUpdated":1677480774000}'),o={name:"buildTools/vite/plugin.md"};function s(n,r,i,c,p,l){return a(),t("div")}const u=e(o,[["render",s]]);export{_ as __pageData,u as default};
