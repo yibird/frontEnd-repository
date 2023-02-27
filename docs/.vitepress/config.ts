@@ -1,7 +1,7 @@
-import { defineConfig } from "vitepress";
+import { DefaultTheme, defineConfig, HeadConfig } from "vitepress";
 import sidebar from "./sidebar";
 
-const head = [
+const head: HeadConfig[] = [
   [
     "link",
     { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
@@ -14,13 +14,13 @@ const footer = {
 };
 
 // 社交链接
-const socialLinks=[
-  { icon: "github",link: "https://github.com/vuejs/vitepress" },
+const socialLinks: DefaultTheme.SocialLink[] = [
+  { icon: "github", link: "https://github.com/vuejs/vitepress" },
   { icon: "twitter", link: "..." },
 ];
 
 // 主题
-const themeConfig = {
+const themeConfig: DefaultTheme.Config = {
   logo: "/assets/images/logo.jpg",
   siteTitle: "前端知识库",
   sidebar,
@@ -29,16 +29,12 @@ const themeConfig = {
   footer,
 };
 
-
-
 export default defineConfig({
-  //   base: "../",
+  base: "../",
   title: "前端学习路线",
   description: "一个前端知识库",
   head,
   themeConfig,
-  
-   
   lastUpdated: true,
   ignoreDeadLinks: true,
 });
