@@ -12,6 +12,9 @@ jobs:
   build-and-deploy:
     # 服务器环境:最新版 Ubuntu
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
     steps:
       # 拉取代码
       - name: Checkout
