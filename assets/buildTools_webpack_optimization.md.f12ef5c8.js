@@ -1,1 +1,0 @@
-import{_ as t,c as e,o}from"./app.9aa8a5d9.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"buildTools/webpack/optimization.md","lastUpdated":1677481506000}'),a={name:"buildTools/webpack/optimization.md"};function i(s,n,r,c,p,d){return o(),e("div")}const _=t(a,[["render",i]]);export{m as __pageData,_ as default};

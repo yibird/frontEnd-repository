@@ -1,0 +1,1 @@
+import{_ as t,c as o,o as e}from"./app.1f2ef310.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"solution/longListLoading.md","lastUpdated":1677483206000}'),a={name:"solution/longListLoading.md"};function n(s,r,i,c,d,l){return e(),o("div")}const m=t(a,[["render",n]]);export{_ as __pageData,m as default};

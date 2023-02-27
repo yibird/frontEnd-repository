@@ -1,0 +1,1 @@
+import{_ as e,c as a,o as t}from"./app.1f2ef310.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"buildTools/webpack/loader.md","lastUpdated":1677483206000}'),o={name:"buildTools/webpack/loader.md"};function r(s,c,d,n,l,p){return t(),a("div")}const m=e(o,[["render",r]]);export{_ as __pageData,m as default};

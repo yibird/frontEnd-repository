@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as a}from"./app.9aa8a5d9.js";const f=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"typeScript/declareAndConfig.md","lastUpdated":1677481506000}'),r={name:"typeScript/declareAndConfig.md"};function n(c,o,d,s,p,i){return a(),t("div")}const l=e(r,[["render",n]]);export{f as __pageData,l as default};
