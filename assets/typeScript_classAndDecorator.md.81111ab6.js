@@ -1,1 +1,0 @@
-import{_ as t,c as e,o as a}from"./app.1f2ef310.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"typeScript/classAndDecorator.md","lastUpdated":1677483206000}'),r={name:"typeScript/classAndDecorator.md"};function c(o,s,n,p,d,i){return a(),e("div")}const m=t(r,[["render",c]]);export{l as __pageData,m as default};
