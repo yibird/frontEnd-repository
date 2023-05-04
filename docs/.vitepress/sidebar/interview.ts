@@ -29,5 +29,15 @@ export default {
       link: "/caseInterview/react.md",
       items: [],
     },
+    {
+      text: "工程化",
+      link: "/caseInterview/engineering.md",
+      items: [],
+    },
+    {
+      text: "网络协议",
+      link: "/caseInterview/networkProtocol.md",
+      items: [],
+    },
   ],
 };

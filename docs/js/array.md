@@ -27,6 +27,19 @@ arr[2] = "Golang";
 const arr = Array.of("Java", "JavaScript", "Golang");
 ```
 
+### 1.5 通过 Array.from()指定 length 属性生成数字序列
+
+```js
+/**
+ * Array.from()可以指定length属性生成数字序列,生成后的数组元素都使用undefined初始化
+ */
+const arr = Array.from({ length: 3 });
+console.log(arr); // [undefined,undefined,undefined]
+
+// 通过Array.from()生成0到10(不含10)之间的数组
+Array.from({ length: 10 }, (_, index) => index);
+```
+
 ## 2.数组 Api
 
 ```js
@@ -440,7 +453,7 @@ const arr = [
   10,
 ];
 console.log(Array.from(new Set(arr.flat(Infinity))).sort((a, b) => a - b));
-//[1, 2, 3, 4, 5, 6,7, 8, 9, 10, 11, 12,13, 14]
+// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 ```
 
 **解法二**:通过递归拍平数组,然后转 Set 去重,最后 sort()升序
@@ -462,11 +475,62 @@ Array.prototype.unique = function () {
 };
 const sort = (a, b) => a - b;
 console.log(arr.flat().unique().sort(sort));
-//[1, 2, 3, 4, 5, 6,7, 8, 9, 10, 11, 12,13, 14]
+// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 ```
 
 ## 7.数组技巧
 
-### 7.1 通过 Reduce 实现 compose(组合)函数
+compose(组合)函数和 pipe(管道)函数属于函数式编程(FP)中的概念,函数式编程中,组合函数是一种将多个函数组合在一起形成一个新函数的技术,管道是函数式编程的一种编程模式,它允许将函数链接在一起以构建数据流,两者都可以组织多个函数执行,其区别如下:
 
-### 7.2 通过 reduceReight 实现 pipe(管道)函数
+- 接收参数不同。管道函数接收一个初始值和一组函数,它会依次将初始值传入每个函数,最终输出管道的最后一个函数的结果。而组合函数接收一组数组,并将多个函数组合成一个新的函数,组合函数会将每个函数的输出作为上一个函数的输入,最终输出组合函数的结果。
+- 函数调用顺序不同。管道函数是从左到右依次调用每个函数,而组合函数是从右到左依次调用每个函数。
+
+### 7.1 通过 reduce()实现 pipe(管道)函数
+
+```js
+const pipe = function (value, ...fns) {
+  return fns.reduce((result, fn) => {
+    return fn(result);
+  }, value);
+};
+
+// -------- 测试
+function addOne(num) {
+  return num + 1;
+}
+function double(num) {
+  return num * 2;
+}
+const result = pipe(3, addOne, double);
+console.log(result); // 8
+```
+
+### 7.2 通过 reduceRight() 或 reduce()实现 compose(组合)函数
+
+```js
+// 实现方式1:基于reduceRight实现compose函数,reduceRight()由右到左遍历数组
+const compose = function (...fns) {
+  return (args) => {
+    return fns.reduceRight((result, fn) => {
+      return fn(result);
+    }, args);
+  };
+};
+
+// 实现方式2:基于reduce()实现compose函数,从里到外求值,即从右到左求值
+const compose = function (...fns) {
+  return fns.reduce((result, fn) => {
+    return (...args) => result(fn(...args));
+  });
+};
+
+// -------- 测试
+function addOne(num) {
+  return num + 1;
+}
+function double(num) {
+  return num * 2;
+}
+const composeFn = compose(double, addOne);
+console.log(composeFn(3)); // 8
+```

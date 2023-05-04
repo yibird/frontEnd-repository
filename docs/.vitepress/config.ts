@@ -36,5 +36,4 @@ export default defineConfig({
   head,
   themeConfig,
   lastUpdated: true,
-  ignoreDeadLinks: true,
 });

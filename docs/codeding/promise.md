@@ -1,4 +1,4 @@
-### 手写 Promise
+## 手写 Promise
 
 Promise 是 ES6 提供的异步解决方案,Promise 通过链式调用可以解决回调函数(回调函数在事件循环中属于微任务)嵌套而产生的回调地狱问题,手写 Promise 会涉及 Promise、Class、this 显式绑定(call、apply、bind)、事件循环(Event Loop)等知识点。Promise 的特点如下:
 
@@ -6,8 +6,7 @@ Promise 是 ES6 提供的异步解决方案,Promise 通过链式调用可以解�
 - **Promise 构造函数是同步的且抛出的错误可以被 catch()捕获,但 resolve()和 reject()是异步的**。Promise 接收一个回调函数,该回调允许接收 resolve()和 reject()两个回调函数,调用 resolve()会将 pending 状态的 Promise 变为 fulfilled 状态,调用 reject()会将 pending 状态的 Promise 变为 rejected 状态。而且 Promise 构造函数产生的错误是可以被 catch()捕获到的。
 - **Promise 支持函数式链式调用**。Promise 的 then()、catch()等方法支持链式调用(例如 `promise.then().catch()`),所以 then()、catch()等方法需要返回一个新的 Promise 实例(不是原来那个 Promise 实例)。
 
-<CodeGroup>
-<CodeGroupItem title="class实现Promise注释版" active>
+::: details 手写 Promise(含注释)
 
 ```js
 // 注释版Promise
@@ -214,8 +213,9 @@ function resolvePromise(promise, result, resolve, reject) {
 }
 ```
 
-</CodeGroupItem>
-<CodeGroupItem title="class实现Promise简洁版">
+:::
+
+::: details 手写 Promise(不含注释)
 
 ```js
 class MyPromise {
@@ -340,8 +340,7 @@ function resolvePromise(promise, result, resolve, reject) {
 }
 ```
 
-</CodeGroupItem>
-</CodeGroup>
+:::
 
 ```js
 // 测试
@@ -415,9 +414,9 @@ module.exports = MyPromise;
 
 ![promiseTest](../assets/images/promise-test.png)
 
-### 手写 async await
+## 手写 async await
 
-### 手写 Promise 错误处理函数
+## 手写 Promise 错误处理函数
 
 ```js
 /*
@@ -439,7 +438,7 @@ function asyncTo<E = Error, T = any>(promise: Promise<any>, fn?: () => void) {
 }
 ```
 
-### 异步请求控制并发数
+## 异步请求控制并发数
 
 ```js
 const limitRequest = (urls = [], limit = 0) => {
@@ -475,7 +474,7 @@ const limitRequest = (urls = [], limit = 0) => {
 };
 ```
 
-### Promise 错误重试函数
+## Promise 错误重试函数
 
 解析:返回一个新的 Promise,遍历 count 次,每次遍历 count 减一,每次遍历都会使用`try catch`捕获外部传入的 Promise 执行时产生的异常,执行成功则调用`resolve()`修改 Promise 的状态为`fulfilled`,则立即终止循环,如果执行 count 次外部 Promise 任务仍未执行成功,则直接调用`reject()`修改 Promise 的状态为`rejected`。
 
@@ -511,3 +510,5 @@ retry(fn, 3).catch(() => {
   console.log("任务重试执行多次后仍处理失败");
 });
 ```
+
+## 实现带有延迟的 Promise

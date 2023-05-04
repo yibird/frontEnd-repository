@@ -1,4 +1,4 @@
-### 手写 instanceof
+## 1.手写 instanceof
 
 作用:instanceof 用于判断变量是否属于某个对象的实例。
 
@@ -36,9 +36,23 @@ console.log(instanceof_of([], Array)); // true
 console.log(instanceof_of(1, String)); // false
 ```
 
-### 手写 new
+虽然 instanceof 操作符可以用来检查一个对象是否是某个构造函数或其原型链的实例,但它也有一些缺点,包括以下几点：
 
-new 的作用是实例化对象,使用 new 时做了如下事情:
+- 只能用于检查对象是否是某个构造函数或其原型链的实例。如果要检查一个对象是否是其他类型的实例(如字符串或数字),则需要使用其他方法。
+- 不能检查一个对象是否实现了某个接口。JavaScript 本身不支持接口的概念,但可以通过代码约定来实现类似于接口的功能。instanceof 操作符不能检查一个对象是否符合某个接口的约定。
+- 在多重继承的情况下,instanceof 操作符可能会出现意外的行为。当一个对象的原型链上存在多个构造函数时,instanceof 操作符只会检查第一个构造函数，而忽略其他构造函数。这可能会导致意外的行为。
+- instanceof 操作符无法直接检查一个对象是否是字面量创建的。在 JavaScript 中,当创建一个字面量对象时,实际上是通过其构造函数 Object() 隐式创建的。
+
+```js
+const obj = { foo: "bar" };
+console.log(obj instanceof Object); // true
+```
+
+使用 instanceof 来检查 obj 是否是 Object 类型的实例,它将返回 true,因此,instanceof 操作符只能检查一个对象是否是通过其构造函数创建的实例,而不能直接检查一个对象是否是字面量创建的。
+
+## 2.手写 new
+
+new 的作用是实例化对象,使用 new 时其工作流程如下:
 
 - 创建空对象。创建一个空对象来接收实例化对象信息。
 - 连接原型。将空对象的隐式原型(`__proto__`)连接到实例化对象的 prototype。
@@ -73,7 +87,7 @@ console.log(person.name); // 'z乘风'
 console.log(person.age); // 20
 ```
 
-### 手写 let 和 const
+## 3.手写 let 和 const
 
 `let`和`const`是 ES6 提供了用于声明变量的关键字,相比较`var`它们都具有独立的块作用域,在 let、const 声明的变量前访问变量就会出现暂时性死区错误,而 var 支持函数提升和变量提升。
 
@@ -123,4 +137,58 @@ function _const(key, value) {
 console.log(name); // undefined
 ```
 
-### 手写 extends
+## 4.手写 extends
+
+继承是面向对象的三大特征之一,在 ES6 前并未提供继承关键字,需要通过原型机制自行实现继承。而在 ES6 后提供了`extends`关键字用于继承父类,其底层基于寄生组合式继承方式实现。
+
+```js
+function _inherits(supers, sub) {
+  /*
+   * (1).创建一个对象,创建父类原型副本。
+   * (2).增强对象,弥补因重写原型而失去的默认的constructor 属性。
+   * (3).链接对象,将新创建的对象链接到子类的原型。
+   */
+  sub.prototype = Object.create(supers && supers.prototype, {
+    constructor: {
+      value: sub,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    },
+  });
+  // 链接,将父类链接到子类的原型上(即__proto__)
+  if (supers) {
+    Object.setPrototypeOf
+      ? Object.setPrototypeOf(sub, supers)
+      : (sub.__proto__ = supers);
+  }
+}
+
+function Super(name) {
+  this.name = name;
+  this.languages = ["Java", "JavaScript", "Go"];
+}
+Super.prototype.getName = function () {
+  return this.name;
+};
+function Sub(name) {
+  Super.call(this, name);
+}
+
+// 将父类原型指向子类
+_inherits(Super, Sub);
+
+// 新增子类原型属性
+Sub.prototype.getName = function () {
+  return this.age;
+};
+
+var instance1 = new Sub("haha", 20);
+var instance2 = new Sub("hehe", 22);
+
+instance1.languages.push("Rust");
+console.log(instance1.languages); // ['Java', 'JavaScript', 'Go', 'Rust']
+
+instance2.languages.push("TypeScript");
+console.log(instance2.languages); // ['Java', 'JavaScript', 'Go', 'TypeScript']
+```

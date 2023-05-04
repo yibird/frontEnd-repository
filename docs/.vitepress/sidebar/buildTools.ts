@@ -5,6 +5,7 @@ export default {
   items: [
     {
       text: "Webpack",
+      link: "/buildTools/webpack/base.md",
       items: [
         {
           text: "Webpack基础",
@@ -28,18 +29,18 @@ export default {
         },
       ],
     },
-    {
-      text: "Vite",
-      items: [
-        {
-          text: "Vite基础",
-          link: "/buildTools/vite/base.md",
-        },
-        {
-          text: "Plugin",
-          link: "/buildTools/vite/plugin.md",
-        },
-      ],
-    },
+    // {
+    //   text: "Vite",
+    //   items: [
+    //     {
+    //       text: "Vite基础",
+    //       link: "/buildTools/vite/base.md",
+    //     },
+    //     {
+    //       text: "Plugin",
+    //       link: "/buildTools/vite/plugin.md",
+    //     },
+    //   ],
+    // },
   ],
 };

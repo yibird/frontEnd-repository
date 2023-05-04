@@ -323,8 +323,8 @@ extends 继承的核心代码如下,其实现和上述的寄生组合式继承�
 function _inherits(supers, sub) {
   /*
    * (1).创建一个对象,创建父类原型副本。
-   * (2).增强对象,弥补因重写原型而失去的默认的constructor 属性
-   * (3).指定对象,将新创建的对象赋值给子类的原型
+   * (2).增强对象,弥补因重写原型而失去的默认的constructor 属性。
+   * (3).链接对象,将新创建的对象链接到子类的原型。
    */
   sub.prototype = Object.create(supers && supers.prototype, {
     constructor: {
@@ -334,7 +334,7 @@ function _inherits(supers, sub) {
       configurable: true,
     },
   });
-  // 链接
+  // 链接,将父类链接到子类的原型上(即__proto__)
   if (supers) {
     Object.setPrototypeOf
       ? Object.setPrototypeOf(sub, supers)

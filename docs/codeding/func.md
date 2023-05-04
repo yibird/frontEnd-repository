@@ -860,3 +860,7 @@ const template = `name:{{name}},age:{{age}}`;
 const data = { name: "zchengfeng", age: 18 };
 console.log(render(template, data)); // name:zchengfeng,age:18
 ```
+
+## 11.手写 setTimeout()
+
+## 12.手写 setInterval()
