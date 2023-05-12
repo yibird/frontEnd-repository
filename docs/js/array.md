@@ -534,3 +534,9 @@ function double(num) {
 const composeFn = compose(double, addOne);
 console.log(composeFn(3)); // 8
 ```
+
+## 8.数组与树形结构转换
+
+### 8.1 根据层级关系数组转树
+
+### 8.2 树转数组

@@ -1,7 +1,7 @@
 JavaScript 类型可分为基本类型和引用类型两种:
 
-- 基本类型:String、Number、Boolean、Null、Undefined、Symbol(ES6 新增)、Bigint(ES10 新增)。
-- 引用类型:Object。Object 类型包含 Object、Array、Date、Function、RegExp、Math 等子类型。
+- 基本类型:`String`、`Number`、`Boolean`、`Null`、`Undefined`、`Symbol`(ES6 新增)、`Bigint`(ES10 新增)。
+- 引用类型:`Object`。Object 类型包含 `Object`、`Array`、`Date`、`Function`、`RegExp`、`Math` 等子类型。
   ::: tip
   严谨来说截止目前为止,JavaScript 一共有 8 种数据类型,7 种基本类型,1 种引用类型。在 ES5 版本有 5 种基本类型,在 ES6 版本有 6 种基本类型,在 ES10 版本有 7 种基本类型。
   :::
@@ -34,7 +34,7 @@ const obj = {name:"xxx"}
 obj.name="zchengfeng"
 ```
 
-### 扩展:栈内存相较于堆内存的优点:
+### 1.1 栈内存相较于堆内存的优点(扩展)
 
 - 申请速度快:栈是程序运行前就已经分配好的空间,所以运行时分配内存空间几乎不需要时间。而堆是运行时动态申请的,相当于将分配内存的耗时由编译阶段转嫁到了机器运行阶段,将分配过程从编译器搬到了运行的代码中。于是动态分配的速度不仅与分配算法有关,还与机器运行速度有关。(栈是编译时分配空间,而堆是动态分配,即运行时分配空间,所以栈的申请速度快)。
 - 存储寻址速度快:栈的物理地址空间是连续的,而堆未必,查找堆的链表也会耗费较多时间,所以存储寻址速度慢。
@@ -42,7 +42,7 @@ obj.name="zchengfeng"
 
 现代化的内存分配器通过类似 slab allocator 这样的设计已经尽可能令相关数据尽可能放在一起,从 CPU 数据缓存角度,绝大多数程序并不需要在栈上分配内存,且栈缓冲区溢出的后果比堆缓冲区溢出要严重许多(栈溢出是指当所需栈内存大小超过分配栈内存大小导致程序异常,内存溢出可分为栈溢出和堆溢出),而在堆上分配缓冲区则可以避免前者。
 
-### 扩展:JS 栈溢出产生原因及解决方法
+### 1.2 JS 栈溢出产生原因及解决方法(扩展)
 
 使用 JS 通过递归调用在 Chrome 浏览器环境下测试的栈空间为 1MB 左右(不同浏览器或版本执行结果有所差异)。
 
@@ -58,7 +58,6 @@ function computeMaxCallStackSize() {
 console.log(computeMaxCallStackSize()); // 11390
 ```
 
-<br/>
 函数调用会在内存形成一个"调用记录",又称"调用帧"(call frame),保存调用位置和内部变量等信息。函数在内部调用该函数本身被称为递归,而递归是极为消耗内存的,因为需要同时保存成千上百个调用帧,很容易发生"栈溢出"错误(stack overflow)。对于递归调用可以通过 ES6 提供的尾递归来节省所耗用的栈空间。
 
 - **尾调用优化**:尾调用即在函数内部最后一步操作调用函数(一般是 return 语句)。在各大编程语言中通过栈(stack)结构来维护将要执行的代码片段,执行代码被称为栈帧,每一次执行代码都会将该栈帧添加至执行栈中,这个过程被称为入栈,执行完毕后就会从执行栈中移除,这个过程被称为出栈,执行栈遵循先进后出原则。如果在函数 A 的内部调用函数 B,那么在 A 的调用帧上方,还会形成一个 B 的调用帧,等到 B 运行结束,将结果返回到 A,B 的调用帧才会消失,如果函数 B 内部还调用函数 C,那就还有一个 C 的调用帧,以此类推。所有的调用帧,就形成一个"调用栈"(call stack)。尾调用由于是函数的最后一步操作,所以无需保留外层函数的调用帧,因为调用位置、内部变量等信息都不会再用到了,只要直接用内层函数的调用帧,取代外层函数的调用帧就可以了。
@@ -125,7 +124,7 @@ factorial(5, 1); // 120
 
 ### 2.1 typeof
 
-`typeof` 操作符用于检测变量的类型并返回变量的类型值。它有 2 种使用方式:`typeof(表达式)`和`typeof 变量名`,第一种是对表达式做运算,第二种是对变量做运算。typeof 操作符在判断 Null 和 Array 类型时都为 object,所以 typeof 常用于 Function 类型的判断。
+`typeof` 操作符用于检测变量的类型并返回变量的类型值。它有 2 种使用方式:`typeof(表达式)`和`typeof 变量名`,第一种是对表达式做运算,第二种是对变量做运算。**typeof 操作符在判断 Null 和 Array 类型时都为 object,所以 typeof 常用于 Function 类型的判断**。
 
 ```js
 console.log(typeof 123); //number
@@ -155,7 +154,7 @@ console.log(typeof class Person {}); //function
 
 ### 2.2 instanceof
 
-instanceof 操作符用于判断变量是否属于某个对象的实例。注意:instanceof 操作符在判断 Array 和 Function 类型时都为 true。
+instanceof 操作符用于判断变量是否属于某个对象的实例。注意:**instanceof 操作符在判断 Array 和 Function 类型时都为 true**。
 
 ```js
 console.log([] instanceof Array); //true
@@ -199,39 +198,39 @@ console.log(instanceof_of([], Array)); // true
 
 ### 2.4 类型判断的几种方式
 
-- 通过 Object.prototype.toString 获取类型(推荐)
-  Object.prototype.toString()可以返回一个对象的字符串,通过此方式能够精确判断对象类型。
+- 通过 `Object.prototype.toString()` 获取类型(推荐)
+  `Object.prototype.toString()`可以返回一个对象的字符串,通过此方式能够精确判断对象类型。
 
 ```js
-//从下面可以看出返回[object xxx]中的xxx就是变量的类型
+// 从下面可以看出返回[object xxx]中的xxx就是变量的类型
 console.log(Object.prototype.toString.call("")); // [object String]
 console.log(Object.prototype.toString.call(null)); // [object Null]
 console.log(Object.prototype.toString.call([])); // [object Array]
 console.log(Object.prototype.toString.call({})); // [object Object]
 
-/*封装成函数:判断obj是否是type类型*/
+// 封装成函数:判断obj是否是type类型
 function isType(obj, type) {
   const typeinof = Object.prototype.toString.call(obj);
   return typeinof.substring(8, typeinof.length - 1) === type;
 }
 
-//测试
+// 测试
 console.log(isType({}, "Object")); // true
 console.log(isType([], "Object")); // false
 console.log(isType(null, "Object")); // false
 
-/*封装成一个函数(使用高阶函数特性):判断obj是否是type类型*/
+// 封装成一个函数(使用高阶函数特性),判断obj是否是type类型
 const isType = (obj) => (type) =>
   Object.prototype.toString.call(obj) === `[object ${type}]`;
 
-//测试
+// 测试
 console.log(isType("123")("String")); // true
 console.log(isType("123")("Number")); // false
 console.log(isType({})("Object")); // true
 console.log(isType({})("Object"));
 ```
 
-- 通过构造器判断类型:
+- 通过构造器判断类型。注意:**`undefined`和`null`类型并没有构造器,因此访问`constructor`属性时会出现 TypeError 错误**。
 
 ```js
 var a = 123;
@@ -254,7 +253,7 @@ var udef = undefined;
 console.log(udef.constructor === Object); // TypeError: Cannot read properties of null (reading 'constructor')
 ```
 
-- 通过 typeof 获取表达式类型:
+- 通过 `typeof` 获取表达式类型:
 
 ```js
 console.log(typeof 123); //number
@@ -269,7 +268,7 @@ console.log(typeof function () {}); //function
 console.log(typeof class Person {}); //function
 ```
 
-- 通过 instanceof 判断表达式是否属于某个类型的实例:
+- 通过 `instanceof` 判断表达式是否属于某个类型的实例:
 
 ```js
 console.log([] instanceof Array); //true
@@ -281,11 +280,11 @@ console.log(function () {} instanceof Object); //true
 
 ### 2.4 总结
 
-- typeof 操作符在判断 Null 和 Array 类型时为 object。
-- instanceof 操作符在判断 Array 和 Function 类型时都为 true。
-- constructor 方式在判断 null 或 undefined 将会报错,因为 null 和 undefined 是无效类型。
-- 判断类型最佳方式是使用 Object.prototype.toString 方式。
-- instanceof 操作符的原理是通过原型链机制不停向上匹配目标类型,如果对象的**proto**中途匹配上了目标类型的 prototype 则中断原型链查找(返回 true),否则一直向上查找,直到对象的**proto**为 null 时才终止查找(返回 false)。
+- `typeof` 操作符在判断 `Null` 和 `Array` 类型时为 `object`。
+- `instanceof` 操作符在判断 `Array` 和 `Function` 类型时都为 true。
+- `constructor` 方式在判断 `null` 或 `undefined` 将会报错,因为 `null`和 `undefined` 是无效类型。
+- 判断类型最佳方式是使用 `Object.prototype.toString()` 方式。
+- `instanceof` 操作符的原理是通过原型链机制不停向上匹配目标类型,如果对象的**proto**中途匹配上了目标类型的 `prototype` 则中断原型链查找(返回 true),否则一直向上查找,直到对象的**proto**为 null 时才终止查找(返回 false)。
 
 ## 3.类型转换
 
@@ -637,17 +636,17 @@ console.log(isEqual(0.1, 0.2, 0.3)); // true
 
 Symbol 是 ES6 引入了一种新的原始数据类型,表示独一无二的值。Symbol 具有如下特点:
 
-- Symbol 存储的值是唯一的。即 Symbol('a')和 Symbol('a')是不相等的。
-- 无法使用 new 操作符实例化 Symbol,new Symbol()是不合法的。
+- Symbol 存储的值是唯一的。即 `Symbol('a')`和 `Symbol('a')`是不相等的。
+- 无法使用 new 操作符实例化 Symbol,`new Symbol()`是不合法的。
 - Symbol 值无法参与运算,无法隐士转成字符串,会报 TypeError。
 - 作为对象属性无法用.运算符,但是可以使用方括号[]。
-- 作为对象属性,无法被循环遍历，如 for...in、for...of,也不会被 Object.keys()、Object.getOwnPropertyNames()、JSON.stringify()返回。
-- Object.getOwnPropertySymbols()方法,可以获取对象的所有 Symbol 属性名。
-- Reflect.ownKeys()可以返回所有类型的键名,包括常规键名和 Symbol 键名。
+- 作为对象属性,无法被循环遍历，如 `for...in`、`for...of`,也不会被 `Object.keys()`、`Object.getOwnPropertyNames()`、`JSON.stringify()`返回。
+- `Object.getOwnPropertySymbols()`方法,可以获取对象的所有 Symbol 属性名。
+- `Reflect.ownKeys()`可以返回所有类型的键名,包括常规键名和 Symbol 键名。
 
 Symbol 的应用场景:
 
-- **模拟私有属性**。由于 Symbol 作为对象属性时不参与遍历,就像对象不存在这个属性一样,同时又可以使用 Object.getOwnPropertySymbols()返回,就像私有属性一样。
+- **模拟私有属性**。由于 Symbol 作为对象属性时不参与遍历,就像对象不存在这个属性一样,同时又可以使用 `Object.getOwnPropertySymbols()`返回,就像私有属性一样。
 - **消除魔法字符串**。魔术字符串是指在代码中多次出现,与代码形成强耦合的某一字符串或数值,不利于将来的修改和维护。
 
 ```jsx
@@ -672,7 +671,7 @@ if (type === types.super) {
 }
 ```
 
-- **防止属性名称冲突**。当向一个全局对象中添加属性时,不明确对象是否包含该属性,很容易发生属性覆盖。而使用 Symbol 作为对象属性可以避免这个问题,整因为它的独一无二的特性。
+- **防止属性名称冲突**。当向一个全局对象中添加属性时,不明确对象是否包含该属性,很容易发生属性覆盖。而使用 Symbol 作为对象属性可以避免这个问题,因为它的独一无二的特性。
 
 ```js
 var globalObj = { name: "haha" };

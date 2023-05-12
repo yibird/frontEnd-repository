@@ -76,6 +76,46 @@ Vue2 采用 Options API 开发组件,组件生命周期定义在导入的组件�
 Vue 之所以将组件组件的 Props 设计为单向流,是因为可以防止子组件对父组件的 Props 修改而造成混乱,子组件修改 Props 就会导致父组件状态的修改无法被预测,父组件无法捕获到 Props 如何被修改。
 
 所有的 prop 都使得其父子 prop 之间形成了一个单向下行绑定:父级 prop 的更新会向下流动到子组件中,但是反过来则不行。这样会防止从子组件意外变更父级组件的状态,从而导致应用的数据流向难以理解。但可以通过`$emit()`和`.sync` 修饰符进行双向数据流通讯。
+::: details 示例
+
+```vue
+<!-- 父组件 -->
+<template>
+  <Child :visible.sync="visible" />
+</template>
+<script>
+export default {
+  data() {
+    return {
+      visible: false,
+    };
+  },
+};
+</script>
+
+<!-- 子组件 -->
+<template>
+  <button @click="changeVisible">change visible</button>
+</template>
+<script>
+export default {
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    changeVisible() {
+      // 通过触发 "update:visible" 事件修改父组件的visible为true
+      this.$emit("update:visible", true);
+    },
+  },
+};
+</script>
+```
+
+:::
 
 ## 6.为什么在组件的 created 钩子函数进行数据请求?
 
@@ -317,7 +357,7 @@ new Vue({
 ## 13.Vue 如何强制刷新组件?
 
 - 通过 v-if 指令。在需要控制的组件跟标签使用 v-if 指令,v-if 指令对应的是一个布尔值,如果条件为 false 就表明这个元素不会被渲染。
-- 通过 this.$forceUpdate方法。this.$forceUpdate 作用是强制 Vue 实例重新渲染,注意:它仅针对当前实例本身和它插槽内的子组件,并不包含所有组件。
+- 通过 this.$forceUpdate()。this.$forceUpdate() 作用是强制 Vue 实例重新渲染,注意:它仅针对当前实例本身和它插槽内的子组件,并不包含所有组件。
 
 ## 14.$nextTick()的作用和实现原理?
 

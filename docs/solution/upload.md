@@ -6,18 +6,16 @@
 - **压缩目录上传**:在目录上传的基础上,利用 `JSZip` 实现压缩目录上传的功能。
 - **拖拽上传**:利用拖拽事件和 `DataTransfer` 对象实现拖拽上传的功能。
 - **粘贴板上传**:利用剪贴板事件和 `Clipboard API` 实现剪贴板上传的功能。
-- **大文件分块上传**:分块上传是将一个文件通过`Blob.slice()`将其分割为多个文件 chunk(块),多个文件 chunk 可以通过`async-pool` 实现文件并发上传。多个文件由于被分成多个 chunk,当上传中断后再次进行上传时服务端应秒传已上传的 chunk,所以服务端需要根据文件的 md5 值判断上传文件和文件 chunk 是否已上传,若上传则直接秒传,否则进行正常的文件上传,文件的 MD5 可通过`SparkMD5`根据文件内容生成,只要文件内容发生变化,生成的 MD5 也会不同。
+- **大文件分块上传**:分块上传是将一个文件通过`Blob.slice()`将其分割为多个文件 chunk(块),多个文件 chunk 可以通过`async-pool` 实现文件并发上传。多个文件由于被分成多个 chunk,当上传中断后(因为网络问题、或者强制中断上传)再次进行上传时服务端应秒传已上传的 chunk,所以服务端需要根据文件的 md5 值判断上传文件和文件 chunk 是否已上传,若上传则直接秒传,否则进行正常的文件上传,文件的 MD5 可通过`SparkMD5`根据文件内容生成,只要文件内容发生变化,生成的 MD5 也会不同。
   - **文件秒传**:文件秒传是指上传前根据文件名和文件 MD5 值检查文件是否被上传,若已上传则直接跳过。
   - **断点续传**:断点续传是指上传文件时因为网络等原因导致上传中断,仅上传一部分文件 chunk,当再次进行文件上传时,已上传的文件 chunk 会被秒传,而未被上传的文件 chunk 则需要上传到服务器。断点续传
 - **服务端文件上传**:利用第三方库 `form-data` 实现服务端文件流式上传的功能。
 
-### 1.单文件上传
+## 1.单文件上传
 
-单文件上传场景下将 input 元素的 type 属性设置为 file 表示设置文件上传,input 元素的`accept`属性可以限制上传文件的类型(accept 属性不支持 IE9)。例如 accept="image/\*"表示只能选择图片文件,当然也可以设置为具体的图片类型,比如 `image/png` 或 `image/png,image/jpeg`。
+单文件上传场景下将 input 元素的 type 属性设置为 file 表示设置文件上传,input 元素的`accept`属性可以限制上传文件的类型(accept 属性不支持 IE9)。例如 `accept="image/\*"`表示只能选择图片文件,当然也可以设置为具体的图片类型,比如 `image/png` 或 `image/png,image/jpeg`。
 
-<CodeGroup>
-
-<CodeGroupItem title="useUploadFile.ts" active>
+::: details 封装上传逻辑
 
 ```ts
 import axios from "axios";
@@ -118,9 +116,9 @@ export const useUploadFile = (option: Option) => {
 };
 ```
 
-</CodeGroupItem>
+:::
 
-<CodeGroupItem title="Signle.vue">
+::: details 单文件上传组件
 
 ```vue
 <!-- 单文件上传组件 -->
@@ -164,18 +162,29 @@ const { upload, files } = useUploadFile({
 </script>
 ```
 
-</CodeGroupItem>
+:::
 
-<CodeGroupItem title="Node Server端代码">
+上面代码通过 files 属性获取已选择文件列表中的第一个 File 对象,然后将 File 封装成 FormData 对象(FormData 对象用以将数据解析成键值对结构数据,主要用于发送表单数据),再通过 Axios 的 post 方法向服务端发送请求。若想监听文件的上传进度可以配置请求配置对象的 `onUploadProgress`事件,`onUploadProgress` 对应值是一个回调函数,该回调接收一个 `ProgressEvent` 对象(上传进度事件)作为函数,可以通过 `ProgressEvent` 对象获取当前文件上传进度。
+
+### 1.1 Node 实现单文件上传
+
+::: details 安装项目依赖
+
+- koa:一个轻量级 Web 框架。
+- koa-static:处理静态资源的中间件。
+- @koa/cors:处理跨域请求的中间件。
+- @koa/multer:处理 multipart/form-data 的中间件。
+- @koa/router:处理路由的中间件。
+
+```shell
+npm i koa koa-static @koa/cors @koa/multer @koa/router
+```
+
+:::
+
+::: details 服务端文件上传处理逻辑
 
 ```js
-/**
- * koa中间件说明:
- * koa-static:处理静态资源的中间件。
- * @koa/cors:处理跨域请求的中间件。
- * @koa/multer:处理 multipart/form-data 的中间件。
- * @koa/router:处理路由的中间件。
- */
 const path = require("path");
 const Koa = require("koa");
 const Router = require("@koa/router");
@@ -234,12 +243,13 @@ app.listen(PORT, () => {
 });
 ```
 
-</CodeGroupItem>
+:::
 
-<CodeGroupItem title="Java  Server端代码">
+### 1.1 Java 实现单文件上传
 
-```java
-/** pom.xml:
+::: details pom.xml
+
+```xml
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -257,10 +267,13 @@ app.listen(PORT, () => {
          <artifactId>lombok</artifactId>
     </dependency>
 </dependencies>
-*/
+```
 
-/** application.properties:
+:::
 
+::: details application.properties
+
+```properties
 server.port=3000
 # 开启多文件上传
 spring.servlet.multipart.enabled=true
@@ -268,7 +281,13 @@ spring.servlet.multipart.enabled=true
 spring.servlet.multipart.max-file-size=10MB
 # 单次请求文件总数大小,默认为10MB
 spring.servlet.multipart.max-request-size=100MB
-*/
+```
+
+:::
+
+::: details 服务端文件上传处理逻辑
+
+```java
 
 /**
  * 处理逻辑如下:
@@ -336,16 +355,12 @@ public class UploadController {
 }
 ```
 
-</CodeGroupItem>
-</CodeGroup>
+:::
 
-上面代码通过 files 属性获取已选择文件列表中的第一个 File 对象,然后将 File 封装成 FormData 对象(FormData 对象用以将数据解析成键值对结构数据,主要用于发送表单数据),再通过 Axios 的 post 方法向服务端发送请求。若想监听文件的上传进度可以配置请求配置对象的 `onUploadProgress`事件,`onUploadProgress` 对应值是一个回调函数,该回调接收一个 `ProgressEvent` 对象(上传进度事件)作为函数,可以通过 `ProgressEvent` 对象获取当前文件上传进度。
-
-### 2.多文件上传
+## 2.多文件上传
 
 相比较单文件上传,多文件上传只是在 input 元素新增了`multiple`属性,然后使用`Array.from()`将选择的文件转为文件数组,再遍历挨个添加到 FormData 对象传递给服务端。
-<CodeGroup>
-<CodeGroupItem title="Multiple.vue" active>
+::: details 多文件上传组件
 
 ```vue
 <!-- 多文件上传组件 -->
@@ -388,9 +403,11 @@ const { upload, files } = useUploadFile({
 </script>
 ```
 
-</CodeGroupItem>
+:::
 
-<CodeGroupItem title="Node Koa Server 端代码">
+### 2.1 Node 实现多文件上传
+
+::: details 服务端多文件上传处理逻辑
 
 ```js
 const multerUploadFields = multerUpload.fields([
@@ -420,44 +437,40 @@ router.post("/upload/multiple", multerUploadFields, async (ctx, next) => {
 });
 ```
 
-</CodeGroupItem>
-<CodeGroupItem title="Java SpringMvc Server端代码">
+:::
+
+### 2.2 Java 实现多文件上传
+
+::: details 服务端实现多文件上传逻辑
 
 ```java
 @PostMapping("/upload/multiple")
-    public Result uploadMultipleFile(@RequestParam("files") MultipartFile[] multipartFiles){
-        System.out.println(multipartFiles.length);
-        if(multipartFiles.length == 0){
-            return Result.error("请选择文件");
-        }
-        StringBuilder sb=new StringBuilder();
-        try{
-            for(MultipartFile multipartFile:multipartFiles){
-                String fileName=multipartFile.getOriginalFilename();
-                File file=new File(UPLOAD_DIR+"/"+fileName);
-                multipartFile.transferTo(file);
-                sb.append(file.getPath()+";");
-            }
-            return Result.success("文件上传成功","文件地址:"+sb.toString());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return Result.error("文件上传失败");
+public Result uploadMultipleFile(@RequestParam("files") MultipartFile[] multipartFiles){
+    System.out.println(multipartFiles.length);
+    if(multipartFiles.length == 0){
+        return Result.error("请选择文件");
     }
-
+    StringBuilder sb=new StringBuilder();
+    try{
+        for(MultipartFile multipartFile:multipartFiles){
+            String fileName=multipartFile.getOriginalFilename();
+            File file=new File(UPLOAD_DIR+"/"+fileName);
+            multipartFile.transferTo(file);
+            sb.append(file.getPath()+";");
+        }
+        return Result.success("文件上传成功","文件地址:"+sb.toString());
+    } catch (Exception e) {
+          e.printStackTrace();
+    }
+    return Result.error("文件上传失败");
+}
 ```
 
-</CodeGroupItem>
-</CodeGroup>
+## 3.目录上传
 
-### 3.目录上传
+目录上传需要设置 input 元素的`webkitdirectory`属性,但是`webkitdirectory`的兼容性较差,不支持 IE11 以下版本。为了让服务端能按照实际的目录结构来存放对应的文件,在添加表单项时需要把当前文件的路径提交到服务端。此外,为了确保`@koa/multer` 能正确处理文件的路径,需要对路径进行特殊处理,即把`/`替换为`@`符号。
 
-目录上传需要设置 input 元素的`webkitdirectory`属性,但是`webkitdirectory`的兼容性较差,不支持 IE11 以下版本。
-为了让服务端能按照实际的目录结构来存放对应的文件,在添加表单项时需要把当前文件的路径提交到服务端。此外,为了确保`@koa/multer` 能正确处理文件的路径,需要对路径进行特殊处理,即把`/`替换为`@`符号。
-<CodeGroup>
-
-<CodeGroupItem title="Directory.vue" active>
+::: details 目录上传组件
 
 ```vue
 <!-- 目录上传组件 -->
@@ -500,17 +513,13 @@ const { upload, files } = useUploadFile({
 </script>
 ```
 
-</CodeGroupItem>
-</CodeGroup>
+:::
 
-### 4.压缩目录上传
+## 4.压缩目录上传
 
-当上传文件体积过大时,可以先在客户端将文件进行压缩后再上传至服务器,然后在服务器进行解压,这样可以节省带宽、提升上传效率。
-在目录上传的基础上,利用 `JSZip` 实现压缩目录上传的功能。
+当上传文件体积过大时,可以先在客户端将文件进行压缩后再上传至服务器,然后在服务器进行解压,这样可以节省带宽、提升上传效率。在目录上传的基础上,利用 `JSZip` 实现压缩目录上传的功能。
 
-<CodeGroup>
-
-<CodeGroupItem title="useUploadFile.ts" active>
+::: details 封装上传逻辑
 
 ```ts
 import axios from "axios";
@@ -655,9 +664,9 @@ export const useUploadFile = (option: Option) => {
 };
 ```
 
-</CodeGroupItem>
+:::
 
-<CodeGroupItem title="ZipDirectory.vue">
+::: details 压缩目录上传组件
 
 ```vue
 <template>
@@ -697,16 +706,12 @@ const { upload, files } = useUploadFile({
 </script>
 ```
 
-</CodeGroupItem>>
+:::
 
-</CodeGroup>
-
-### 5.拖拽上传
+## 5.拖拽上传
 
 文件拖拽上传的流程是监听 body 元素与目标区域元素`drop`、`dragenter`、`dragover`、`dragleave`等拖拽相关事件,当拖拽文件到目标元素松开时就会触发`drop`,通过该事件 Event 对象的`dataTransfer.files`获取拖拽的文件列表进行文件上传(dataTransfer 用于存储拖拽过程中产生的数据)。
-<CodeGroup>
-
-<CodeGroupItem title="useUploadFile.ts" active>
+::: details 封装上传逻辑
 
 ```ts
 import axios from "axios";
@@ -762,7 +767,7 @@ const drapEvents = [
   "onDragleave",
   "onDrop",
 ] as const;
-type DrapEvents = typeof drapEvents[number];
+type DrapEvents = (typeof drapEvents)[number];
 
 // 阻止浏览器默认行为
 const preventDefaults = (e: Event) => {
@@ -934,8 +939,9 @@ export const useUploadFile = (option: Option) => {
 };
 ```
 
-</CodeGroupItem>
-<CodeGroupItem title="Drag.vue" >
+:::
+
+::: details 拖拽上传组件
 
 ```vue
 <!-- 拖拽上传 -->
@@ -1031,21 +1037,17 @@ const previewImage = (file: File, container: Element) => {
 </style>
 ```
 
-</CodeGroupItem>
+:::
 
-</CodeGroup>
-
-### 6.粘贴板上传
+## 6.粘贴板上传
 
 粘贴板上传依赖于`Clipboard` API,在 Web 应用程序中,Clipboard API 可用于实现剪切、复制和粘贴功能。实现粘贴板上传流程如下:
 
-- 监听目标容器的粘贴(paste)事件。 navigator.clipboard
-- 读取并解析剪贴板中的内容。在生产中无需手动创建 Clipboard 对象,而是通过 navigator.clipboard 来获取 Clipboard 对象,创建 Cliboard 对象后通过 read()读取剪贴板中的内容,由于剪贴板中的内容可能是文字、视频、HTML,所以这一步需要对剪贴板内容的 MIME 类型进行过滤。
+- 监听目标容器的粘贴(paste)事件。
+- 读取并解析剪贴板中的内容。在生产中无需手动创建 Clipboard 对象,而是通过 navigator.clipboard 来获取 Clipboard 对象,创建 Clipboard 对象后通过 read()读取剪贴板中的内容,由于剪贴板中的内容可能是文字、视频、HTML,所以这一步需要对剪贴板内容的 MIME 类型进行过滤。
 - 动态构建 FormData 对象并上传。
 
-<CodeGroup>
-
-<CodeGroupItem title="useUploadFile.ts" active>
+::: details 封装上传逻辑
 
 ```ts
 import axios from "axios";
@@ -1103,7 +1105,7 @@ const drapEvents = [
   "onDragleave",
   "onDrop",
 ] as const;
-type DrapEvents = typeof drapEvents[number];
+type DrapEvents = (typeof drapEvents)[number];
 
 // 文本mime类型
 const textMimeTypes = ["text/plain", "text/html", "text/css"];
@@ -1316,9 +1318,8 @@ export const useUploadFile = (option: Option) => {
 };
 ```
 
-</CodeGroupItem>
-
-<CodeGroupItem title="Clipboard.vue">
+:::
+::: details 剪切板上传组件
 
 ```vue
 <!-- 剪切板上传组件 -->
@@ -1423,14 +1424,20 @@ const previewImage = (file: File, container: Element) => {
 </style>
 ```
 
-</CodeGroupItem>
+:::
 
-</CodeGroup>
+## 7.大文件分片上传
 
-### 7.大文件上传
+文件分片上传是指将一个大文件分成几个小的文件块(chunk),然后通过网络将这些文件片段上传到服务器。这种方式比一次性上传整个文件更加可靠,能够更好地处理网络中断、传输错误等情况。上传流程图:
+![分片上传](../assets/images/slice-upload.png)
 
-<CodeGroup>
-<CodeGroupItem title="useSliceUploadFile.ts" active>
+- 客户端上传文件前首先根据文件的摘要信息判断是否已经被上传,如果被上传则直接秒传。
+- 客户端上传文件时将文件分成若干小块(chunk),并为每个块生成唯一的标识符(根据文件块的内容生成 MD5 摘要)。
+- 客户端逐个或并发上传小片段到服务端,上传文件块时会携带 fileName(文件名称)、chunkTotal(文件分块总数量)、fileMD5(文件 MD5 值)等信息。
+- 服务端接收到文件块后,将其保存在一个临时目录中,此文件的 MD5 值作为目录名称,该目录用于存放对应的文件 chunk。
+- 客户端上传文件时服务端会使用一个容器存储文件对应 chunk 上传成功的次数,如果 chunk 上传成功次数与 chunkTotal 相等,则说明文件块已全部上传完毕,此时可以进行文件合并操作。文件合并首先会读取保存文件块的临时目录下的所有文件,获取文件列表后会对文件进行顺序排序,最后读取文件并通过写入流写入到一个文件中,写入成功后将删除已合并的分块。
+
+::: details 封装大文件分片上传逻辑
 
 ```ts
 import SparkMD5 from "spark-md5";
@@ -1438,7 +1445,7 @@ import { nextTick, ref, Ref } from "vue";
 import axios from "axios";
 
 const request = axios.create({
-  baseURL: "http://localhost:8000/upload/",
+  baseURL: "http://localhost:8000/",
   timeout: 5000,
 });
 
@@ -1453,12 +1460,16 @@ request.interceptors.response.use((res) => {
  */
 const calcFileMD5 = (file: File, chunkSize: number) => {
   return new Promise<string>((resolve, reject) => {
-    let chunks = Math.ceil(file.size / chunkSize), // 分块的数量
-      currentChunk = 0, // 当前分块下标
-      spark = new SparkMD5.ArrayBuffer(), // spark实例
-      fileReader = new FileReader(); // fileReader用于读取file对象
+    // 分块的数量
+    let chunks = Math.ceil(file.size / chunkSize),
+      // 当前分块下标
+      currentChunk = 0,
+      // spark实例
+      spark = new SparkMD5.ArrayBuffer(),
+      // fileReader用于读取file对象
+      fileReader = new FileReader();
 
-    // fileReader分块读取文件
+    // fileReader读取文件
     fileReader.onload = (e) => {
       spark.append(e.target!.result as ArrayBuffer);
       currentChunk++;
@@ -1494,8 +1505,10 @@ const asyncPool = async (
   tasks: Array<any>,
   iteratorFn: (index: number, tasks: Array<any>) => Promise<unknown>
 ) => {
-  const ret = [], // 存储所有异步任务
-    executing: Array<Promise<any>> = []; // 存储正在执行的异步任务
+  // 存储所有异步任务
+  const ret = [],
+    // 存储正在执行的异步任务
+    executing: Array<Promise<any>> = [];
   for (const item of tasks) {
     const p = Promise.resolve().then(() => iteratorFn(item, tasks));
     // 保存新的异步任务
@@ -1560,6 +1573,7 @@ const upload = async ({
       url,
       chunk,
       chunkIndex: i,
+      totalChunk: chunks,
       fileMD5,
       fileName: file.name,
     });
@@ -1570,6 +1584,7 @@ type UploadChunkOption = {
   url: string;
   chunk: Blob;
   chunkIndex: number;
+  totalChunk: number;
   fileMD5: string;
   fileName: string;
 };
@@ -1577,13 +1592,19 @@ const uploadChunk = ({
   url,
   chunk,
   chunkIndex,
+  totalChunk,
   fileMD5,
   fileName,
 }: UploadChunkOption) => {
   let formData = new FormData();
   formData.set("file", chunk, fileMD5 + "-" + chunkIndex);
-  formData.set("name", fileName);
+  formData.set("fileName", fileName);
+  // 文件MD5值
+  formData.set("fileMD5", fileMD5);
   formData.set("timestamp", Date.now().toString());
+  // chunk的总数量,用于服务端判断所有chunk是否都上传完毕
+  formData.set("chunkTotal", String(totalChunk));
+
   return request.post(url, formData);
 };
 
@@ -1597,6 +1618,7 @@ interface Option {
 
 export const useUploadFile = (option: Option) => {
   const { el, slice } = option;
+  // 分块大小
   const chunkSize = slice?.chunkSize || 2 * 1024 * 1024;
   let files = ref<File[]>([]);
 
@@ -1613,15 +1635,14 @@ export const useUploadFile = (option: Option) => {
     }
   });
 
-  const uploadFile = async () => {
+  const uploadFile = async (url: string) => {
     if (files.value.length === 0) return;
-    const url = "single";
     const file = files.value[0];
     // 获取文件md5值
     const fileMD5 = await calcFileMD5(file, chunkSize);
     const fileStatus = await checkFileExist(
       // 判断文件是否已存在
-      "exists",
+      "upload/exists",
       file.name,
       fileMD5
     );
@@ -1642,22 +1663,317 @@ export const useUploadFile = (option: Option) => {
       },
     });
   }
-  const megerFile = async () => {
+  const mergerFile = async (url: string) => {
     if (files.value.length === 0) return;
     const file = files.value[0];
     // 获取文件md5值
     const fileMD5 = await calcFileMD5(file, chunkSize);
-    concatFile("concatFiles", file.name, fileMD5);
+    concatFile(url, file.name, fileMD5);
   };
-  return { uploadFile, megerFile };
+  return { uploadFile, mergerFile };
 };
 ```
 
-</CodeGroupItem>
-</CodeGroup>
+:::
 
-### 8.服务器文件上传
+::: details 分片上传组件
 
+```vue
+<template>
+  <div class="upload">
+    <div class="upload-container">
+      <label for="slice" id="label"> 分片文件上传 </label>
+      <input ref="uploadRef" id="slice" type="file" accept="images/*" />
+    </div>
+    <button @click="uploadFile('upload/fileChunk')" class="btn">
+      分片文件上传
+    </button>
+    <button @click="mergerFile('upload/concatFileChunks')" class="btn">
+      合并文件
+    </button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import { useUploadFile } from "../hooks/useSliceUploadFile";
+
+const uploadRef = ref<HTMLInputElement>();
+const { uploadFile, mergerFile } = useUploadFile({
+  el: uploadRef,
+  url: "",
+  slice: {
+    chunkSize: 2 * 1024 * 1024,
+  },
+});
+</script>
 ```
 
+:::
+
+### 7.1 Node 实现大文件分片上传
+
+```js
+const fs = require("fs");
+const path = require("path");
+const util = require("util");
+const Koa = require("koa");
+const cors = require("@koa/cors");
+const multer = require("@koa/multer");
+const Router = require("@koa/router");
+const serve = require("koa-static");
+const fse = require("fs-extra");
+const readdir = util.promisify(fs.readdir);
+const unlink = util.promisify(fs.unlink);
+const PORT = 8000;
+
+const app = new Koa(),
+  router = new Router(),
+  // 临时目录
+  TMP_DIR = path.join(__dirname, "tmp"),
+  // 上传文件存放目录
+  UPLOAD_DIR = path.join(__dirname, "../public/upload"),
+  // 忽略的文件列表
+  IGNORES = [".DS_Store"],
+  /**
+   * 定义一个map容器用于存储文件所上传成功块的数量,key为文件的MD5值,
+   * value为上传成功块的数量
+   */
+  fileMap = new Map();
+
+// 定义文件的存储方式和存储路径
+const storage = multer.diskStorage({
+  // 用于定义文件存储的目标目录
+  destination: async function (req, file, cb) {
+    let fileMd5 = file.originalname.split("-")[0];
+    const fileDir = path.join(TMP_DIR, fileMd5);
+    await fse.ensureDir(fileDir);
+    cb(null, fileDir);
+  },
+  // 用于定义文件在存储目录中的名称
+  filename: function (req, file, cb) {
+    let chunkIndex = file.originalname.split("-")[1];
+    cb(null, `${chunkIndex}`);
+  },
+});
+
+const multerUpload = multer({ storage });
+
+const resOK = (ctx, message = "") => {
+  ctx.body = {
+    status: "success",
+    message,
+  };
+};
+const resError = (ctx, message = "") => {
+  ctx.body = {
+    status: "error",
+    message,
+  };
+};
+
+/**
+ * 合并多个文件块
+ * @param {*} sourceDir 源文件目录
+ * @param {*} targetPath 目标path
+ */
+async function concatFiles(sourceDir, targetPath) {
+  // 读取文件到只写流中
+  const readFile = (file, ws) =>
+    new Promise((resolve, reject) => {
+      // 创建只读流
+      fs.createReadStream(file)
+        .on("data", (data) => ws.write(data))
+        .on("end", resolve)
+        .on("error", reject);
+    });
+  // 读取指定目录下的所有文件,返回一个文件列表
+  const files = await readdir(sourceDir);
+
+  // 对文件进行排序
+  const sortedFiles = files
+    .filter((file) => IGNORES.indexOf(file) === -1)
+    .sort((a, b) => a - b);
+  // 创建只写流
+  const writeStream = fs.createWriteStream(targetPath);
+  // 遍历文件列表
+  for (const file of sortedFiles) {
+    let filePath = path.join(sourceDir, file);
+    // 读取文件
+    await readFile(filePath, writeStream);
+    // 删除已合并的分块
+    await unlink(filePath);
+  }
+  // 关闭只写流
+  writeStream.end();
+}
+
+/**
+ * 判断文件是否存在,若文件存在则直接返回文件URL,
+ * 否则检查该文件的chunk是否存在,若存在chunk则返回
+ * chunk列表
+ */
+router.get("/upload/exists", async (ctx) => {
+  const { fileName, fileMD5 } = ctx.query;
+  // 获取所有文件块合并为文件的存储路径
+  const filePath = path.join(UPLOAD_DIR, fileName);
+  // 如果存在该路径则说明该文件已上传,无需上传(秒传)
+  const isExists = await fse.pathExists(filePath);
+  if (isExists) {
+    ctx.body = {
+      status: "success",
+      data: {
+        isExists: true,
+        url: `http://localhost:3000/${fileName}`,
+      },
+    };
+    return;
+  }
+
+  let chunkIds = [];
+  // 获取chunk存放路径
+  const chunksPath = path.join(TMP_DIR, fileMD5);
+  // 判断chunk存放路径是否存在
+  const hasChunksPath = await fse.pathExists(chunksPath);
+  if (hasChunksPath) {
+    // 根据chunks的路径读取目录下所有文件,返回一个文件列表
+    let files = await readdir(chunksPath);
+    chunkIds = files.filter((file) => IGNORES.indexOf(file) === -1);
+  }
+  ctx.body = {
+    status: "success",
+    data: {
+      isExists: false,
+      chunkIds,
+    },
+  };
+});
+
+/**
+ * 上传文件块
+ */
+router.post(
+  "/upload/fileChunk",
+  multerUpload.single("file"),
+  async (ctx, next) => {
+    // 获取文件名称、时间戳、chunk总数量、文件MD5值
+    const { fileName, timestamp, chunkTotal, fileMD5 } = ctx.request.body;
+    const total = Number(chunkTotal);
+    if (!Number.isInteger(total)) {
+      resError(ctx, "chunkTotal参数非法");
+      return;
+    }
+    // 根据文件MD5值获取文件的chunk上传数量
+    const chunkSuccessNumber = fileMap.get(fileMD5) || 1;
+    // 如果与上传chunk数量与分块的总数量相等则进行文件合并
+    if (chunkSuccessNumber === total) {
+      fileMap.delete(fileMD5);
+      await concatFiles(
+        path.join(TMP_DIR, fileMD5),
+        path.join(UPLOAD_DIR, fileName)
+      );
+      resOK(ctx, "文件合并成功");
+      return;
+    }
+    // 上传成功后chunk上传成功数量+1
+    fileMap.set(fileMD5, chunkSuccessNumber + 1);
+    resOK(ctx, "文件chunk上传成功");
+  }
+);
+
+/**
+ * 创建上传目录,用于存放上传文件
+ * @param dirPath 上传目录路径
+ */
+function createUploadMkdir(dirPath) {
+  fs.exists(dirPath, (e) => {
+    fs.mkdir(dirPath, { recursive: true }, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  });
+}
+
+/**
+ * 合并多个文件块(File chunk)为一个文件
+ */
+router.get("/upload/concatFileChunks", async (ctx) => {
+  const { fileName, fileMD5 } = ctx.query;
+  await concatFiles(
+    path.join(TMP_DIR, fileMD5),
+    path.join(UPLOAD_DIR, fileName)
+  );
+  resOK(ctx, `http://localhost:3000/${fileMD5}`);
+});
+
+// 注册中间件
+app.use(cors());
+app.use(serve(UPLOAD_DIR));
+app.use(router.routes()).use(router.allowedMethods());
+
+app.listen(PORT, () => {
+  // 项目启动时创建上传目录
+  createUploadMkdir(UPLOAD_DIR);
+  console.log(`app starting at port ${PORT}`);
+});
 ```
+
+### 7.2 Java 实现大文件分片上传
+
+## 8.服务器文件上传
+
+服务器上传就是把文件从一台服务器上传到另外一台服务器,在 Node 环境可以借助`form-data`实现服务器文件上传。在 Java 环境下可以基于实现服务器文件上传。
+
+### 8.1 Node 实现服务器文件上传
+
+::: details 单文件上传
+
+```js
+const fs = require("fs");
+const path = require("path");
+const FormData = require("form-data");
+
+const form = new FormData();
+form.append(
+  "file",
+  fs.createReadStream(path.join(__dirname, "images/image-1.jpeg"))
+);
+form.submit("http://localhost:3000/upload/single", (error, response) => {
+  if (error) {
+    console.log("单图上传失败");
+    return;
+  }
+  console.log("单图上传成功");
+});
+```
+
+:::
+
+::: details 多文件上传
+
+```js
+const fs = require("fs");
+const path = require("path");
+const FormData = require("form-data");
+const form = new FormData();
+form.append(
+  "file",
+  fs.createReadStream(path.join(__dirname, "images/image-2.jpeg"))
+);
+form.append(
+  "file",
+  fs.createReadStream(path.join(__dirname, "images/image-3.jpeg"))
+);
+form.submit("http://localhost:3000/upload/multiple", (error, response) => {
+  if (error) {
+    console.log("多图上传失败");
+    return;
+  }
+  console.log("多图上传成功");
+});
+```
+
+:::
+
+### 8.2 Java 实现多文件上传

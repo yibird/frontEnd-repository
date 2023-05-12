@@ -1,4 +1,4 @@
-### 什么是 Vite?它为什么这么快?
+## 1.什么是 Vite?它为什么这么快?
 
 Vite 是下一代前端开发与构建工具,其特点是基于 ESBuild 构建效率非常快。
 
@@ -12,4 +12,6 @@ Vite 是下一代前端开发与构建工具,其特点是基于 ESBuild 构建�
   - 包管理器的 lockfile 发生变化,例如 package-lock.json、yarn.lock、pnpm-lock.yaml。
   - 可能在 vite.config.js 相关字段中配置过的。
 
-对于浏览器缓存来说,解析后的依赖请求会以 HTTP Header `max-age=31536000,immutable`设置强缓存,以提高在开发时的页面重载性能,一旦被缓存，这些请求将永远不会再到达开发服务器
+对于浏览器缓存来说,解析后的依赖请求会以 HTTP Header `max-age=31536000,immutable`设置强缓存,以提高在开发时的页面重载性能,一旦被缓存，这些请求将永远不会再到达开发服务器。
+
+## 2.Webpack 与 Vite 打包流程对比

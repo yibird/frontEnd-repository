@@ -4,7 +4,7 @@ export default {
   collapsed: true,
   items: [
     {
-      text: "网络基础",
+      text: "TCP/UDP",
       link: "/networkProtocol/networkBase.md",
       items: [],
     },
@@ -15,6 +15,16 @@ export default {
     },
     {
       text: "HTTPS",
+      link: "/networkProtocol/https.md",
+      items: [],
+    },
+    {
+      text: "HTTP/2",
+      link: "/networkProtocol/https.md",
+      items: [],
+    },
+    {
+      text: "WebSocket",
       link: "/networkProtocol/https.md",
       items: [],
     },

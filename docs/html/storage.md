@@ -121,7 +121,7 @@ Web Storage 包括 SeesionStorage 与 LocalStorage,它们具有一样的 API,除
 
 - SessionStorage:SessionStorage 用于将数据保存到 session 对象中,sessionStorage 的生命周期是在仅在当前会话下有效,sessionStorage 引入了一个"浏览器窗口"的概念,SessionStorage 是在同源的窗口中始终存在的数据。只要这个浏览器窗口没有关闭,即使刷新页面或者进入同源另一个页面,数据依然存在。但是 sessionStorage 在关闭了浏览器窗口后就会被销毁。同时独立的打开同一个窗口同一个页面,sessionStorage 也是不一样的。sessionStorage 中的数据属于临时性数据,关闭浏览器窗口后就会被销毁。
 
-- LocalStorage:LocaStorage 的生命周期是永久的,即使关闭浏览器或窗口后数据仍会存在,除非主动删除 localStorage 的数据,否则 localStorage 将永远存在。localStorage 中的数据属于永久数据,关闭浏览器仍会存在。
+- LocalStorage:LocaStorage 的生命周期是永久的,即使关闭浏览器或窗口后数据仍会存在,除非主动删除 localStorage 的数据,否则 localStorage 将永远存在。
 
 ```js
 // SessionStorage和LocalStorage具有一样的API

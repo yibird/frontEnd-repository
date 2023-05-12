@@ -1,3 +1,4 @@
+import type { Sidebar } from '../typing'
 import js from "./js";
 import html from "./html";
 import css from "./css";
@@ -15,21 +16,22 @@ import networkProtocol from "./networkProtocol";
 import solution from "./solution";
 import interview from "./interview";
 
-export default [
+const sidebars: Sidebar = [
   js,
   html,
   css,
   browser,
   coding,
-  programmingStyle,
+  engineering,
   buildTools,
   vue3,
   react,
   typeScript,
-  node,
+  programmingStyle,
   designMode,
-  engineering,
   networkProtocol,
   solution,
   interview,
-];
+]
+
+export default sidebars

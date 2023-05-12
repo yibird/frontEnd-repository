@@ -18,6 +18,68 @@
 
 ### 扩展:如何判断 Promise 和纯对象?
 
+Promise 是一个 JavaScript 对象,用于处理异步操作和回调函数。它代表了一个尚未完成的操作,并且可以在操作完成后返回成功或失败的状态。这个状态可以通过 then()和 catch()方法来处理。而纯对象是指没有继承自其他对象或者原型链上仅有 Object.prototype 属性的对象。
+
+- 判断 Promise:
+  - 检查对象是否具有`Promise.prototype`上定义的 then()函数。
+  - 使用 ES6 内置的 Promise.resolve()函数。
+
+```ts
+// 获取对象的原始类型
+const rawType = (val: unknown) => {
+  return Object.prototype.toString.call(val).slice(8, -1);
+};
+// 判断val是否是Function类型
+function isFunc(val: unknown): val is Function {
+  return typeof val === "function";
+}
+// 方式1:通过检查目标对象上是否具有Promise.prototype.then()
+function isPromise<T = any>(val: unknown): val is Promise<T> {
+  return (
+    rawType(val) === "Promise" &&
+    val !== null &&
+    typeof val === "object" &&
+    isFunc((val as any).then) &&
+    isFunc((val as any).catch)
+  );
+}
+
+// 方式2:Promise.resolve()函数判断目标对象是否是Promise
+function isPromise<T = any>(val: unknown): val is Promise<T> {
+  return (
+    rawType(val) === "Promise" &&
+    val !== null &&
+    typeof val === "object" &&
+    Promise.resolve(val) === val
+  );
+}
+```
+
+- 判断纯对象
+  - 使用 Object.getPrototypeOf()方法获取对象的原型,如果该原型不为 null 或者不等于 Object.prototype,则该对象不是纯对象。
+  - 判断对象是否有自己定义的属性,如果没有则认为该对象是纯对象。
+
+```js
+/**
+ * 方式1:通过Object.getPrototypeOf()获取对象的原型,
+ * 如果该结果等于Object.prototype说明是一个纯对象
+ */
+function isPlainObject(obj) {
+  return Object.getPrototypeOf(obj) === Object.prototype;
+}
+
+// 方式2:判断对象是否有自己定义的属性,如果没有则认为该对象是纯对象
+function isPlainObject(obj) {
+  for (var key in obj) {
+    // hasOwnProperty()用于判断对象自身属性中是否具有指定的属性
+    if (obj.hasOwnProperty(key)) {
+      return false;
+    }
+  }
+  return true;
+}
+```
+
 ### 扩展:Number.isNaN()与 isNaN()的区别
 
 Number.isNaN()方法和 isNaN()的区别在于,Number.isNaN()不会将传入的非数值类型进行强制转换为数值类型,而是首先判断传入的参数是否为数值类型,只要是非数值类型就直接返回 false。而 isNaN()会对非数值类型进行强制转换为数值类型,然后再进行判断。
@@ -112,6 +174,27 @@ console.log(obj.value === 1 && obj.value === 2 && obj.value === 3); // 输出 tr
 
 ## 5.JS 中作用域提升
 
+作用域提升(Hoisting)是指在 JavaScript 解释器中,在代码执行前将变量和函数声明提升到其所在作用域的顶部的过程。注意:只有声明才会被提升,而赋值操作并不会被提升。在 ES6 之前,JavaScript 并没有块级作用域,因此在块内部声明的变量和函数都会被提升到所在的函数或全局作用域中。作用域提升分为变量提升和函数提升,其中函数提升的优先级高于变量提升。
+
+```js
+// 变量提升,在变量声明之前使用变量会产生undefined值
+console.log(a); // undefined
+var a = "hello";
+
+// 函数提升
+foo(); // 1
+function foo() {
+  console.log(1);
+}
+
+// 函数提升的优先级高于变量提升,因为函数声明的优先级高于变量声明的优先级
+foo(); // "hello"
+var foo = "world";
+function foo() {
+  console.log("hello");
+}
+```
+
 ## 6.说说 JS 原型和原型链
 
 ## 7.call、apply、bind 函数的区别?
@@ -125,6 +208,14 @@ call、apply、bind 这三个函数都可以改变调用者对象的 this 指向
 ## 8.什么是闭包?
 
 ## 9.闭包和立即执行函数(LLEF)的区别?
+
+闭包函数和立即执行函数都是 JS 中的概念,但它们具有不同的作用和应用场景:
+
+- 闭包:闭包是指在一个函数内部定义的函数,该内部函数可以访问包含它的外部函数中的变量和参数。闭包可以用来实现函数式编程中的一些技巧,比如创建私有变量、实现记忆化等。
+
+- 立即执行函数:立即执行函数(IIFE)是指在定义之后立刻执行的函数,通常使用匿名函数来定义,并且使用了一对括号将函数表达式包裹。IIFE 的作用是可以创建一个独立的作用域,避免变量污染全局作用域,也可以实现模块化编程。
+
+虽然闭包函数与立即执行函数是两种不同的概念,但两者应用场景有些重叠,都可以用来避免变量污染全局作用域,实现一些高级的编程技巧。
 
 ## 10.ES6 特性有哪些?
 
@@ -252,3 +343,15 @@ console.log(counter); // 4
 ```
 
 - CommonJS 模块是运行时加载,ESM 是编译时输出接口。CommonJS 加载的是一个对象(即 module.exports 属性),该对象只有在脚本运行完毕后才会加载。ESM 不是对象,它的对外接口只是一种静态定义,在代码静态解析阶段就会执行,所以 ESM 的静态分析的特点天然支持 Tree shaking(摇树,即描述移除 JS 上下文中未引用的代码,从而缩小代码体积)。
+
+## 什么是防抖和节流?
+
+## 什么是柯里化?
+
+## FileReader 的作用?
+
+## Cookie、LocalStorage、SessionStorage 的区别?
+
+## 什么是 Web Worker?它的应用场景有哪些?
+
+## 浏览器的渲染原理?

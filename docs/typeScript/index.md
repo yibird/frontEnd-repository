@@ -192,9 +192,7 @@ TypeScript 4.5 支持导入断言的 ECMAScript 提案,这是运行时用来确�
 
 ```ts
 // 导入断言:断言导入后obj对象的为 {type: "fluffy bunny"}
-import obj from "./something.json" assert {
-    type: "fluffy bunny"
-};
+import obj from "./something.json" assert { type: "fluffy bunny" };
 
 // 导入断言:动态import()调用还可以通过第二个参数使用导入断言。
 const obj = await import("./something.json", {
@@ -556,13 +554,13 @@ const MyArray = [
   由于MyArray中元素属性不同,当使用number获取数组类型时,首先获取数组元素中属性最多的类型,
   然后将其他元素不足的属性进行补齐,类型为undefined,最后将其组合成一个交叉类型。
  */
-type MyPerson = typeof MyArray[number];
+type MyPerson = (typeof MyArray)[number];
 // MyAge的类型为number
-type MyAge = typeof MyArray[number]["age"];
+type MyAge = (typeof MyArray)[number]["age"];
 // MyName的类型为string
-type MyName = typeof MyArray[number]["name"];
+type MyName = (typeof MyArray)[number]["name"];
 // MyAddress的类型为string | undefined
-type MyAddress = typeof MyArray[number]["address"];
+type MyAddress = (typeof MyArray)[number]["address"];
 
 // 注意:在索引类型不能使用变量引用,但可以使用类型别名
 const nameKey = "name";
@@ -631,7 +629,7 @@ type Bools = GetReturnType<(a: boolean, b: boolean) => boolean[]>; // Bools类�
 
 ### 3.6 模板文字类型
 
-### 4 TypeScript 中特殊的字符
+## 4 TypeScript 中特殊的字符
 
 - `&` : &号用于叠加多个类型(交叉类型)
 - `|` : |号表示多个类型的其中一个(联合类型)。

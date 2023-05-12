@@ -266,6 +266,64 @@ console.log(JSON.parse(JSON.stringify(obj))); // {name: "muyiy", a: Object}
 |浅拷贝| 否| 改变不会使原数据一同改变 |改变会使原数据一同改变|
 |深拷贝| 否| 改变不会使原数据一同改变 |改变不会使原数据一同改变|
 
+### 3.3 structuredClone()实现深拷贝
+
+structuredClone()是一个全局函数,它使用结构化克隆算法可以对指定的值进行深拷贝。structuredClone()支持循环引用、支持 Blob、RegExp、Error 多种类型深拷贝。
+::: details structuredClone 语法
+
+```js
+/**
+ * structuredClone()的返回值是原始值的深拷贝。
+ *
+ * value:被克隆的对象。可以是任何结构化克隆支持的类型。
+ * transfer:是一个可转移对象的数组,里面的值并没有被克隆,而是被转移到被拷贝对象上。
+ * transfer支持的可转移对象有ArrayBuffer、MessagePort、
+ * ReadableStream、WritableStream、TransformStream、AudioData、ImageBitmap、
+ * VideoFrame、OffscreenCanvas、RTCDataChannel
+ */
+structuredClone(value, { transfer });
+```
+
+:::
+::: details structuredClone()示例
+
+```js
+// 示例1
+const obj = { name: "dog" };
+const newObj = structuredClone(obj);
+obj.name = "cat";
+console.log(obj); // { name: 'cat' }
+console.log(newObj); // { name:'dog' }
+
+// 示例2
+var uInt8Array = new Uint8Array(1024 * 1024 * 16); // 16MB
+for (var i = 0; i < uInt8Array.length; ++i) {
+  uInt8Array[i] = i;
+}
+const transferred = structuredClone(uInt8Array, {
+  transfer: [uInt8Array.buffer],
+});
+console.log(uInt8Array.byteLength); // 0
+
+// 示例3 structuredClone()支持循环引用
+const original = { name: "MDN" };
+original.itself = original;
+const clone = structuredClone(original);
+console.log(clone !== original); // true
+```
+
+:::
+
+structuredClone()缺点如下:
+
+- 无法拷贝 Function。Function 对象是不能被结构化克隆算法复制的,拷贝 Function 时会导致抛出 DATA_CLONE_ERR 的异常。
+- 无法拷贝 DOM 节点。拷贝 DOM 节点同样会抛出 DATA_CLONE_ERR 异常。
+- 对象的某些特定参数也不会被保留。
+  - RegExp 对象的 lastIndex 字段不会被保留。
+  - 属性描述符，setters 以及 getters(以及其他类似元数据的功能)同样不会被复制。例如,如果一个对象用属性-描述符标记为 read-only,它将会被复制为 read-write,因为这是默认的情况下。
+  - 原形链上的属性也不会被追踪以及复制。
+- 兼容性较差,但是`core-js`提供了对应的 polyfill。
+
 ## 4.手写深拷贝
 
 ### 4.1 乞丐版深拷贝

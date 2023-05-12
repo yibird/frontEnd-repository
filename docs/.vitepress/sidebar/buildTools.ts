@@ -29,18 +29,22 @@ export default {
         },
       ],
     },
-    // {
-    //   text: "Vite",
-    //   items: [
-    //     {
-    //       text: "Vite基础",
-    //       link: "/buildTools/vite/base.md",
-    //     },
-    //     {
-    //       text: "Plugin",
-    //       link: "/buildTools/vite/plugin.md",
-    //     },
-    //   ],
-    // },
+    {
+      text: "Vite",
+      items: [
+        {
+          text: "Vite基础",
+          link: "/buildTools/vite/base.md",
+        },
+        {
+          text: "Plugin",
+          link: "/buildTools/vite/plugin.md",
+        },
+        {
+          text: "Vite优化",
+          link: "/buildTools/vite/optimization.md",
+        },
+      ],
+    },
   ],
 };
