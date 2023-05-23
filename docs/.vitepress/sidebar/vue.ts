@@ -5,22 +5,27 @@ export default {
   items: [
     {
       text: "Vue3新特性及生态介绍",
-      link: "/vue3/features.md",
+      link: "/vue/features.md",
       items: [],
     },
     {
       text: "定义组件",
-      link: "/vue3/component.md",
+      link: "/vue/component.md",
       items: [],
     },
     {
       text: "洞悉Vue3",
-      link: "/vue3/vue3.md",
+      link: "/vue/vue3.md",
+      items: [],
+    },
+    {
+      text: "Vue指令",
+      link: "/vue/directive.md",
       items: [],
     },
     {
       text: "面试题",
-      link: "/vue3/interview.md",
+      link: "/vue/interview.md",
       items: [],
     },
   ],

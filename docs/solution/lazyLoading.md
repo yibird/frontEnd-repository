@@ -1,15 +1,13 @@
-### 1.图片懒加载
-
 图片的优化是程序优化不可忽视的一部分,常用的图片优化手段如下:
 
-- 使用正确的图片编码。webp 格式的图片相比较 png、jpg 格式的图片体积小 40%,且兼容性不错。
+- 使用正确的图片编码。webp 格式的图片相比较 png、jpg 格式的图片体积小 40%,且兼容性好。
 - 图片放在 CDN,CDN 加速能大大提升图片下载速度,减少图片白屏时间。
 - 图片压缩,使用`<picture>`指定所需图片大小等等。
-- 图片懒加载。对于图片较多且大多数图片不在可视区域内,此时就可以使用图片懒加载。使用图片懒加载可以忽视一些未在可视区域的图片进行加载,避免一次性加载过多图片造成请求阻塞(浏览器一般对同一域名下的并发请求的连接数有限制),这样可以提高程序加载速度,提升用户体验。
+- 图片懒加载。图片懒加载是图片优化中最常见的手段之一,对于图片较多且大多数图片不在可视区域内,此时就可以使用图片懒加载。使用图片懒加载可以忽视一些未在可视区域的图片进行加载,避免一次性加载过多图片造成请求阻塞(浏览器一般对同一域名下的并发请求的连接数有限制),这样可以提高程序加载速度,提升用户体验。
 
-图片懒加载的实现原理:**初始加载图片时将图片的 URL 设置在 img 元素自定义属性上,当图片处于可见区域时才设置 img 元素的 src,从而达到图片懒加载**。图片懒加载的实现方案有监听 onscroll 滚动事件和 IntersectionObserver 两种,而 IntersectionObserver 性能相较于 onscroll 事件性能更好,但兼容性较差,所以 onscroll 方式被做为兜底方案。
+图片懒加载的实现原理:**初始加载图片时将图片的 URL 设置在 img 元素自定义属性上(并不会发送请求),当图片处于可见区域时才设置 img 元素的 src,从而实现图片懒加载**。图片懒加载的实现方案有监听 onscroll 滚动事件和 IntersectionObserver 两种,IntersectionObserver 性能相较于 onscroll 事件性能更好,但兼容性较差,所以 onscroll 方式被做为兜底方案。
 
-#### 1.1 监听 onScroll 事件实现图片懒加载
+## 1.监听 onScroll 事件实现图片懒加载
 
 onScroll 事件实现图片懒加载流程:初始加载图片时可以将图片的路径挂载到 img 标签非 src 属性上(例如 dataset-src),当触发滚动事件时,判断 img 元素是否进入可视区域,如果进入可视区域就设置 img 的 src 属性加载图片,,此时 img 会根据 src 属性的路径进行图片加载。
 
@@ -80,7 +78,7 @@ onScroll 事件实现图片懒加载流程:初始加载图片时可以将图片�
 
 onscroll 方式实现图片懒加载的优点在于兼容性好,但性能不佳,需要持续监听滚动事件;实现不太优雅,代码量大。
 
-#### 1.2 使用 IntersectionObserver 实现图片懒加载
+## 2.使用 IntersectionObserver 实现图片懒加载
 
 在以前检测一个元素是否可见或者两个元素是否相交并不容易,不是不可靠或者就是性能不佳。好在 Intersection Observer API 出现解决了这一问题,它提供了一种异步检测目标元素与祖先元素或 viewport 相交情况变化的方法,祖先元素与视窗(viewport)被称为根(root)。相交检测场景如下:
 
@@ -343,34 +341,6 @@ IntersectionObserver 实现懒加载:
       class="lazy-img"
       dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
     />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
-    <img
-      class="lazy-img"
-      dataset-src="https://scpic.chinaz.net/Files/pic/pic9/202104/apic32339_s.jpg"
-    />
   </div>
 </body>
 <script>
@@ -407,7 +377,7 @@ IntersectionObserver 实现懒加载:
 
 IntersectionObserver 实现图片懒加载具有性能佳、简单、代码量少的优点,缺点是兼容性差，IE 完全不支持，在 safari 也需要 12 以上才支持。所以可以将 onScroll 方案和 IntersectionObserver 方案结合起来,如果浏览器支持 IntersectionObserver 那么就使用 IntersectionObserver 方案,否则使用 onScroll 方案。
 
-#### 1.3 onScroll 与 IntersectionObserver 结合实现图片懒加载
+## 3.onScroll 与 IntersectionObserver 结合实现图片懒加载
 
 ```html
 <script>

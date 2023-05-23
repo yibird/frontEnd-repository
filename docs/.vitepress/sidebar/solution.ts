@@ -9,9 +9,9 @@ export default {
       link: "/solution/lazyLoading.md",
     },
     {
-      text: "长列表加载",
+      text: "虚拟列表",
       items: [],
-      link: "/solution/longListLoading.md",
+      link: "/solution/virtualList.md",
     },
     {
       text: "文件上传",

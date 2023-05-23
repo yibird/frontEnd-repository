@@ -268,7 +268,7 @@ console.log(JSON.parse(JSON.stringify(obj))); // {name: "muyiy", a: Object}
 
 ### 3.3 structuredClone()实现深拷贝
 
-structuredClone()是一个全局函数,它使用结构化克隆算法可以对指定的值进行深拷贝。structuredClone()支持循环引用、支持 Blob、RegExp、Error 多种类型深拷贝。
+structuredClone()是一个全局函数,它使用结构化克隆算法可以对指定的值进行深拷贝。structuredClone()支持循环引用、支持 Blob、RegExp 等多种类型深拷贝。
 ::: details structuredClone 语法
 
 ```js

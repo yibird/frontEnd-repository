@@ -6,7 +6,7 @@ import browser from "./browser";
 import coding from "./coding";
 import programmingStyle from "./programmingStyle";
 import buildTools from "./buildTools";
-import vue3 from "./vue3";
+import vue from "./vue";
 import react from "./react";
 import typeScript from "./typeScript";
 import node from "./node";
@@ -24,7 +24,7 @@ const sidebars: Sidebar = [
   coding,
   engineering,
   buildTools,
-  vue3,
+  vue,
   react,
   typeScript,
   programmingStyle,

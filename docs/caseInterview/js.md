@@ -229,7 +229,7 @@ call、apply、bind 这三个函数都可以改变调用者对象的 this 指向
 - 新增 class 关键字定义类,使 JS 更加符合面向对象。
 - 新增 ESM 模块化。模块通过 import 关键字导入,通过 export 关键字导出。
 
-### Set、Map 与 WeakSet、WeakMap 的区别?
+## 11.Set、Map 与 WeakSet、WeakMap 的区别?
 
 WeakSet 与 WeakMap 用于代替无法被释放内存的 Set 和 Map,从而避免造成内存泄漏。WeakSet 与 WeakMap(WeakMap 的 key)存储的都是弱引用对象,一旦未被使用就会进行垃圾回收,释放内存。
 
@@ -243,7 +243,31 @@ Map 与 WeakMap 的区别:
 - Map 的 key 不仅可以存储值类型又可以存储引用类型,而 WeakMap 只能存储引用类型。
 - WeakMap 只能以引用类型作为 key(排除 null),且是 key 是被弱引用的,key 对象未被使用时将会被垃圾回收掉。WeakMap 无法被遍历,只支持 get、set、has、delete 方法。
 
-### 箭头函数与普通函数的区别?
+## Object 与 Map 的区别?
+
+JavaScript 中的 Object 和 Map 都可以被用来存储键值对。但是,它们之间有几个区别:
+
+- 存储 key 类型不同。Object 的键必须是字符串或符号,而 Map 的键可以是任何类型的值,包括函数、对象和原始类型。
+- 存储键值对有序性不同。Map 中的键值对是有序的,而 Object 中的键值对是无序的。这意味着当迭代一个 Map 时,它的元素是按照插入顺序返回的。
+- 应用场景不同。Map 比 Object 更适合存储大量的键值对,因为它被设计为高效地处理大量的数据。
+
+## for...in 和 for...of 的区别?
+
+for...in 和 for...of 都是循环语句,但有以下区别:
+
+- for...in 循环用于遍历对象的属性,而 for...of 循环用于遍历可迭代对象的值。
+- for...in 循环遍历的是一个对象的键名,而 for...of 循环遍历的是一个可迭代对象的键值。
+- for...in 循环可以遍历对象的原型链中的属性,而 for...of 循环只能遍历自身属性。
+- for...in 循环遍历的顺序是不确定的,而 for...of 循环遍历的顺序是按照可迭代对象的顺序进行的。
+- for...in 循环可以用于遍历普通对象、数组和字符串等,而 for...of 循环只能用于遍历实现了迭代器接口的对象,如数组、字符串、Map、Set、Generator 等。
+
+## setTimeout、setInterval、requestAnimationFrame 各有什么特点？
+
+- setTimeout:它是一个在指定的时间后执行特定逻辑的一次性定时器。
+- setInterval:它类似于 setTimeout,但是它会在指定的时间间隔内重复执行相同的代码。
+- requestAnimationFrame:它是一种优化了的定时器,在当前屏幕刷新频率下执行动画(确保在下一次浏览器渲染之前更新动画),可以节省系统资源,提高动画的渲染效率。它的主要特点是更加平滑自然地在屏幕上播放动画，通过浏览器的优化能够尽量保证动画流畅度，在动画中使用 requestAnimationFrame 可以避免出现卡顿、闪烁等现象。
+
+## 箭头函数与普通函数的区别?
 
 - 箭头函数不能作为构造函数。函数对象是一个支持`[[Call]]`和`[[Construct]]`内部方法的对象,当使用 `new` 操作符对某个对象进行实例化时,必须确保该对象具有`[[Construct]]`这个内部方法。而箭头函数没有不支持`[[Construct]]`内部方法,所以无法使用 new 进行实例化。
 - 箭头函数没有 arguments 形参列表,但 rest 参数(剩余参数)可以获取函数参数列表。
