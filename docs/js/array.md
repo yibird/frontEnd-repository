@@ -537,6 +537,243 @@ console.log(composeFn(3)); // 8
 
 ## 8.数组与树形结构转换
 
-### 8.1 根据层级关系数组转树
+在实际开发中由于存储数据时采用线性结构,但展示数据时以树形结构显示,例如菜单列表,数据库以行的形式存储着菜单项,但是展示数据时需要根据菜单项的层级关系转为树形结构显示,因此需要实现数组和树形结构的互转。数组结构如下:
 
-### 8.2 树转数组
+```js
+const nodes = [
+  { id: 1, parentId: null },
+  { id: 2, parentId: 1 },
+  { id: 3, parentId: 1 },
+  { id: 4, parentId: 2 },
+  { id: 5, parentId: 3 },
+  { id: 6, parentId: 3 },
+  { id: 7, parentId: 4 },
+  { id: 8, parentId: 4 },
+];
+```
+
+### 8.1 数组转树形结构
+
+#### 8.1.1 使用递归数组转树
+
+```js
+function arrayToTree(nodes, parentId = null) {
+  return nodes
+    .filter((node) => node.parentId === parentId)
+    .map((node) => ({ ...node, children: arrayToTree(nodes, node.id) }));
+}
+```
+
+递归是处理树形结构最常用的方法之一,可以通过递归遍历数组并构建树形结构。递归方法需要定义一个递归函数,该函数接受一个数组和一个父节点 ID 作为参数,并返回一个树形结构。递归函数的实现过程中,需要遍历数组,找到所有父节点 ID 等于当前父节点 ID 的节点,并将其添加到当前节点的子节点列表中。然后,递归调用函数,将其子节点添加到当前节点中。最后,返回树形结构。
+
+递归方式实现数组转树比较简单,其时间复杂度是 O(n^2),n 表示节点的数量,空间复杂度为 O(n^2)。递归方式仅使用小规模数据,处理大规模数据时可能会导致栈溢出。
+
+#### 8.1.2 使用迭代数组转树
+
+迭代方法也可以用于将数组转换为树形结构,但是实现起来比递归方法更复杂。遍历数组找到所有父节点 ID 等于当前节点 ID 的节点,并将其添加到当前节点的子节点列表中。
+
+```js
+function arrayToTree(nodes) {
+  const map = new Map();
+  const tree = [];
+  for (const node of nodes) {
+    // 初始化map,其key为节点id,value为节点,根据节点id可以快速查找节点
+    map.set(node.id, node);
+    // 处理外层节点,如果节点的parentId为null,则直接将该节点push到tree中
+    if (node.parentId === null) {
+      tree.push(node);
+    } else {
+      // 根据节点的parentId查找节点对应的父节点
+      const parent = map.get(node.parentId);
+      // 初始化children属性
+      !parent.children && (parent.children = []);
+      // 将当前节点push到父节点的children中
+      parent.children.push(node);
+    }
+  }
+  return tree;
+}
+```
+
+迭代实现数组转树时间复杂度为 O(n),其中 n 是节点的数量,空间复杂度为 O(n)。此种方式使用于适合大规模数据,相较于递归实现比较复杂。
+
+#### 8.1.3 使用 reduce 数组转树
+
+```js
+function arrayToTree(nodes) {
+  const map = {};
+  const tree = nodes.reduce((acc, node) => {
+    // 初始化map,以node的id为key
+    map[node.id] = { ...node, children: [] };
+    // 处理最外层节点
+    if (node.parentId === null) {
+      acc.push(map[node.id]);
+    } else {
+      // 处理内层节点
+      map[node.parentId].children.push(map[node.id]);
+    }
+    return acc;
+  }, []);
+  return tree;
+}
+```
+
+reduce 与迭代方式类似,但实现更为简洁,其时间复杂度为 O(n),n 表示节点的数量,空间复杂度为 O(n),适用于中小规模数据。
+
+#### 8.1.4 使用哈希表数组转树
+
+```js
+function arrayToTree(nodes) {
+  // 初始化map,map的key为node.id,value为node的所有属性和chidrent属性组成的对象
+  const map = new Map(
+    nodes.map((node) => [node.id, { ...node, children: [] }])
+  );
+  const tree = [];
+  // 遍历map的value集合
+  for (const node of map.values()) {
+    // 处理外层节点
+    if (node.parentId === null) {
+      tree.push(node);
+    } else {
+      // 处理内层节点
+      map.get(node.parentId).children.push(node);
+    }
+  }
+  return tree;
+}
+```
+
+使用 Map 方法可以将数组转换为 Map,然后通过遍历 Map 来构建树形结构。具体实现过程中,需要先将数组转换为 Map,其中键为节点 ID,值为节点对象。然后,遍历 Map 找到所有父节点 ID 等于当前节点 ID 的节点,并将其添加到当前节点的子节点列表中。最后,返回根节点。
+
+map 实现数组转树的时间复杂度为 O(n),其中 n 是节点的数量,空间复杂度为 O(n)。map 方式适合大规模数据,而且由于使用了 Map,相比于迭代方式,能够更方便地进行节点的查找和删除。
+
+#### 8.1.5 使用深度优先搜索(DFS)数组转树
+
+```js
+function arrayToTreeDFS(nodes) {
+  // 初始化map,map的key为node.id,value为node的所有属性和chidrent属性组成的对象
+  const map = new Map(
+    nodes.map((node) => [node.id, { ...node, children: [] }])
+  );
+  const tree = [];
+  // 遍历map的value集合
+  for (const node of map.values()) {
+    // 处理外层节点
+    if (node.parentId === null) {
+      dfs(node);
+      tree.push(node);
+    }
+  }
+  // 深度优先搜索,调用该函数后,会根据parentId获取对应节点,并做为node的子节点
+  function dfs(node) {
+    // 遍历所有节点
+    for (const child of nodes) {
+      // 如果当前节点的父id === 传入节点的id
+      if (child.parentId === node.id) {
+        // 根据child.id 从map获取节点
+        const childNode = map.get(child.id);
+        dfs(childNode);
+        // 将childNode作为node的子节点
+        node.children.push(childNode);
+      }
+    }
+  }
+  return tree;
+}
+```
+
+基于 DFS 实现的数组转树时间复杂度为 O(n),其中 n 是节点的数量,空间复杂度为 O(n)。这种方式适用于大规模数据的处理,而且可以更方便地进行深度优先搜索。
+
+### 8.2 树结构转数组
+
+树结构转数组:
+
+- 前序遍历方式:使用前序遍历(根-左-右)的方式遍历树,将节点的值按照遍历顺序存储到数组中。这种方式可以方便地将树转换为数组,但在还原树结构时需要额外的信息(如节点的子节点数量或特定的占位符)来确定节点的层次关系。
+
+- 层次遍历方式:使用层次遍历(逐层从左到右)的方式遍历树,将节点的值按照层次顺序存储到数组中。这种方式可以直观地将树结构转换为数组,而且在还原树结构时不需要额外的信息,只需按照层次顺序逐个构建节点。
+
+#### 8.1 前序遍历
+
+```js
+const root = [
+  {
+    id: 1,
+    parentId: null,
+    children: [
+      {
+        id: 2,
+        parentId: 1,
+        children: [
+          {
+            id: 4,
+            parentId: 2,
+            children: [
+              {
+                id: 5,
+                parentId: 4,
+                children: [],
+              },
+              {
+                id: 6,
+                parentId: 4,
+                children: [
+                  {
+                    id: 8,
+                    parentId: 6,
+                    children: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 3,
+        parentId: 1,
+        children: [
+          {
+            id: 7,
+            parentId: 3,
+            children: [],
+          },
+        ],
+      },
+    ],
+  },
+];
+
+function treeToArrayPreorder(root) {
+  const result = [];
+  function traverse(node) {
+    if (node) {
+      result.push(node);
+      for (const child of node.children) {
+        traverse(child);
+      }
+    }
+  }
+  root.forEach((node) => {
+    traverse(node);
+  });
+  return result;
+}
+```
+
+#### 8.2 层次遍历
+
+```js
+function treeToArrayLevelOrder(root) {
+  const queue = [...root];
+  const result = [];
+  while (queue.length > 0) {
+    const node = queue.shift();
+    result.push(node);
+    for (const child of node.children) {
+      queue.push(child);
+    }
+  }
+
+  return result;
+}
+```
