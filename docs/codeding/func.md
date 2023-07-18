@@ -509,6 +509,7 @@ class EventEmitter {
   }
   // 订阅事件
   on(event, callback, context) {
+    // 如果事件列表不存在对应的事件则进行初始化
     if (!this.events[event]) {
       this.events[event] = [];
     }
@@ -593,9 +594,12 @@ emitter.emit("event01", "z乘风", "男"); // z乘风 男 callback2
 
 ## 7.手写 trim()
 
-trim()的作用是去除字符串两端的空白字符,空白字符包括所有的空白字符(space, tab, no-break space 等)以及所有行终止符字符(如 LF,CR 等)。
+trim()的作用是去除字符串两端的空白字符,空白字符包括所有的空白字符(space, tab, no-break space 等)以及所有行终止符字符(如 LF,CR 等)。常见实现方式如下:
 
-### 7.1 通过正则表达式替换实现 trim()
+- 基于正则表达式匹配空格实现去除空格。
+- 基于字符提取法去除空格。
+
+### 7.1 基于正则表达式替换实现 trim()
 
 ```js
 // 方式1:通过正则表达式替换实现trim()
@@ -845,7 +849,7 @@ console.log(result);
 
 模板编译最常用的实现方式是通过正则表达式进行解析,当匹配指定规则时则使用数据对象替换。
 
-```ts
+```js
 /**
  * \s*表示以非贪婪模式匹配0个或多个空白字符,(\w+)表示匹配字母、
  * 数字、下划线并获取这一匹配
@@ -856,6 +860,7 @@ const render = (template: string, data: Record<string, any>) => {
     return key && data.hasOwnProperty(key) ? data[key] : "";
   });
 };
+// 测试
 const template = `name:{{name}},age:{{age}}`;
 const data = { name: "zchengfeng", age: 18 };
 console.log(render(template, data)); // name:zchengfeng,age:18
@@ -864,3 +869,134 @@ console.log(render(template, data)); // name:zchengfeng,age:18
 ## 11.手写 setTimeout()
 
 ## 12.手写 setInterval()
+
+setInterval 常用于计时场景,例如倒计时组件,由于 setInterval 的缺点,通常不会直接使用 setInterval 实现计时功能,而是借助 setTimeout 模拟 setInterval,setInterval 的缺点如下:
+
+- 执行时机不准:setInterval 的执行时间间隔是近似的，并不能保证在指定的时间间隔内准确执行。实际执行时间可能会受到 JavaScript 引擎当前的负载和其他因素的影响，导致执行时间不稳定。
+- 积累的延迟:如果回调函数的执行时间比设定的时间间隔更长，多个回调函数会积累在一起等待执行，导致回调函数的执行时间出现延迟。这可能导致一些计时器任务的堆积，使得回调函数的执行与预期不符
+- 容易发生内存泄漏风险。如果回调函数存在问题导致无法执行完毕,会持续占用内存资源。
+
+### 12.1 使用 setTimeout 模拟 setInterval
+
+使用 setTimeout 替代 setInterval 的优势如下:
+
+- 更准确的时间间隔：使用 setTimeout 可以手动控制每次回调函数的执行时间间隔，而不受 JavaScript 引擎的负载和其他因素的影响。这样可以更精确地控制回调函数的执行间隔，并减少误差。
+- 避免积累的延迟：setInterval 的一个常见问题是如果回调函数的执行时间比设定的时间间隔更长，多个回调函数会积累在一起等待执行，导致回调函数的执行时间出现延迟。使用 setTimeout 可以避免这个问题，因为每次回调函数执行完成后，手动设置下一个 setTimeout，确保下一个回调函数按照指定的时间间隔执行。
+- 动态调整时间间隔：使用 setTimeout 可以在每次回调函数执行时动态地设置下一个回调的时间间隔。这样可以根据实际需求灵活地调整时间间隔，例如根据回调函数的执行情况来调整执行频率，实现更高级的调度逻辑。
+- 可暂停和恢复：通过使用 setTimeout，可以通过清除计时器的方式实现暂停和恢复功能。可以使用 clearTimeout 清除当前计时器，从而停止回调函数的执行，并在需要时再次调用 setTimeout 来恢复执行。
+
+使用 setTimeout 模拟 setInterval 核心在于:在回调函数内部使用递归调用 setTimeout 来实现循环执行。
+
+```js
+function mySetInterval(callback, interval) {
+  let timeoutId;
+  function intervalFn() {
+    callback();
+    // 递归调用intervalFn
+    timeoutId = setTimeout(intervalFn, interval);
+  }
+  // 每次到了延迟时间就会递归调用intervalFn中的callback函数
+  timeoutId = setTimeout(intervalFn, interval);
+  // 返回一个函数,用于清理定时器
+  return function () {
+    clearTimeout(timeoutId);
+  };
+}
+
+// 测试
+const clearIntervalFn = mySetInterval(function () {
+  console.log("Repeated execution");
+}, 2000);
+```
+
+### 12.1 使用 requestAnimationFrame 实现 setInterval
+
+requestAnimationFrame 是浏览器提供的一个用于执行动画和其他重绘操作的优化定时器函数,使用 requestAnimationFrame 来模拟 setInterval 可以提供更精确和更流畅的定时效果，并且对于可见性更好，因为它会自动暂停和恢复，以适应页面激活和非激活状态。
+
+```js
+function mySetInterval(callback, interval) {
+  // 获取开始时间
+  let startTime = Date.now();
+  // 用于跟踪经过的时间,以确定是否达到了指定的时间间隔
+  let elapsed = 0;
+  function loop() {
+    // 获取当前执行时间
+    const currentTime = Date.now();
+    // 计算时间差
+    const deltaTime = currentTime - startTime;
+    // 累加时间差
+    elapsed += deltaTime;
+    // 如果累加时间差大于执行函数间隔,则执行callback,并重置累加时间差
+    if (elapsed >= interval) {
+      callback();
+      elapsed = 0;
+    }
+    // 将当前执行时间作为下一次的开始时间
+    startTime = currentTime;
+    requestAnimationFrame(loop);
+  }
+  // 递归调用loop
+  requestAnimationFrame(loop);
+}
+```
+
+## 13.手写 once 函数
+
+once 用于保证函数只执行一次,常用于只执行一次的初始化、订阅事件或执行一次性操作的场景(Vue 提供 once 函数的实现)。
+
+```js
+// 利用闭包和高阶函数函数式编程特性实现once函数,保证once是一个纯函数,无副作用
+function once(callback) {
+  // 执行标志位,false表示未执行,true表示已执行
+  let called;
+  return function (...args) {
+    // 标志位为false时执行callback
+    if (!called) {
+      // 修改标志位状态
+      called = true;
+      // 绑定this传入参数
+      callback.apply(this, args);
+    }
+  };
+}
+
+// 测试
+const func = once(function () {
+  console.log("This function will only be called once.");
+});
+func(); // 输出:This function will only be called once.
+func(); // 无输出,函数不会再次调用
+```
+
+## 14.手写版本号对比函数
+
+实际项目开发中,通常需要版本管理功能以实现版本包更新功能,因此需要对比最新包版本号是否大于本地包版本号(当前版本),判断是否需要更新。
+
+```js
+/**
+ * 比较两个字符串版本号,version2大于version1则返回true,否则返回false
+ * @param {Object} version1
+ * @param {Object} version2
+ */
+function compareVersion(version1, version2) {
+  // 边界判断
+  if (typeof version1 !== "string" || typeof version2 !== "string")
+    return false;
+  // 根据 . 号分割字符串为数组
+  const v1 = version1.split("."),
+    v2 = version2.split(".");
+  // 获取分割后数组的最大长度,由于两个数组长度可能会不一致,最小长度的数组元素需要补0
+  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+    const n1 = i < v1.length ? parseInt(v1[i]) : 0;
+    const n2 = i < v2.length ? parseInt(v2[i]) : 0;
+    if (n2 > n1) return true;
+  }
+  return false;
+}
+
+// 测试
+compareVersion1(1.0, 2.0); // false
+compareVersion1("0.0.2", "0.0.1"); // false
+compareVersion1("0.0.1", "0.0.2"); // true
+compareVersion1("0.0.1", "0.0.11"); // true
+```
