@@ -1,6 +1,4 @@
-## 1.手写 create()、freeze()、assign()
-
-### 1.1 手写 Object.create()
+## 1.手写 Object.create()
 
 Object.create(proto,propertiesObject?)用于创建一个新对象,允许接收一个对象为参数,使用参数来提供新创建的对象的`__proto__`(会返回一个新对象,带着指定的原型对象和属性)。proto 为新创建对象的原型对象,propertiesObject 用来给新创建的对象添加可枚举属性,与 Object.defineProperies 方法第二个参数用法一样。
 
@@ -47,7 +45,7 @@ const obj = create(Base);
 console.log(obj.__proto__ === Base); // true
 ```
 
-### 1.2 Object.freeze()
+## 2.手写 Object.freeze()
 
 Object.freeze()用于冻结一个对象,接收一个对象作为参数,返回被冻结后的对象,冻结后的对象不能被修改,不能添加新属性,不能删除已有属性,不能修改该对象已有属性的可枚举性、可配置性、可写性,以及不能修改已有属性的值,被冻结对象的原型也不能被修改。freeze()实现原理是:**使用 Object.seal()密封对象,使得被密封对象不可删除属性、添加新属性,使用 Object.defineProperty()将对象属性配置为不可写,对于对象嵌套使用递归实现深层次的冻结。**在 Vue 或 Vuex 中如果对于 data 或 vuex 里使用 freeze 冻结了的对象,vue 不会做 getter 和 setter 的转换。如果有一个巨大数组且确信不会发生变化,使用 Object.freeze()可以让性能大幅提升。
 
@@ -97,7 +95,7 @@ newObj["like"] = "美女";
 console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"}
 ```
 
-### 1.3 Object.assign()
+## 3.Object.assign()
 
 Object.assign(target,...sources) 方法用于将所有可枚举属性的值从一个或多个源对象分配到目标对象,它将返回目标对象。
 如果目标对象中的属性具有相同的键,则属性将被源对象中的属性覆盖,后面的源对象的属性将类似地覆盖前面的源对象的属性。所以 Object.assign()一般用于对象浅合并,它只会合并第一层的属性。
@@ -146,7 +144,7 @@ const mergeObj = Object.myAssign(a, b);
 console.log(mergeObj); // { name: '呵呵', user: { obj: { name: '小黑' } } }
 ```
 
-### 1.4 deepAssign()
+## 4.deepAssign()
 
 deepmerge()用于深度合并对象。原理是遍历合并对象判断 target 的属性对应值是否是对象,若是对象则递归合并,否则直接赋值。
 
@@ -164,4 +162,29 @@ const a = { name: "哈哈", user: { age: 10, obj: { name: "小白" } } };
 const b = { name: "呵呵", user: { obj: { name: "小黑" } } };
 const mergeObj = Object.deepmerge(a, b);
 console.log(mergeObj);
+```
+
+## 5.判断纯对象
+
+在 JavaScript 中,"纯对象"通常指的是普通的、没有特殊类型或原型链的对象。纯对象没有通过构造函数创建(不是数组、函数、正则表达式等特殊类型),也没有被赋予自定义的原型链属性。它是最基本的对象类型,通常由对象字面量或 Object.create(null)创建。
+
+```js
+function isPlainObject(obj) {
+  // 不是对象或是 null,则不是纯对象
+  if (typeof obj !== "object" || obj === null) {
+    return false;
+  }
+
+  // 通过迭代获取对象的原型链,并将最终的原型
+  let proto = obj;
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  /*
+   * 将最终的原型(Object.prototype)与对象的原型比较,如果它们相等,
+   * 那么对象的原型链上没有其他自定义原型,因此它是一个纯对象
+   */
+  return Object.getPrototypeOf(obj) === proto;
+}
 ```

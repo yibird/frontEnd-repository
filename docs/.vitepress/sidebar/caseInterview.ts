@@ -39,5 +39,26 @@ export default {
       link: "/caseInterview/networkProtocol.md",
       items: [],
     },
+    {
+      text: "算法",
+      collapsed: true,
+      items: [
+        {
+          text: "字符串",
+          link: "/caseInterview/algorithm/string.md",
+          items: [],
+        },
+        {
+          text: "线性结构",
+          link: "/caseInterview/algorithm/linearStructure.md",
+          items: [],
+        },
+        {
+          text: "树结构",
+          link: "/caseInterview/algorithm/tree.md",
+          items: [],
+        },
+      ],
+    },
   ],
 };

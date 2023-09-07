@@ -1,4 +1,4 @@
-import type { Sidebar } from '../typing'
+import type { Sidebar } from "../typing";
 import js from "./js";
 import html from "./html";
 import css from "./css";
@@ -14,7 +14,7 @@ import designMode from "./designMode";
 import engineering from "./engineering";
 import networkProtocol from "./networkProtocol";
 import solution from "./solution";
-import interview from "./interview";
+import caseInterview from "./caseInterview";
 
 const sidebars: Sidebar = [
   js,
@@ -31,7 +31,7 @@ const sidebars: Sidebar = [
   designMode,
   networkProtocol,
   solution,
-  interview,
-]
+  caseInterview,
+];
 
-export default sidebars
+export default sidebars;

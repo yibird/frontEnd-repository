@@ -4,29 +4,24 @@ export default {
   collapsed: true,
   items: [
     {
-      text: "React基础",
-      items: [
-        {
-          text: "初识React",
-          link: "/react/base/index.md",
-          items: [],
-        },
-      ],
+      text: "HOC(高阶组件)",
+      link: "/react/hoc.md",
+      items: [],
     },
     {
-      text: "React状态管理",
-      items: [
-        {
-          text: "Redux",
-          link: "/react/state/redux.md",
-          items: [],
-        },
-        {
-          text: "Redux-Toolkit",
-          link: "/react/state/redux-toolkit.md",
-          items: [],
-        },
-      ],
+      text: "hooks",
+      link: "/react/hooks.md",
+      items: [],
+    },
+    {
+      text: "自定义Hooks",
+      link: "/react/customizeHooks.md",
+      items: [],
+    },
+    {
+      text: "Redux源码分析",
+      link: "/react/redux.md",
+      items: [],
     },
   ],
 };

@@ -374,13 +374,36 @@ console.log("end");
  */
 ```
 
-## 4.扩展:requestAnimationFrame
+## 4.requestAnimationFrame
 
-`requestAnimationFrame()`用于添加一个动画帧,该 API 可以通过 JS 的方式控制动画效果(返回一个 long 类型的请求 ID,可以根据请求 ID 通过`cancelAnimationFrame()`取消动画帧回调),浏览器在下次重绘之前调用指定的回调函数来更新动画。使用 `setTimeout` 控制动画时,由于 `setTimeout` 并不能保证回调函数的执行时机,当主线程执行时间过长时,可能会导致 `setTimeout` 回调函数延迟执行,从而造成掉帧卡顿。**而 `requestAnimationFrame` 支持渲染每一帧(FPS 表示画面播放数率,60FPS 可以提供更加平滑流畅的画面,谷歌浏览器默认一帧的刷新时间为 16.7ms=60ms/1000,即每秒 60 帧)都会调用该回调函数**。注意:想在浏览器下次重绘之前继续更新下一帧动画，那么回调函数自身必须再次调用`window.requestAnimationFrame()`。`requestAnimationFrame` 与 `setTimeout` 优点如下:
+requestAnimationFrame（通常缩写为 rAF）是一个浏览器提供的用于执行动画和其他需要高性能的操作的 API。它允许在下一次浏览器重绘之前调用指定的函数,以确保动画和渲染操作在浏览器的优化帧绘制周期内进行。使用 `setTimeout` 控制动画时,由于 `setTimeout` 并不能保证回调函数的执行时机,当主线程执行时间过长时,可能会导致 `setTimeout` 回调函数延迟执行,从而造成掉帧卡顿。**而 `requestAnimationFrame` 支持渲染每一帧(FPS 表示画面播放数率,60FPS 可以提供更加平滑流畅的画面,谷歌浏览器默认一帧的刷新时间为 16.7ms=60ms/1000,即每秒 60 帧)都会调用该回调函数**。注意:想在浏览器下次重绘之前继续更新下一帧动画，那么回调函数自身必须再次调用`window.requestAnimationFrame()`。`requestAnimationFrame` 优点如下:
 
 - **使得动画更加流畅,防止动画失帧情况**。`requestAnimationFrame()`可以保证回调函数每一帧都能被调用,而`setTimeout`可能会被延迟执行,从而造成掉帧卡顿。
 - **CPU 节能**:使用 setTimeout 实现的动画,当页面被隐藏或最小化时,setTimeout 仍然在后台执行动画任务,由于此时页面处于不可见或不可用状态,刷新动画是没有意义的,完全是浪费 CPU 资源。而 requestAnimationFrame 则完全不同,当页面处理未激活的状态下,该页面的屏幕刷新任务也会被系统暂停,因此跟着系统步伐走的 requestAnimationFrame 也会停止渲染,当页面被激活时,动画就从上次停留的地方继续执行,有效节省了 CPU 开销。
 - **函数节流**:在高频率事件(resize,scroll 等)中,为了防止在一个刷新间隔内发生多次函数执行,使用 requestAnimationFrame 可保证每个刷新间隔内,函数只被执行一次,这样既能保证页面流畅性,也能更好的节省函数执行的开销。一个刷新间隔内函数执行多次是没有意义的,因为显示器每 16.7ms 刷新一次,多次绘制并不会在屏幕上体现出来。
+
+```js
+const element = document.getElementById("animate");
+let position = 0;
+let direction = 1;
+
+function animate() {
+  // 移动元素的位置
+  position += direction;
+  element.style.left = position + "px";
+
+  // 当元素到达边界时，改变方向
+  if (position >= window.innerWidth - element.clientWidth || position <= 0) {
+    direction *= -1;
+  }
+
+  // 使用 requestAnimationFrame 安排下一帧动画
+  requestAnimationFrame(animate);
+}
+
+// 启动动画
+animate();
+```
 
 ## 5.总结
 
