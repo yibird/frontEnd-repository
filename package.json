@@ -5,6 +5,7 @@
   "repository": "git@github.com:yibird/frontEnd-repository.git",
   "author": "zchengfeng <2684837849@qq.com>",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
