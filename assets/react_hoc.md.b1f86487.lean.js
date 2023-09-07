@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as a}from"./chunks/framework.a9ea851b.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"react/hoc.md","filePath":"react/hoc.md","lastUpdated":1694073156000}'),c={name:"react/hoc.md"};function o(r,s,n,d,p,_){return t(),a("div")}const f=e(c,[["render",o]]);export{m as __pageData,f as default};
