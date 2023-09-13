@@ -149,7 +149,7 @@ counterFunc.get(); // 3
 
 - 默认绑定。
 - 隐式绑定。
-- 显示绑定。
+- 显式绑定。
 - new 绑定。
 - 箭头函数绑定。
 
@@ -228,9 +228,9 @@ var x = 20;
 doFn(obj.fn); // 20
 ```
 
-### 4.2 显示绑定
+### 4.2 显式绑定
 
-函数 this 的显示绑定离不开 apply()、call()、bind()这三个函数,apply()、call()、bind()这三个函数是 Function.prototype 上的方法,且都可以改变函数 this 指向,三者区别如下:
+函数 this 的显式绑定离不开 apply()、call()、bind()这三个函数,apply()、call()、bind()这三个函数是 Function.prototype 上的方法,且都可以改变函数 this 指向,三者区别如下:
 
 - apply():第一个参数是一个绑定对象(函数的 this 就指向这个对象),第二个参数是一个数组用于传递给绑定函数的入参。
 - call():第一个参数是一个绑定对象(函数的 this 就指向这个对象),第二个参数是一个可选参数用于传递给绑定函数的入参。

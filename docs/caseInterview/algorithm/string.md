@@ -83,7 +83,7 @@ console.log(isPalindrome("level")); // true
 console.log(isPalindrome("case")); // false
 ```
 
-## 找出字符串中出现次数最多的字符串
+## 查找字符串中出现次数最多的字符串
 
 - 使用一个 Key-Value 结构(对象或者 Map)来记录每个字符串的出现次数,然后找到出现次数最多的字符串。
 
@@ -179,4 +179,108 @@ function findMostFrequent(str) {
 }
 
 console.log(findMostFrequent("aabbbbccc")); // b
+```
+
+## 字符串数字格式化
+
+要求将"100000000"格式化为"100,000,000"。
+
+### 倒序遍历
+
+```js
+function stringNumberFormat(str, formatChar) {
+  if (typeof str !== "string") {
+    throw new TypeError("str is not a string");
+  }
+  const len = str.length;
+  if (len === 0) return str;
+  let formatResult = "",
+    result = "";
+  // 倒序遍历字符串,每遍历3次都在字符串后面拼接格式化字符
+  for (let i = len - 1; i >= 0; i--) {
+    if ((len - i) % 3 === 0 && i !== 0) {
+      formatResult += str[i] + formatChar;
+    } else {
+      formatResult += str[i];
+    }
+  }
+  // 由于formatResult的结果值是倒序的,需要倒序遍历拼接字符串为正序
+  for (let i = formatResult.length - 1; i >= 0; i--) {
+    result += formatResult[i];
+  }
+  return result;
+}
+
+console.log(stringNumberFormat("100000000", ",")); // "100,000,000"
+```
+
+### 正则表达式替换
+
+正则表达式替换是三种实现中最简洁的一种,使用`/\B(?=(\d{3})+(?!\d))/g`表达式对字符串匹配并进行替换:
+
+- \B:一个零宽度断言(zero-width assertion),表示匹配不在单词边界（word boundary）的位置。在这个上下文中,\B 用于确保分隔符不会出现在单词的开头或结尾。
+- (?=...):表示正向预查(positive lookahead),用于在匹配位置后面查找一个模式。在表达式中表示查找\d{3},即查找连续出现三次的数字。
+- (\d{3}):这是一个捕获组,用于匹配连续的三个数字。\d 表示匹配任何数字字符,{3} 表示匹配连续出现三次。
+- +:表示匹配一个或多个前面的元素,即 \d{3}。
+- (?!\d):这是负向预查(negative lookahead),用于确保在匹配的三个数字后面不会出现数字字符。也就是说,它要求匹配的数字组后面不能再跟数字。
+
+```js
+function stringNumberFormat(str, formatChar) {
+  if (typeof str !== "string") {
+    throw new TypeError("str is not a string");
+  }
+  return str.replace(/\B(?=(\d{3})+(?!\d))/g, formatChar);
+}
+```
+
+### Number 的 toLocaleString()
+
+Number.toLocaleString() 是 JavaScript 内置的方法,用于将数字格式化为带有千位分隔符、小数点和货币符号的字符串,具体格式会根据当前浏览器的地区和语言设置而变化。相比较前两种方式,使用 toLocaleString()无法自定义分隔符。
+
+```js
+function stringNumberFormat(str) {
+  const number = parseFloat(str);
+  if (Number.isNaN(number)) {
+    throw new Error("str cannot be converted to a number");
+  }
+  return number.toLocaleString();
+}
+console.log(stringNumberFormat("100000000")); // "100,000,000"
+console.log(stringNumberFormat("ss100000000")); // Error: str cannot be converted to a number
+```
+
+## 比较两个版本号
+
+提供一个用于比较两个数字字符串的版本号,如果两个版本号相等则返回 0,如果版本号 1 大于版本号 2 则返回 1,否则返回-1。实现思路如下:
+
+- 首先以,号分割两个版本号为数组。
+- 比较两个版本号的长度,以最长版本号的长度作为遍历次数。
+- 不满长度的版本号需要补 0 对齐,然后挨个比较两个版本号中元素的每一项。
+
+```js
+function compareVersions(v1, v2) {
+  // 分割两个版本号
+  const arr1 = v1.split(","),
+    arr2 = v2.split(",");
+  // 获取两个版本号中长度最长的版本号作为遍历次数
+  const count = Math.max(arr1.length, arr2.length);
+
+  // 循环
+  for (let i = 0; i < count; i++) {
+    /**
+     * 补零对齐。假设v1为 1.1.1 v2为 1.0,遍历到第三次时由于v2的长度不够,
+     * 因此访问arr2[i]时结果为undefined,所以使用 arr2[i] || "0" 进行
+     * 补零,补零之后的结果为 1.0.0
+     */
+    const v1Part = parseInt(arr1[i] || "0", 10);
+    const v2Part = parseInt(arr2[i] || "0", 10);
+
+    if (v1Part > v2Part) {
+      return 1;
+    } else if (v1Part < v2Part) {
+      return -1;
+    }
+    return 0;
+  }
+}
 ```

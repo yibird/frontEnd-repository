@@ -7,7 +7,7 @@
   - 视图(View):代表应用程序的用户界面。它是应用程序中用户直接交互的部分,包括显示和呈现数据、响应用户输入等。
   - 控制器(Controller):连接模型和视图。它是应用程序中的中间件,用于处理用户输入和数据操作,并根据需要更新视图。控制器接收来自视图的用户输入,并将请求转发给模型来更新数据。一旦模型被更新,控制器将更新视图以反映新的数据状态。
 
-MVC 架构的优点是分离了应用程序的不同方面,从而使得应用程序更容易维护、扩展和重用。例如,如果需要更改应用程序的用户界面,可以仅仅修改视图部分,而不需要改变模型和控制器。同样,如果需要更新数据操作,可以仅仅修改模型部分,而不需要修改视图和控制器。React 是一个典型的 MVC 架构库。
+MVC 架构的优点是分离了应用程序的不同方面,从而使得应用程序更容易维护、扩展和重用。例如,如果需要更改应用程序的用户界面,可以只修改视图部分,而不需要改变模型和控制器。同样,如果需要更新数据操作,可以只修改模型部分,而不需要修改视图和控制器。React 是一个典型的 MVC 架构库。
 
 ## 2.Vue 生命周期
 
@@ -15,8 +15,8 @@ Vue2 采用 Options API 开发组件,组件生命周期定义在导入的组件�
 
 ### 2.1 Vue2 生命周期
 
-- beforeCreate():在实例创建完成之前,此阶段实例的 data 和 methods 是读取不到。
-- created():在实例创建之后,此阶段已完成数据的观测、属性和方法的运算、watch/event 事件回调,mount 挂载阶段还未开始,$el 属性目前不可见,数据并未在 Dom 元素中渲染,created 钩子函数完成后,开始进行模板(template)编译,将模板编译成渲染函数,有了- render 函数后才会执行 beforeMount()钩子函数。
+- beforeCreate():在实例创建完成之前,此阶段实例的 data 和 methods 读取不到。
+- created():在实例创建之后,此阶段已完成数据的观测、属性和方法的运算、watch/event 事件回调,mount 挂载阶段还未开始,$el 属性目前不可见,数据并未在 Dom 元素中渲染,created 钩子函数完成后,开始进行模板(template)编译,将模板编译成渲染函数,有了 render 函数后才会执行 beforeMount()钩子函数。
 - beforeMount():在挂载到实例之前被调用,相关的 render()函数首次执行。
 - mounted():挂载到实例之后调用,el 选项的 Dom 节点被新创建的 vm.$el 替换,并挂载到实例之后被调用,此时数据开始在 Dom 节点上渲染,注意:后续的钩子函数都是需要外部的触发才能执行。
 - beforeUpdate():实例数据发生变化之前调用。
@@ -27,14 +27,18 @@ Vue2 采用 Options API 开发组件,组件生命周期定义在导入的组件�
 ### 2.2 Vue3 生命周期
 
 - setup():等同 Vue2 中 beforeCreate 和 created()钩子函数。setup 接收 props 和 context 作为参数,由于在执行 setup 时尚未创建组件实例,因此在 setup 选项中没有 this(或者说 setup 的 this 指向 undefined)。这意味着,除了 props 之外,无法在 setup 函数中访问组件中声明的任何属性——本地状态、计算属性或方法。
-- onBeforeMount():等同 Vue2 中 beforeMounut()钩子函数。
+- onBeforeMount():等同 Vue2 中 beforeMount()钩子函数。
 - onMounted:等同 Vue2 的 mounted 钩子函数。
 - onBeforeUpdate():等同 Vue2 中 beforeUpdate()钩子函数。
 - onUpdated():等同 Vue2 中 updated()钩子函数。
 - onBeforeUnmount():等同 Vue2 中 beforeDestroy()钩子函数。
-- onUnmounted():等同 Vue 中 destoryed()钩子函数。
+- onUnmounted():等同 Vue 中 destroyed()钩子函数。
 - onRenderTracked():该钩子函数用于追踪状态,它会追踪页面上所有响应式变量和方法的状态,当有变量更新时,它就会进行跟踪,然后生成一个 event 事件,以供开发者调试。
 - onRenderTriggered():该钩子函数状态触发,它不会跟踪每一个值,而是给你变化值的信息,并且新值和旧值都会明确的展示出来。onRenderTriggered 只精确跟踪发生变化的值,进行针对性调试。
+
+- 创建组件时父子组件钩子执行顺序:父 beforeCreate、父 created、父 beforeMount、子 beforeCreate、子 created、子 beforeMount、子 Mounted、父 Mounted。
+- 更新状态时父子组件钩子执行顺序:父 beforeUpdate、子 beforeUpdate、父 updated、子 updated。
+- 销毁组件时父子组件钩子执行顺序:父 beforeDestroy、子 beforeDestroy、子 destroy、父 destroy。
 
 ## 3.Vue 组件通讯方式有哪些?
 
@@ -64,8 +68,6 @@ Vue2 采用 Options API 开发组件,组件生命周期定义在导入的组件�
 - 第三方 EventBus 实现跨组件层级通讯。在 Vue3 中移除了 Event Bus 特性,但可以使用 mitt.js 等第三方库实现组件通讯,其实现原理还是 EventBus(底层基于发布订阅模式)。
 - 第三方状态管理库实现跨组件层级通讯。例如 Pinia、Vue4。
 - 浏览器存储机制实现跨组件层级通讯。例如 Cookie、LocalStorage、SessionStroage、IndexDB。
-
-组件作用是抽离公共逻辑单元,这意味着组件是可以公用的,如果 data 是一个对象的话,那么所有组件实例都能访问到 data 对象,因为对象是对内存地址的引用,这样会造成组件数据的相互影响。如果 data 是一个函数,每个组件实例可以维护一份被返回对象的独立的拷贝。
 
 ## 4.为什么 Vue2 组件的 data 是一个函数
 
