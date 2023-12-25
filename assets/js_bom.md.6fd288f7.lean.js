@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as a}from"./chunks/framework.e23b3577.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"js/bom.md","filePath":"js/bom.md","lastUpdated":1703485932000}'),o={name:"js/bom.md"};function s(r,c,n,m,d,p){return t(),a("div")}const f=e(o,[["render",s]]);export{i as __pageData,f as default};
