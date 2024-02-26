@@ -28,5 +28,10 @@ export default {
       items: [],
       link: "/solution/watermark.md",
     },
+    {
+      text: "错误监控",
+      items: [],
+      link: "/solution/errorMonitoring.md",
+    },
   ],
 };

@@ -7,7 +7,7 @@
 - 包管理工具。使用 pnpm、yarn、npm 实现依赖安装、版本管理、依赖更新等操作。
 - 构建工具。使用构建工具如 Vite、Webpack、Rollup 等,将多个代码文件打包成一个或多个可执行的文件,同时进行资源优化、压缩等操作,以提高页面加载速度和性能。
 - 自动化测试。使用自动化测试工具如 Vitest、Jest、Mocha 等,实现自动化测试,以确保代码的质量和可靠性。
-- 代码规范。使用代码质量检查工具如 ESLint、Prettier 等，检查代码规范、代码风格等问题,以确保代码的可读性和可维护性。使用 commitLint 检查 Git Commit 提交规范、使用 changeset 管理版本及更新日志。
+- 代码规范。使用代码质量检查工具如 ESLint、Prettier 等,检查代码规范、代码风格等问题,以确保代码的可读性和可维护性。使用 commitLint 检查 Git Commit 提交规范、使用 changeset 管理版本及更新日志。
 - 性能优化。使用性能优化工具如 Lighthouse、PageSpeed Insights 等,对页面进行性能分析和优化,以提高页面的响应速度和用户体验。
 
 通过前端工程化的实践,可以提高前端开发的效率和质量,同时也可以减少人为错误和重复工作,从而使团队更加高效和协作。
@@ -20,7 +20,7 @@
 - 下载依赖。npm 会从 npm 的官方 registry 中下载所有需要安装的依赖包,以及这些依赖包的所有依赖项。
 - 安装依赖。npm 会将下载的所有依赖包安装到项目的 node_modules 目录中。如果依赖包已经存在于 node_modules 中,npm 会检查它们的版本是否满足要求。如果版本不符合要求,npm 会尝试更新依赖包的版本。
 - 执行钩子。npm 会执行 preinstall、postinstall、preuninstall、postuninstall 钩子,以及 prepublish 和 prepare 钩子。
-- 生成 package-lock.json。npm 会生成一个 package-lock.json 文件,用于锁定依赖包的版本号，以保证在不同的机器上安装依赖时使用相同的版本。
+- 生成 package-lock.json。npm 会生成一个 package-lock.json 文件,用于锁定依赖包的版本号,以保证在不同的机器上安装依赖时使用相同的版本。
 - 执行依赖命令。最后,npm 会执行依赖包的 bin 命令,以确保依赖包已经正确地安装并可用。
 
 ## pnpm 对比 npm、yarn 有哪些优点?
@@ -33,7 +33,7 @@
 
 当使用 npm 或 yarn 时,如果有 100 个项目,并且所有项目都有一个相同的依赖包,那么,在硬盘上就需要保存 100 份该相同依赖包的副本。如果是使用 pnpm,依赖包将被存放在一个统一的位置,因此:
 
-- 如果对同一依赖包需要使用不同的版本,则仅有版本之间不同的文件会被存储起来。例如,如果某个依赖包包含 100 个文件，其发布了一个新 版本，并且新版本中只有一个文件有修改，则 pnpm update 只需要添加一个 新文件到存储中，而不会因为一个文件的修改而保存依赖包的 所有文件。
+- 如果对同一依赖包需要使用不同的版本,则仅有版本之间不同的文件会被存储起来。例如,如果某个依赖包包含 100 个文件,其发布了一个新 版本,并且新版本中只有一个文件有修改,则 pnpm update 只需要添加一个 新文件到存储中,而不会因为一个文件的修改而保存依赖包的 所有文件。
 - 所有文件都保存在硬盘上的统一的位置。当安装软件包时,其包含的所有文件都会硬链接自此位置,而不会占用额外的硬盘空间。这可以在项目之间方便地共享相同版本的依赖包。
 
 ### 创建非扁平的 node_modules 目录
@@ -67,7 +67,7 @@ web-project
         | --express-session@1.16.1(dev)
 ```
 
-因为扁平化处理会提升包所在目录层级,但是存在同一个包的不同版本,npm 会选择一个版本提升到 node_modules 一级目录,其他版本嵌套安装,这样做会导致在项目中引用 C 和 D 的时候,是使用两个 B 的实例,从而造成依赖分身。依赖分身在一些边界情况就会导致项目的崩溃(typescript 和 webpack 都有可能因此出错,所以只能内部做兼容)。
+因为扁平化处理会提升包所在目录层级,但是存在同一个包的不同版本,npm 会选择一个版本提升到 node_modules 一级目录,其他版本嵌套安装,这样做会导致在项目中引用 C 和 D 的时候,是使用两个 B 的实例,从而造成依赖分身。依赖分身在一些边界情况就会导致项目的崩溃(typescript 和 Webpack 都有可能因此出错,所以只能内部做兼容)。
 
 ```js
 web-project
@@ -107,7 +107,7 @@ CommonJS 和 ESModule 是 JavaScript 中两种不同的模块系统。其区别�
 - **变量绑定不同**。ESModule 中导入的变量是只读的,不能被修改,而 CommonJS 导入的变量是可以被修改的。
 - **应用场景不同**。CommonJS 主要应用于服务器端的 Node.js 环境中,而 ESModule 主要应用于浏览器端的 Web 应用程序中。
 
-需要注意的是，由于 CommonJS 和 ESModule 有不同的语法和特性,因此它们之间的模块无法直接互相引用,需要通过转换工具进行转换。例如,Babel 可以将 ESModule 转换成 CommonJS,而 Webpack 可以将 CommonJS 转换成 ESModule。
+需要注意的是,由于 CommonJS 和 ESModule 有不同的语法和特性,因此它们之间的模块无法直接互相引用,需要通过转换工具进行转换。例如,Babel 可以将 ESModule 转换成 CommonJS,而 Webpack 可以将 CommonJS 转换成 ESModule。
 
 ## CommonJS 规范 require()的过程?
 
@@ -140,7 +140,7 @@ C    代码:  add(2, subtract(4, 2))
 
 解析过程主要分为词法分析和语法分析两个步骤:
 
-- 词法分析:词法分析是使用 tokenizer(分词器)或者 lexer(词法分析器),将源码拆分成 tokens,tokens 是一个放置对象的数组,其中的每一个对象都可以看做是一个单元(数字，标签，标点，操作符...)的描述信息。例如对"你是猪"进行词法分析就可以得到主谓宾词语,对`(add 2 (subtract 4 2))`进行词法分析后得到:
+- 词法分析:词法分析是使用 tokenizer(分词器)或者 lexer(词法分析器),将源码拆分成 tokens,tokens 是一个放置对象的数组,其中的每一个对象都可以看做是一个单元(数字,标签,标点,操作符...)的描述信息。例如对"你是猪"进行词法分析就可以得到主谓宾词语,对`(add 2 (subtract 4 2))`进行词法分析后得到:
 
 ```js
 [
@@ -198,26 +198,198 @@ C    代码:  add(2, subtract(4, 2))
 
 第一步是将输入代码解析为 tokens。这个过程需要 tokenzier(分词器)函数,整体思路就是通过遍历字符串的方式,对每个字符按照一定的规则进行`switch case`,最终生成 tokens 数组。
 
-```js
-
-```
-
 ## 什么是 Babel?
 
-## webpack 的打包流程?
+Babel 是一个 JavaScript 编译器,主要用于将 ECMAScript 2015+ 代码转换为当前和旧浏览器或环境中向后兼容的 JavaScript 版本,Babel 常用于语法转换(Transform syntax)、源代码转换(Source code transformations)、目标环境中缺少的 Polyfill 的场景。Babel 的执行流程分为解析、转换、生成三个步骤:
 
-## webpack 打包的原理?
+- 解析阶段:Babel 首先会将输入的源代码解析成抽象语法树(AST)。这一步骤由 Babel 的解析器完成,将源代码转换为一种更易于处理的数据结构,即 AST。
+- 转换(Transformation)阶段:在解析的基础上,Babel 将对 AST 进行转换。这个阶段涉及到一系列的插件,每个插件负责一种转换。插件可以修改、添加或删除 AST 中的节点,实现对源代码的不同转换。
+- 代码生成(Code Generation)阶段:转换完成后,Babel 会将修改后的 AST 转换回字符串形式的代码。这个阶段由 Babel 的代码生成器完成,它会根据修改后的 AST 生成目标版本的 JavaScript 代码。例如生成 sourcemap(源码映射)有利于开发调试。
 
-## webpack Loader 和 Plugin 的区别?
+## Webpack 的打包流程?
+
+Webpack 的打包流程可以分为以下几个步骤：
+
+- 解析配置文件:Webpack 会读取并解析配置文件（通常是 webpack.config.js 文件）,并根据配置生成一个 Compiler 对象。
+- 读取入口文件:Webpack 根据配置中的入口文件,读取这些文件及其依赖的模块,并将它们组成一个依赖图。
+- 解析模块依赖:Webpack 会根据模块之间的依赖关系,递归地解析它们的依赖,直到所有的依赖都被解析完毕。
+- 加载模块:Webpack 会根据模块的路径,使用相应的 Loader 加载模块的源代码,并将其转换为 Webpack 可以处理的形式。
+- 转换代码:Webpack 会根据配置中的插件,对加载的模块进行一系列的转换操作,比如压缩、合并、优化等。
+- 生成代码:Webpack 会将所有模块转换后的代码合并成一个或多个文件,并输出到指定的输出目录中。
+
+## Webpack Loader 和 Plugin 的区别?
+
+Loader 和 Plugin 是 Webpack 的核心概念,两者区别如下:
+
+- Loader:Loader 用于对模块的源代码进行转换,它直接影响到文件的加载和解析。例如,可以使用 Babel Loader 将 ES6+的代码转换为 ES5,或者使用 CSS Loader 加载和转换 CSS 文件。开发中常用的 Loader 如下:
+  - babel-loader:用于将新版本的 JavaScript 代码转换为旧版本的 JavaScript 代码,以确保在不同环境中运行。
+  - css-loader 和 style-loader: 处理 CSS 文件,使其能够被 Webpack 识别和加载到应用中。
+  - file-loader:处理图片、字体等文件,将它们复制到输出目录,并返回文件路径。
+  - url-loader:类似于 file-loader,但可以根据文件大小将文件转换为 DataURL,减少 HTTP 请求。
+  - sass-loader 和 less-loader:用于处理 Sass 和 Less 文件,将其编译为 CSS。
+  - cache-loader:用于缓存文件的转换结果,以提高构建性能。
+  - vue-loader:用于处理 Vue.js 的单文件组件(.vue 文件)。Vue.js 单文件组件将 HTML、CSS 和 JavaScript 封装在一个文件中,vue-loader 负责将这种文件进行解析和转换,使得它们可以被 Webpack 正确地加载和使用。
+- Plugin:Plugin 用于扩展 Webpack 的功能,执行更广泛的任务。它可以在 Webpack 运行的不同阶段执行各种任务,比如优化、压缩、代码分割、模块热替换等。
 
 ### 如何实现一个 Loader?
 
+在 Webpack 中 Loader 是一个普通函数,该函数接收上一个 Loader 处理后的源码内容,并返回当前 Loader 处理后的源码内容。
+
+创建 Loader:
+
+```js
+// source表示上一个Loader处理后的文件源内容
+module.exports = function (source) {
+  // 对源代码进行处理
+  const result = transform(source);
+  return result;
+};
+function transform(source) {
+  // 实际的转换逻辑
+  // 可以使用正则表达式、字符串替换、AST解析等方式进行处理
+  return source.toUpperCase();
+}
+```
+
+注册 Loader:
+
+```js
+// webpack.config.js
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.js$/, // 匹配需要使用该Loader的文件
+        use: "path/to/custom-loader.js", // 指定Loader的路径
+        exclude: /node_modules/, // 可选,排除的文件夹
+      },
+    ],
+  },
+  // ...
+};
+```
+
 ### 如何实现一个 Plugin?
 
-## webpack 的打包优化策略有哪些?
+在 Webpack 中,Plugin 是一个 JavaScript 命名函数或 JavaScript 类,Plugin 需要提供 apply()函数,该方法在 Webpack 构建过程中被调用,允许在不同的生命周期钩子上执行自定义任务。
+
+创建 Plugin:
+
+```js
+// 自定义Plugin
+class CustomPlugin {
+  // options表示插件的配置参数,可选
+  constructor(options) {
+    this.options = options || {};
+  }
+
+  // Plugin需要提供一个apply(),该方法在 Webpack 构建过程中被调用
+  apply(compiler) {
+    // 在compiler对象上注册Webpack生命周期钩子
+    compiler.hooks.emit.tapAsync("CustomPlugin", (compilation, callback) => {
+      // 执行自定义处理逻辑...
+      // 调用回调函数通知Webpack继续构建
+      callback();
+    });
+  }
+}
+module.exports = CustomPlugin;
+```
+
+注册 Plugin:
+
+```js
+// webpack.config.js
+
+// 导入自定义插件
+const CustomPlugin = require("./path/to/CustomPlugin");
+module.exports = {
+  // ...
+  plugins: [
+    new CustomPlugin({
+      /* 插件配置参数 */
+    }),
+  ],
+};
+```
+
+## Webpack 的优化策略有哪些?
+
+- 量化分析。首先通过 speed-measure-webpack-plugin 插件量化分析各个 plugin 和 loader 打包时所花费的时间,通过量化指标可以看出优化前与优化后的对比。
+- 可以用过 exclude 或 include 配置来确保转译尽可能少的文件。通过 exclude 排除无需打包的目录(例如 exclude:/\node_modules/排除 node_modules 目录),exclude 的优先级高于 include(优先匹配 exclude)。include 用于包含指定目录下的模块进行打包,一般会将 include 配置为 src,建议使用 include,避免使用 exclude,指定 include 大分部情况比指定 exclude 构建效果要好。
+- 使用 cache-loader。对于一些性能开销比较大的 loader 之前添加 cache-loader,将结果缓存到磁盘中,能大幅度提升性能,默认缓存保存在 node_modules/.cache/cache-loader 目录下。
+- 使用 happypack 插件进行多线程打包。happypack 是一个通过多线程来提升 webpack 打包速度的工具
+- 使用 thread-loader 进行多线程打包。除了使用 Happypack 提升打包速度,也可以使用 thread-loader,把 thread-loader 放置在其他 loader 之前,那么放置在这个 loader 之后的 loader 就会在一个单独的 worker 池中运行。
+- 使用 terser-webpack-plugin 和 mini-css-extract-plugin 分别对 JS 和 CSS 资源压缩。资源压缩包括 JS 与 CSS 文件压缩,terser-webpack-plugin 是一个用于压缩 JS 资源的插件。压缩 CSS 前首先使用 mini-css-extract-plugin 插件将 CSS 提取出来,然后使用 optimize-css-assets-webpack-plugin 进行压缩。
+- 使用 noParse 标识模块不进行转化与解析。如果一些第三方模块没有 AMD/CommonJS 规范版本,这对打包影响还是挺大的,我们可以使用 noParse 来标识这个模块,这个 webpack 会引入这些模块,但是不进行转化和解析,从而提升 webpack 的构建性能,例如 jquery、lodash。noParse 属性的值可是一个正则表达式或一个 function。
+- IgnorePlugin 忽略第三方依赖。IgnorePlugin 是 webpack 的内置插件,作用是忽略第三方依赖指定目录。例如: moment (2.24.0 版本) 会将所有本地化内容和核心功能一起打包,可以使用 IgnorePlugin 在打包时忽略本地化内容。
+- 使用 externals 从 bundle 排除依赖项。xternals(外部扩展)配置选项提供了「从输出的 bundle 中排除依赖」的方法。防止将某些 import 的包(package)打包到 bundle 中,而是在运行时(runtime)再去从外部获取这些扩展依赖(external dependencies)。
+- 拆分 bundle。如果所有的 js 文件都打包成一个 JS 文件,这会导致最终生成的 js 文件体积很大,这个时候就要考虑拆分 bundle 了。DllPlugin 和 DLLReferencePlugin 可以实现拆分 bundles,并且可以大幅度提升构建速度,DllPlugin 和 DLLReferencePlugin 都是 webpack 的内置模块。
+- 抽离公共代码。optimization.SplitChunks(简称 SplitChunks)是 webpack4 为了改进 CommonsChunk-Plugin 而重新设计和实现的代码分片特性。webpack4 之前自带 CommonsChunk-Plugin 插件用于处理代码分片,webpack4 后使用 SplitChunks,SplitChunks 相比 CommonsChunk-Plugin 功能更加强大,操作更加简单。
+- webpack-bundle-analyzer 监控 bundle 体积,根据分析结果进一步优化。
+- 尽量使用 ESModule。ES6 Module 依赖关系的构建是在代码编译时而非运行时,基于这一特性 webpack 提供了 tree shaking(摇树)功能,它可以在打包过程中检测工程中未使用过的模块,这部分代码将不会被执行,因此被称为"死代码"。webpack 会对这部分代码进行标记,并在资源压缩时将它们从最终的 bundle 中去掉。
+- 使用 swc-loader 或 esbuild-loader 提升打包速度。JS 是一门动态采用单线程模型的脚本语言,性能成为了 JS 的瓶颈,为了追求更极致的性能前端工程化建设基本朝 rust 和 go 语言方向偏移,rust 和 go 能大幅度提升程序执行效率。swc 就是基于 rust 开发的一款对标 babel 的模块打包器,esbuild 是基于 go 语言实现的一款打包器,它们基于更底层的静态语言,打包构建的速度非常快。
 
 ## Vite 的打包流程?
 
-## Vite 的打包原理?
-
 ## 如何实现一个 Vite Plugin?
+
+## Vite Plugin 的钩子函数有哪些?
+
+## Vite 的优化策略有哪些?
+
+- 查看模块依赖分析。分析依赖模块的大小占比,可以有针对性对某些模块进行体积优化。rollup-plugin-visualizer 是一个模块依赖分析插件,通过该插件可以对模块依赖进行构建分析。
+
+```shell
+# 安装
+pnpm i rollup-plugin-visualizer -D
+```
+
+- 分包策略。分包是一种将不常更新的文件进行单独打包的优化策略。vite 在打包时,会在 bundle 添加一个 hash 值,该 hash 与文件内容相关,当文件内容发生变化,hash 值也会发生变化,这样做能保证文件发生变化时浏览器能够请求到最新资源。对于不常变化的文件,无法利用浏览器缓存提升加载效率(请求相同资源会命中浏览器缓存),可以借助分包机制将不常变化的文件进行单独打包,例如将第三方包进行独立打包。在 vite 中分包依赖于 rollup 的 output.manualChunks,当该选项值为函数形式时,每个被解析的模块都会经过该函数处理。如果函数返回字符串,那么该模块及其所有依赖将被添加到以返回字符串命名的自定义 chunk 中。
+
+```js
+import { defineConfig } from "vite";
+export default defineConfig({
+  build: {
+    minify: false,
+    // 在这里配置打包时的rollup配置
+    rollupOptions: {
+      manualChunks: (id) => {
+        if (id.includes("node_modules")) {
+          // 打包后生成一个vendor.xxxxx.js
+          return "vendor";
+        }
+      },
+    },
+  },
+});
+```
+
+经过分包策略后,可能会导致打包后的体积过大,此时可以使用`vite-plugin-compression2`插件进行打包压缩。
+
+```shell
+pnpm install vite-plugin-compression2 -D
+```
+
+- 开启 treeshaking。treeshaking 也被称为 "摇树优化"。简单来说,在保证代码运行结果不变的前提下,去除无用的代码,从而减少打包后产物的体积大小。但是使用 treeshaking 机制时,必须要保证使用 ESModule 模块化方式组织代码,因为 ESModule 使用静态分析,可以检测无使用的死代码。
+- 开启 gzip 压缩。gzip 是一种使用非常普遍的压缩格式。使用 gzip 压缩可以大幅减小代码体积,提升网络性能(对于文本内容压缩效率更好)。
+
+```shell
+# 安装 vite gzip插件
+pnpm i vite-plugin-compression -D
+```
+
+- 开启 CDN 加速。内容分发网络(Content Delivery Network,简称 CDN)允许用户从最近的服务器请求资源,提升网络请求的响应速度。
+
+```shell
+# 安装Vite CDN加速插件
+npm i vite-plugin-cdn-import -D
+```
+
+- 使用图片压缩。当项目存在大量图片或大图片时,除了使用体积更小的图片格式外(例如 webp),此时还可以使用图片压缩。
+
+```shell
+# 安装图片压缩插件
+pnpm i vite-plugin-imagemin -D
+```

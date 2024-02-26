@@ -24,6 +24,31 @@ Vue2 采用 Options API 开发组件,组件生命周期定义在导入的组件�
 - beforeDestroy():实例销毁之前被调用。
 - destroyed():实例销毁之后被调用。
 
+创建组件时父子组件钩子执行顺序:
+
+- 父 beforeCreate。
+- 父 created。
+- 父 beforeMount。
+- 子 beforeCreate。
+- 子 created、
+- 子 beforeMount。
+- 子 Mounted、
+- 父 Mounted。
+
+更新状态时父子组件钩子执行顺序:
+
+- 父 beforeUpdate。
+- 子 beforeUpdate。
+- 父 updated。
+- 子 updated。
+
+销毁组件时父子组件钩子执行顺序:
+
+- 父 beforeDestroy。
+- 子 beforeDestroy。
+- 子 destroy。
+- 父 destroy。
+
 ### 2.2 Vue3 生命周期
 
 - setup():等同 Vue2 中 beforeCreate 和 created()钩子函数。setup 接收 props 和 context 作为参数,由于在执行 setup 时尚未创建组件实例,因此在 setup 选项中没有 this(或者说 setup 的 this 指向 undefined)。这意味着,除了 props 之外,无法在 setup 函数中访问组件中声明的任何属性——本地状态、计算属性或方法。
@@ -35,10 +60,6 @@ Vue2 采用 Options API 开发组件,组件生命周期定义在导入的组件�
 - onUnmounted():等同 Vue 中 destroyed()钩子函数。
 - onRenderTracked():该钩子函数用于追踪状态,它会追踪页面上所有响应式变量和方法的状态,当有变量更新时,它就会进行跟踪,然后生成一个 event 事件,以供开发者调试。
 - onRenderTriggered():该钩子函数状态触发,它不会跟踪每一个值,而是给你变化值的信息,并且新值和旧值都会明确的展示出来。onRenderTriggered 只精确跟踪发生变化的值,进行针对性调试。
-
-- 创建组件时父子组件钩子执行顺序:父 beforeCreate、父 created、父 beforeMount、子 beforeCreate、子 created、子 beforeMount、子 Mounted、父 Mounted。
-- 更新状态时父子组件钩子执行顺序:父 beforeUpdate、子 beforeUpdate、父 updated、子 updated。
-- 销毁组件时父子组件钩子执行顺序:父 beforeDestroy、子 beforeDestroy、子 destroy、父 destroy。
 
 ## 3.Vue 组件通讯方式有哪些?
 
@@ -317,7 +338,19 @@ watch:
 
 Vue 中 data 属性可以与 methods 中的方法名可以相同,但是并不推荐这么做,这是因为在 Vue 实例中,data 中的属性和 methods 中的方法都会被代理到 Vue 实例中,如果名字相同,可能会导致命名冲突(访问时不知道访问的是 data 属性还是 methods)。另外,Vue 在实例化过程中会检查 methods 中的方法名是否和 Vue 内置的方法重名,如果重名会产生一个警告,因此尽量不要和 Vue 内置的方法名相同。
 
-## 12.在 Vue 中定义定时器如何清理?
+## 12.Vue 指令的生命周期?
+
+Vue 除了提供了 v-if、v-show 等内置指令外,还支持通过 Vue.directive()允许自定义指令,自定义指令生命周期如下:
+
+- created:在绑定元素的 attribute 前或事件监听器应用前调用。
+- beforeMount:被插入到 DOM 之前调用。
+- mounted:在绑定元素的父组件,及它自己的所有子节点都挂载完成后调用。
+- beforeUpdate:绑定元素的父组件更新前调用。
+- updated:在绑定元素的父组件,及它自己的所有子节点都更新完成后调用。
+- beforeUnmount(el, binding, vnode, prevVnode):绑定元素的父组件卸载前调用。
+- unmounted(el, binding, vnode, prevVnode):绑定元素的父组件卸载后调用。
+
+## 13.在 Vue 中定义定时器如何清理?
 
 - 在 beforeDestroy 生命周期函数清除。
 
@@ -356,12 +389,12 @@ new Vue({
 });
 ```
 
-## 13.Vue 如何强制刷新组件?
+## 14.Vue 如何强制刷新组件?
 
 - 通过 v-if 指令。在需要控制的组件跟标签使用 v-if 指令,v-if 指令对应的是一个布尔值,如果条件为 false 就表明这个元素不会被渲染。
 - 通过 this.$forceUpdate()。this.$forceUpdate() 作用是强制 Vue 实例重新渲染,注意:它仅针对当前实例本身和它插槽内的子组件,并不包含所有组件。
 
-## 14.$nextTick()的作用和实现原理?
+## 15.$nextTick()的作用和实现原理?
 
 Vue.js 中的 $nextTick() 方法用于在 DOM 更新之后执行一个回调函数。在 Vue 中,当数据发生变化时,Vue 会异步执行 DOM 更新。这意味着,如果想要在数据更新后操作 DOM 元素,需要等到 Vue 完成更新后才能进行操作,$nextTick() 方法可以在下次 DOM 更新循环结束后执行回调函数,确保操作的正确性。
 
@@ -499,7 +532,7 @@ export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
 
 **$nextTick() 的实现原理:将$nextTick()回调函数加入一个队列中,在下次 DOM 更新循环结束后依次执行队列中的所有回调函数。当数据变化时,Vue 会先将需要更新的 DOM 元素放到一个队列中,然后通过浏览器提供的 API 监听 DOM 的变化,当 DOM 变化结束时,触发 $nextTick() 方法中的回调函数**。
 
-## 15.keepAlive 组件的实现原理
+## 16.keepAlive 组件的实现原理
 
 Keepalive 包裹组件时,会缓存不活动的组件实例。Keepalive 底层实现原理是通过缓存机制存储了 Keepalive 组件包裹的首个子组件实例,即使进行路由切换,由于有缓存机制所以并不会销毁子组件。Keepalive 组件源码大体逻辑如下:
 
@@ -507,9 +540,9 @@ Keepalive 包裹组件时,会缓存不活动的组件实例。Keepalive 底层�
 - 当通过 getFirstComponentChild()获取到 Keepalive 包裹的首个子组件后,Keepalive 会根据 include、exclude 引入或排除一些不符合条件的组件。
 - Keepalive 源码中维护了 cached、keys 两个重要的属性,cached 是一个对象用于缓存组件,keys 用于维护缓存 key。当 vnode 上如果有 key 属性则会被当做缓存 key,否则将会以组件 id+组件 tag 的形式作为缓存 key(简称 key)。由于组件初始化时未命中缓存,所以 cached 以 key 作为键,以 vnode 作为 value 将组件节点缓存起来,keys 也会 push 对应的 keys 以便清除缓存 key;当下次命中缓存时会从缓存中取出组件实例(componentInstance)赋值给 vnode 的组件实例(componentInstance),并清理相关缓存 key。
 
-## 16.Vue 响应式数据实现原理?
+## 17.Vue 响应式数据实现原理?
 
-### 16.1 Vue2 响应式数据实现原理?
+### 17.1 Vue2 响应式数据实现原理?
 
 Vue2 实现响应式数据分为两大块:普通对象类型的数据响应式和数组类型的数据响应式。
 
@@ -521,7 +554,15 @@ Vue2 实现响应式数据分为两大块:普通对象类型的数据响应式�
 
 当执行 new Vue() 时,Vue 就进入了初始化阶段,一方面 Vue 会遍历 data 选项中的属性,并用 Object.defineProperty 将它们转为 getter/setter,实现数据变化监听功能;另一方面,Vue 的指令编译器 Compile 对元素节点的指令进行扫描和解析,初始化视图,并订阅 Watcher 来更新视图,此时 Wather 会将自己添加到消息订阅器中(Dep),初始化完毕。当数据发生变化时,Observer 中的 setter 方法被触发,setter 会立即调用 Dep.notify(),Dep 开始遍历所有的订阅者,并调用订阅者的 update() 方法,订阅者收到通知后对视图进行相应的更新。
 
-## VueRouter 的实现原理?
+### 17.2 Vue3 响应式数据实现原理?
+
+在 Vue3 中使用 ES6 提供的 Proxy 实现了数据的侦听,对比 Object.definedProperty()具有以下优点:
+
+- 支持更多的拦截功能。Proxy 支持对象属性的读取、写入、删除、枚举等 13 种对象操作。实例化 Proxy 会返回一个新的代理对象,当对代理对象进行操作 Proxy 可以进行拦截,而 Object.definedProperty()是对原始对象的侦听,因此 Object.definedProperty()无法侦听对象新增和删除属性等操作,但是 Proxy 支持对象新增和删除属性。
+- 深层嵌套的对象侦听:Vue2 提供了 observe()用于实现对象的侦听,如果对象是一个嵌套对象(对象属性值是引用类型,例如`const obj = {a:{b:{c:1}}}`)时,observe()首先会遍历该对象,并判断该对象对应的属性值是否是引用类型(对象或数组),如果是则递归调用 observe()实现数据深层次的侦听。Proxy 内置支持深层嵌套对象的侦听,无需递归式的深层次侦听,因此性能比 Object.definedProperty()更好。
+- 支持数组监听。在 Vue2 中通过重写数组原型上的七个方法从而实现数组的侦听,Proxy 不仅支持对象的侦听,同时也支持数组。
+
+## 18.VueRouter 的实现原理?
 
 VueRouter 的实现原理是不刷新浏览器实现路由的切换。VueRouter 内部支持 abstract、history、hash 三种模式,在 Hash 模式下,路径会带有 # 号,路径改变不会导致页面刷新;而 History 模式下,路径不带 # 号,路径改变会导致页面刷新。VueRouter 的实现包括路由匹配和监听路由变化两部分组成:
 
@@ -530,24 +571,24 @@ VueRouter 的实现原理是不刷新浏览器实现路由的切换。VueRouter 
 
 VueRouter 的实现原理主要包括两个方面:路由匹配和路由变化。通过路由匹配,将路由地址映射为对应的组件,通过监听路由变化,触发页面跳转,并更新对应的视图。
 
-### VueRouter 中 this.$router与this.$route 的区别?
+## 19.VueRouter 中 this.$router与this.$route 的区别?
 
 - this.$router 表示 VueRouter 的实例,它可以控制导航路由。
 - this.$route表示当前路由跳转对象,通过this.$route 可以获取 name、path、params、query、meta 等数据。
 
-### history 和 hash 模式的区别?
+## 20.history 和 hash 模式的区别?
 
 VueRouter 目前提供了 abstract、history、hash 三种模式。history 模式与 hash 模式区别如下:
 
 - 在 hash 模式下,仅 hash 符号之前的内容会被包含在请求中,例如:`http://www.aaa.com` ,因此对于后端来说,即使没有做到对路由的全覆盖,也不会返回 404 的错误。
 - 在 history 模式下,前端的 URL 必须和实际向后端发起请求的 URL 一致,例如`http://www.aaa/book/a` ,如果后端缺少对/book/a 的路由处理,将会返回 404 错误。
 
-### VueRouter 切换和 location.href 切换有什么区别?
+## 21.VueRouter 切换和 location.href 切换有什么区别?
 
 - location.href 切换会刷新页面,而 VueRouter 并不会刷新页面。
 - VueRouter 提供了路由守卫,匹配路由时会执行对应的路由守卫,相比较 location.href 切换能提供更多控制,例如路由切换时做鉴权、参数验证等业务逻辑处理。
 
-## VueRouter 导航守卫有哪些?
+## 22.VueRouter 导航守卫有哪些?
 
 根据作用范围导航钩子可分为全局导航守卫(作用于任意路由和组件)、路由独享守卫(仅作用于当前路由)、组件守卫(仅作用于当前组件)。
 
@@ -615,24 +656,24 @@ const Foo = {
 };
 ```
 
-## VueRouter 路由传值方式有哪些?
+## 23.VueRouter 路由传值方式有哪些?
 
 - 路径参数(即动态路由):在路由定义时使用`:变量名`来表示动态参数,例如在路由定义中设置 `path: '/user/:userId'`,在组件中可以通过 `$route.params.userId` 来获取参数。
 - 查询参数:在路由跳转时可以使用 `router.push({path: '/user', query: {userId: 123}})` 来传递参数,组件中可以通过 `$route.query.userId` 来获取参数。
 - 状态参数(即路由元信息):可以在路由定义中设置 meta 属性,例如 `meta: {isLogin: true}`,在组件中可以通过 `$route.meta.isLogin` 来获取参数。
 - props 参数:可以在路由定义中通过设置 `props: true` 或者自定义函数来启用 props 参数,例如 props: true 表示将所有的路由参数通过 props 传递给组件，自定义函数可以通过 `$route.params` 或 `$route.query` 来获取参数,例如 `props: (route) => ({userId: route.params.userId})`。在组件中可以通过 props 属性来获取参数。
 
-## VueRouter 中 params 和 query 传参的区别?
+## 24.VueRouter 中 params 和 query 传参的区别?
 
 - params 只能根据 name 来引入路由,query 既可以根据路由 name,又可以根据 path 引入路由。
 - params 类似于 post 请求,参数不会在地址栏显示,而 query 类似于 get 请求,参数会在地址栏显示。
 
-## Vue3 的新特性?
+## 25.Vue3 的新特性?
 
 - **Composition API**。这是 Vue3 中最重要的特性之一,它可以更好地组织组件代码,使其更易于维护和重用。
 - **setup 语法糖**。
 
-## Vue3 对比 Vue2 有哪些优化点?
+## 26.Vue3 对比 Vue2 有哪些优化点?
 
 - **响应式系统优化**。Vue3 引入了 Proxy 对象作为响应式系统的实现方式,代替了 Vue2 中使用的 Object.defineProperty()。这种优化可以提高响应式系统的性能,减少了监听的数据量,并支持嵌套属性和动态添加属性,Proxy 相较于 Object.defineProperty()的监听数据优点如下:
   - **更好的性能**。Object.defineProperty() 监听对象属性时,只能遍历对象的属性,因此当对象的属性较多时,会导致性能问题。而 Proxy 可以监听整个对象,所以它的性能更好。
@@ -645,7 +686,7 @@ const Foo = {
 - **更快的虚拟 DOM**。Vue3 的虚拟 DOM 渲染性能得到了提升,主要是通过更好的 Diff 算法和事件的缓存处理,减少了虚拟 DOM 的更新次数,提高了页面的渲染效率。
 - **更好的 TypeScript 支持**。Vue3 对 TypeScript 的支持更加友好,提供了更好的类型推断和类型检查,方便了开发者在项目中使用 TypeScript。
 
-## Vue3 的编译优化有哪些?
+## 27.Vue3 的编译优化有哪些?
 
 - **Block 和 PatchFlags(补丁标志)优化**。由于在运行时得不到足够的关键信息,无法区分动态内容和静态内容,因此传统 DIFF 算法无法避免新旧虚拟 DOM 树之间无用的比较操作。Vue3 为了避免新旧虚拟 DOM 之间无效比较操作,在虚拟节点新增了 dynamicChildren 属性来存储虚拟节点的动态信息(保存了动态节点信息),带有 dynamicChildren 属性的虚拟节点被称为 Block(块),并且使用 PatchFlags(补丁标志)来区分操作类型(PatchFlags 是一个数字,当虚拟节点存在 PatchFlags 时表示当前节点是一个动态节点)。渲染器在更新时以 Block 为维度,更新一个 Block 时,会忽略虚拟节点的 children 数组,而是直接找到该虚拟节点的 dynamicChildren 数组,并只更新该数组中的动态节点。这样可以在更新时跳过静态内容,仅更新动态内容,从而实现精确更新,提升 DIFF 更新效率。
 - **静态提升**。静态提升即把纯静态的虚拟节点提升到渲染函数之外,从而减少更新时创建虚拟 DOM 带来的性能开销和内存占用。
@@ -705,7 +746,7 @@ function render(ctx) {
 </div>
 ```
 
-## Vue3 中 watch 与 watchEffect 的区别?
+## 28.Vue3 中 watch 与 watchEffect 的区别?
 
 在 Vue 3 中,watch 和 watchEffect 是两种不同的响应式数据监听方式,它们的区别如下:
 
@@ -713,6 +754,8 @@ function render(ctx) {
 - watch 可以监听到数据的变化前后值的变化,可以进行更加精细的控制和处理,而 watchEffect 只能获取到变化后的值。
 - watch 会在组件实例化时就执行一次回调函数,而 watchEffect 只有在组件渲染时才会执行,因此 watchEffect 可以更好地适应动态的响应式数据变化。
 - watch 需要手动清除监听器,否则可能会导致内存泄漏,而 watchEffect 会在组件销毁时自动清除。
+
+## 29.如何解决 Vue3 中响应式数据丢失问题?
 
 ## Pinia 对比 Vuex 的优点?
 
@@ -731,3 +774,12 @@ Pinia 和 Vuex 都是 Vue.js 中非常流行的状态管理库。Pinia 对比 Vu
 - 从数据流方面来看,Vue 中数据属于可变数据(Mutable),React 中的数据属于不可变数据(Immutable)。Vue 内部提供了响应系统,通过拦截操作,修改一个数据的同时也会收集依赖,然后数据修改的时候去通知更新 DOM。简单来说修改 Vue 中的响应式数据,可以触发组件重新渲染。React 的范式更偏向函数式编程,在 React 中定义的状态是不可变的,修改状态时需要返回一个新的状态,直接修改状态并不会触发组件重新渲染。
 - 从运行环境来看,Vue 偏编译时和运行时,而 React 属于重运行时。Vue 在运行时和预编译取了一个很好地权衡,保留了虚拟 dom,通过响应式控制虚拟 dom 的颗粒度,在预编译阶段里又做了足够多的性能优化。React 的 Runtime 相比较 Vue 更重一些,在 React 中数据发生变化后,并没有直接去操作 dom,而是生成一个新的虚拟 dom,并且通过 diff 算法得出最小的操作行为,该过程全部发生在运行时阶段。
 - 从抽象层面来看,Vue 抽象层级较低,React 抽象层次较高。React 中定义了 Component、State、Hooks、Effect 等概念,抽象层次较高,上手难度较大。而 Vue 中仅了解 SFC、data、methods 等概念即可上手。
+
+## 什么是 Teleport?
+
+Teleport 是 Vue3 内置的一个组件,它可以将一个组件内部的一部分模板"传送"到该组件的 DOM 结构外层的位置去。渲染的 DOM 结构,它不会影响组件间的逻辑关系,因此 Teleport 常用于解决弹出层层级问题,例如弹出层使用绝对布局,而外层元素设置为相对布局,由于弹出层是相对外层元素布局的,此时外层元素会影响弹出层布局。使用 Teleport
+组件可以将组件内容传送至指定 DOM(例如 body),可以避免外层元素产生的布局影响。
+
+## 什么是 Suspense?
+
+Suspense 是 Vue3 提供内置的一个组件,用于处理在组件树中协调对异步依赖,它可以在组件树上层等待下层的多个嵌套异步依赖项解析完成,并可以在等待时渲染一个加载状态。
