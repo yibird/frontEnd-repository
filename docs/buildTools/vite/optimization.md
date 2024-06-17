@@ -19,9 +19,55 @@ pnpm i rollup-plugin-visualizer -D
 
 ## 3.分包策略
 
+分包(Code Splitting)是一种优化技术,它允许将代码拆分成多个小包,而不是将所有代码打包成一个单一的文件,分包具有如下优点:
+
+- 提高加载速度:通过将应用程序分成多个较小的文件,浏览器可以并行加载这些文件,从而减少总的加载时间。
+- 按需加载:只在需要时加载特定的代码片段,可以减少初始加载时间,。
+- 优化缓存:不同的包可以独立于其他包进行缓存。如果一个包没有改变,浏览器可以从缓存中加载该包,而不是重新下载该文件。
+
+大多数构建工具支持 import()自动分包,build 后会将其打包成一个独立的 chunk,通常适用于加载组件等场景。一个应用一般由第三方库(例如 lodash、vue、react 等等)和业务代码组成,业务代码会根据业务逻辑不断变化,每次打包结果可能不同,而第三方库通常变动很小,且相对稳定,因此,可以将第三库进行分包处理,通过分包处理后的稳定模块打包后结果总是相同。在 Vite 中开发环境使用 esbuild,生成环境打包使用 rollup,rollup 中提供了 manualChunks 属性用于配置分包,它支持对象和函数两种形式:
+
+- 对象形式:对象形式的 manualChunks 通过 key-value 的方式指定模块和对应的代码包,其中 key 表示打包后 chunk(块)的名称,默认情况下打包后的文件名格式为:`chunk名称-文件内容的哈希值`,例如下面配置打包后的文件类似于 chunk-asd123123、chunk-asd1981qwe。
+
+```ts
+// vite.config.ts
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        // 分包配置
+        manualChunks() {
+          chunk: ['lodash', 'vue'];
+        },
+      },
+    },
+  },
+});
+```
+
+- 函数形式:除了对象方式外,manualChunks 也支持函数形式来定义手动分包规则。这种方式可以根据特定的条件动态地将模块分组到不同的代码包(chunks)中,以优化打包后的输出。例如对 node_modules 下的模块进行分包,打包后的 chunk 名称为 vendor(通常指的是第三方库或依赖)。
+
+```ts
+// vite.config.ts
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        // 分包配置
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
+    },
+  },
+});
+```
+
 ## 4.Treeshaking(摇树机制)
 
-treeshaking 也被称为 “摇树优化”。简单来说,在保证代码运行结果不变的前提下,去除无用的代码,从而减少打包后产物的体积大小。在 Vue3 中,许多 ApI 的引入都支持 treeshaking 优化,未使用的 API 均会被忽略打包至产物中。
+treeshaking 也被称为 "摇树优化"。简单来说,在保证代码运行结果不变的前提下,去除无用的代码,从而减少打包后产物的体积大小。在 Vue3 中,许多 ApI 的引入都支持 treeshaking 优化,未使用的 API 均会被忽略打包至产物中。
 Vue3 会默认使用 Rollup 进行 treeshaking,不需要额外进行配置。但是使用 treeshaking 机制时,必须要保证使用 ESModule 模块化方式组织代码,因为 ESModule 使用静态分析,可以检测无使用的死代码。
 
 ## 5.开启 gzip 压缩
@@ -35,7 +81,7 @@ pnpm i vite-plugin-compression -D
 
 ## 6.开启 CDN 加速
 
-内容分发网络(Content Delivery Network,简称 CDN)就是让用户从最近的服务器请求资源,提升网络请求的响应速度。
+内容分发网络(Content Delivery Network,简称 CDN)就是让用户从最近的服务器请求资源,提升网络请求的响应速度。可以将一些第三依赖(lodash、vue、react 等等)以 CDN 的方式加载,从而提高网络请求的响应速度。
 
 ```shell
 # 安装Vite CDN加速插件

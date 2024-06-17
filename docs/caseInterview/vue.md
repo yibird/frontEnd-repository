@@ -3,7 +3,7 @@
 - MVVM 即 Model–View–ViewModel 是一个软件架构设计模式,其中 Model 表示数据模型,View 表示 UI 视图,ViewModel 表示 Model 与 View 之间的桥梁。当 Model 数据发生变化时 ViewModel 会通知对应的 View 重新渲染,当 View 发生变化时 ViewModel 也会通知 Model 发生变化。MVVM 将视图层与数据层进行分离,通过 ViewModel 层控制 View 的渲染与 Model 数据的变化,极大的提高了前端开发效率。虽然 Vue 没有完全遵循 MVVM 模型,但是 Vue 的设计也受到了它的启发。
 
 - MVC 即 Model-View-Controller 是一种软件架构模式,它将应用程序分为三个主要部分:模型(Model)、视图(View)和控制器(Controller):
-  - 模型(Model):代表应用程序的数据和业务逻辑。它是应用程序中负责处理数据和数据操作的组件，包括数据存储、访问和更新等。
+  - 模型(Model):代表应用程序的数据和业务逻辑。它是应用程序中负责处理数据和数据操作的组件,包括数据存储、访问和更新等。
   - 视图(View):代表应用程序的用户界面。它是应用程序中用户直接交互的部分,包括显示和呈现数据、响应用户输入等。
   - 控制器(Controller):连接模型和视图。它是应用程序中的中间件,用于处理用户输入和数据操作,并根据需要更新视图。控制器接收来自视图的用户输入,并将请求转发给模型来更新数据。一旦模型被更新,控制器将更新视图以反映新的数据状态。
 
@@ -131,7 +131,7 @@ export default {
   methods: {
     changeVisible() {
       // 通过触发 "update:visible" 事件修改父组件的visible为true
-      this.$emit("update:visible", true);
+      this.$emit('update:visible', true);
     },
   },
 };
@@ -183,7 +183,7 @@ let map = makeIndexByKey(oldCh);
 
 ```js
 // vue-template-compiler是一个可以将Vue模板编译为渲染函数的工具库
-const compiler = require("vue-template-compiler");
+const compiler = require('vue-template-compiler');
 const template = `<div v-if="false" v-for="n in 3"></div>`;
 /**
  * compile用于编译模板字符串并返回已编译的 JavaScript 代码,返回对象格式如下:
@@ -191,8 +191,8 @@ const template = `<div v-if="false" v-for="n in 3"></div>`;
      ast:？ASTElement,  // 将模板元素解析为 AST,一个树形结构用于描述模板信息
      render:string,  // 主渲染函数代码,返回的函数代码使用with包裹,
      因此不能在严格模式代码中使用(违反CSP,即Content Security Policy,中文译为内容安全策略)
-     staticRenderFns:Array<string>, // 为静态子树渲染代码，如果有
-     errors:Array<string>  // 模板语法错误，如果任何
+     staticRenderFns:Array<string>, // 为静态子树渲染代码,如果有
+     errors:Array<string>  // 模板语法错误,如果任何
    } 
  */
 const ast = compiler.compile(template);
@@ -234,7 +234,7 @@ console.log(ast.render);
 
 ```js
 <template>
-  <div v-if="true" v-for="n in 3"></div>
+  <div v-if='true' v-for='n in 3'></div>
 </template>;
 
 // 编译结果如下:
@@ -252,7 +252,7 @@ import {
   createElementVNode as _createElementVNode,
   // 用于创建一个注释虚拟节点
   createCommentVNode as _createCommentVNode,
-} from "vue";
+} from 'vue';
 function render(_ctx, _cache) {
   return true
     ? (_openBlock(),
@@ -260,14 +260,14 @@ function render(_ctx, _cache) {
         _Fragment,
         { key: 0 },
         _renderList(3, (n) => {
-          return _createElementVNode("div");
+          return _createElementVNode('div');
         }),
         64 /* STABLE_FRAGMENT */
       ))
-    : _createCommentVNode("v-if", true);
+    : _createCommentVNode('v-if', true);
 }
 __sfc__.render = render;
-__sfc__.__file = "App.vue";
+__sfc__.__file = 'App.vue';
 export default __sfc__;
 ```
 
@@ -276,7 +276,7 @@ export default __sfc__;
 
 ```js
 <template>
-  <div v-if="false" v-for="n in 3"></div>
+  <div v-if='false' v-for='n in 3'></div>
 </template>;
 
 // 编译结果如下:
@@ -294,7 +294,7 @@ import {
   createElementVNode as _createElementVNode,
   // 用于创建一个注释虚拟节点
   createCommentVNode as _createCommentVNode,
-} from "vue";
+} from 'vue';
 function render(_ctx, _cache) {
   return false
     ? (_openBlock(),
@@ -302,14 +302,14 @@ function render(_ctx, _cache) {
         _Fragment,
         { key: 0 },
         _renderList(3, (n) => {
-          return _createElementVNode("div");
+          return _createElementVNode('div');
         }),
         64 /* STABLE_FRAGMENT */
       ))
-    : _createCommentVNode("v-if", true);
+    : _createCommentVNode('v-if', true);
 }
 __sfc__.render = render;
-__sfc__.__file = "App.vue";
+__sfc__.__file = 'App.vue';
 export default __sfc__;
 ```
 
@@ -363,7 +363,7 @@ new Vue({
   },
   mounted() {
     this.timer = setInterval(() => {
-      console.log("clear...");
+      console.log('clear...');
     }, 1000);
   },
   beforeDestroy() {
@@ -380,9 +380,9 @@ new Vue({
 new Vue({
   mounted() {
     const timer = setInterval(() => {
-      console.log("clear");
+      console.log('clear');
     }, 1000);
-    this.$once("hook:beforeDestroy", () => {
+    this.$once('hook:beforeDestroy', () => {
       clearInterval(timer);
     });
   },
@@ -400,30 +400,30 @@ Vue.js 中的 $nextTick() 方法用于在 DOM 更新之后执行一个回调函�
 
 ```js
 new Vue({
-  el: "#app",
-  data: { message: "Hello Vue.js!" },
+  el: '#app',
+  data: { message: 'Hello Vue.js!' },
   methods: {
     updateMessage() {
-      this.message = "Hello World!";
+      this.message = 'Hello World!';
       this.$nextTick(function () {
         // 在下次 DOM 更新循环结束后执行
-        this.$refs.message.innerHTML = "Updated!";
+        this.$refs.message.innerHTML = 'Updated!';
       });
     },
   },
 });
 ```
 
-在上面的例子中,当 updateMessage() 方法被调用时,它会先更新数据,然后在 $nextTick() 方法中执行回调函数，以确保 DOM 元素已经被更新。
+在上面的例子中,当 updateMessage() 方法被调用时,它会先更新数据,然后在 $nextTick() 方法中执行回调函数,以确保 DOM 元素已经被更新。
 
 在 Vue.js 2 (以 2.7 为例)中,$nextTick() 方法的源码实现在 `src/core/util/next-tick.ts` 文件中。具体来说,$nextTick() 方法是通过 Vue 的 util 模块中的 nextTick() 函数来实现的。在 next-tick.ts 文件中,首先会根据浏览器环境来选择使用哪种异步任务处理方式(比如 Promise、MutationObserver 或者 setImmediate、setTimeout),然后将传入的回调函数加入到异步任务队列中。$nextTick() 的源码如下:
 
 ::: details $nextTick()源码
 
 ```ts
-import { noop } from "shared/util";
-import { handleError } from "./error";
-import { isIE, isIOS, isNative } from "./env";
+import { noop } from 'shared/util';
+import { handleError } from './error';
+import { isIE, isIOS, isNative } from './env';
 
 // 是否使用微任务
 export let isUsingMicroTask = false;
@@ -451,7 +451,7 @@ function flushCallbacks() {
 
 let timerFunc;
 // 如果当前环境支持Promise,则使用Promise.then()执行刷新任务队列
-if (typeof Promise !== "undefined" && isNative(Promise)) {
+if (typeof Promise !== 'undefined' && isNative(Promise)) {
   const p = Promise.resolve();
   timerFunc = () => {
     p.then(flushCallbacks);
@@ -467,10 +467,10 @@ if (typeof Promise !== "undefined" && isNative(Promise)) {
 // 如果当前环境支持MutationObserver,则使用MutationObserver()执行刷新任务队列
 else if (
   !isIE &&
-  typeof MutationObserver !== "undefined" &&
+  typeof MutationObserver !== 'undefined' &&
   (isNative(MutationObserver) ||
     // PhantomJS and iOS 7.x
-    MutationObserver.toString() === "[object MutationObserverConstructor]")
+    MutationObserver.toString() === '[object MutationObserverConstructor]')
 ) {
   let counter = 1;
   const observer = new MutationObserver(flushCallbacks);
@@ -485,7 +485,7 @@ else if (
   isUsingMicroTask = true;
 }
 // 如果当前环境支持setImmediate,则使用setImmediate()执行刷新任务队列
-else if (typeof setImmediate !== "undefined" && isNative(setImmediate)) {
+else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   timerFunc = () => {
     setImmediate(flushCallbacks);
   };
@@ -507,7 +507,7 @@ export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
       try {
         cb.call(ctx);
       } catch (e: any) {
-        handleError(e, ctx, "nextTick");
+        handleError(e, ctx, 'nextTick');
       }
     } else if (_resolve) {
       _resolve(ctx);
@@ -517,7 +517,7 @@ export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
     pending = true;
     timerFunc();
   }
-  if (!cb && typeof Promise !== "undefined") {
+  if (!cb && typeof Promise !== 'undefined') {
     return new Promise((resolve) => {
       _resolve = resolve;
     });
@@ -530,7 +530,7 @@ export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
 
 需要注意的是,Vue 在每次异步执行回调函数前会将 pending 标志设置为 true,以保证异步任务队列中的回调函数只会被执行一次。同时,如果当前浏览器环境支持 Promise,则 $nextTick() 方法也可以返回一个 Promise 对象,以便在异步任务执行完毕后进行相关操作。
 
-**$nextTick() 的实现原理:将$nextTick()回调函数加入一个队列中,在下次 DOM 更新循环结束后依次执行队列中的所有回调函数。当数据变化时,Vue 会先将需要更新的 DOM 元素放到一个队列中,然后通过浏览器提供的 API 监听 DOM 的变化,当 DOM 变化结束时,触发 $nextTick() 方法中的回调函数**。
+**$nextTick() 的实现原理:当响应式数据变化时,Vue 不会立即更新 DOM,而是将任务(该任务可能包括`$nextTick()`、watcher 的更新任务等等)推送到异步更新队列中,当组件状态发生变化后才会循环执行异步更新队列中的任务。由于异步更新队列的中任务并通过 Promise.then()、MutationObserver.observe、setImmediate、setTimeout 等微任务调度器包装(注意 Promise.then 和 MutationObserver.observe 都属于微任务,setImmediate、setTimeout 属于宏任务),可以保证在下一个微任务执行时执行异步更新队列中的任务,这意味着微任务在浏览器执行更新 DOM 操作后立即执行,因此在组件更新后,$nextTick()可以立即获取到最新的数据状态和 DOM 结构**。
 
 ## 16.keepAlive 组件的实现原理
 
@@ -623,7 +623,7 @@ router.afterEach((to, from) => {});
 const router = new VueRouter({
   routes: [
     {
-      path: "/foo",
+      path: '/foo',
       component: Foo,
       beforeEnter: (to, from, next) => {
         // ...
@@ -645,7 +645,7 @@ const Foo = {
   beforeRouteEnter(to, from, next) {},
   /**
    * 在当前路由改变,但是该组件被复用时调用。举例来说,对于一个带有动态参数的路径
-   * /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候,由于会渲染同样的 Foo 组件,
+   * /foo/:id,在 /foo/1 和 /foo/2 之间跳转的时候,由于会渲染同样的 Foo 组件,
    * 因此组件实例会被复用。而这个钩子就会在这个情况下被调用。可以访问组件实例 `this`
    */
   beforeRouteUpdate(to, from, next) {},
@@ -661,7 +661,7 @@ const Foo = {
 - 路径参数(即动态路由):在路由定义时使用`:变量名`来表示动态参数,例如在路由定义中设置 `path: '/user/:userId'`,在组件中可以通过 `$route.params.userId` 来获取参数。
 - 查询参数:在路由跳转时可以使用 `router.push({path: '/user', query: {userId: 123}})` 来传递参数,组件中可以通过 `$route.query.userId` 来获取参数。
 - 状态参数(即路由元信息):可以在路由定义中设置 meta 属性,例如 `meta: {isLogin: true}`,在组件中可以通过 `$route.meta.isLogin` 来获取参数。
-- props 参数:可以在路由定义中通过设置 `props: true` 或者自定义函数来启用 props 参数,例如 props: true 表示将所有的路由参数通过 props 传递给组件，自定义函数可以通过 `$route.params` 或 `$route.query` 来获取参数,例如 `props: (route) => ({userId: route.params.userId})`。在组件中可以通过 props 属性来获取参数。
+- props 参数:可以在路由定义中通过设置 `props: true` 或者自定义函数来启用 props 参数,例如 props: true 表示将所有的路由参数通过 props 传递给组件,自定义函数可以通过 `$route.params` 或 `$route.query` 来获取参数,例如 `props: (route) => ({userId: route.params.userId})`。在组件中可以通过 props 属性来获取参数。
 
 ## 24.VueRouter 中 params 和 query 传参的区别?
 
@@ -696,27 +696,27 @@ const Foo = {
 function render(ctx) {
   return (
     openBlock(),
-    createBlock("div", null, [
+    createBlock('div', null, [
       /*
        * 当前虚拟节点是静态节点,更新时创建虚拟DOM会带来性能开销和内存占用,
        * 因此可以将该节点静态提升到渲染函数外
        */
-      createVNode("p", null, "static text"),
-      createVNode("p", null, ctx.title, 1 /* TEXT */),
+      createVNode('p', null, 'static text'),
+      createVNode('p', null, ctx.title, 1 /* TEXT */),
     ])
   );
 }
 
 //--- 静态提升后的例子
 // 将静态节点提升到渲染函数外,渲染函数重新执行时并不会重新创建静态虚拟节点,从而避免了额外开销
-const hoist1 = createVNode("p", null, "static text");
+const hoist1 = createVNode('p', null, 'static text');
 function render(ctx) {
   return (
     openBlock(),
-    createBlock("div", null, [
+    createBlock('div', null, [
       // 引用静态节点
       hoist1,
-      createVNode("p", null, ctx.title, 1 /* TEXT */),
+      createVNode('p', null, ctx.title, 1 /* TEXT */),
     ])
   );
 }
@@ -755,7 +755,107 @@ function render(ctx) {
 - watch 会在组件实例化时就执行一次回调函数,而 watchEffect 只有在组件渲染时才会执行,因此 watchEffect 可以更好地适应动态的响应式数据变化。
 - watch 需要手动清除监听器,否则可能会导致内存泄漏,而 watchEffect 会在组件销毁时自动清除。
 
-## 29.如何解决 Vue3 中响应式数据丢失问题?
+## 29.如何解决 Vue3 解构赋值响应式数据丢失问题?
+
+在 Vue 3 中,解构赋值可能导致响应式数据丢失的问题。这是因为 Vue3 响应式系统基于 Proxy 对象,而解构赋值会丢失原始响应式对象的引用,直接创建了一个新的局部变量引用。例如:
+
+```ts
+const state = reactive({
+  user: {
+    name: 'John',
+    age: 30,
+  },
+});
+// 响应式丢失,name 和 age 是原始值的拷贝,解构赋值导致它们失去了与 state.user 之间的响应式链接
+const { name, age } = state.user;
+```
+
+解决方法如下:
+
+- 直接使用响应式对象以降低复杂性。
+- 通过 toRefs()包装解构对象。toRefs()用于将响应式对象的属性转换为具有响应性的 ref,从而保持响应性。除了 toRefs()外,pinia 也提供了 storeToRefs(),用于将 store 属性(state、getters 以及插件添加的 state)转为 ref。
+
+```ts
+// 不会丢失响应式,通过toRefs包装解构对象中的每个属性都会转为ref
+const { name, age } = toRefs(state.user);
+```
+
+- 使用 computed 包装解构属性解构。在 Vue3 中 reactive、ref、computed 都可以定义响应式状态。
+
+## 什么是 setup 语法糖?setup 与 defineComponent 的区别?
+
+`<script setup>` 是在单文件组件 (SFC) 中使用组合式 API 的编译时语法糖。当同时使用 SFC 与组合式 API 时该语法是默认推荐。相比于普通的 `<script>` 语法,它具有更多优势:
+
+- 更少的样板内容,更简洁的代码。
+- 能够使用纯 TypeScript 声明 props 和自定义事件。
+- 更好的运行时性能 (其模板会被编译成同一作用域内的渲染函数,避免了渲染上下文代理对象)。
+- 更好的 IDE 类型推导性能(减少了语言服务器从代码中抽取类型的工作)。
+
+setup 语法糖和 defineComponent 都支持定义组件,两者区别如下:
+
+```vue
+<!-- defineComponent 组件 -->
+<template>
+  <div>
+    <span>{{ count }}</span>
+    <button @click="addCount">addCount</button>
+  </div>
+</template>
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+export default defineComponent({
+  setup(props, { expose }) {
+    const count = ref(0);
+    const addCount = () => {
+      count.value++;
+    };
+    return {
+      count,
+      addCount,
+    };
+  },
+});
+</script>
+
+<!-- setup语法糖组件 -->
+<template>
+  <div>
+    <span>{{ count }}</span>
+    <button @click="addCount">addCount</button>
+  </div>
+</template>
+<script setup lang="ts">
+import { ref } from 'vue';
+const count = ref(0);
+const addCount = () => {
+  count.value++;
+};
+</script>
+
+<!-- 测试组件,打印组件实例 -->
+<template>
+  <div>
+    <SetupComponent ref="setupRef" />
+    <DefineComponent ref="defineRef" />
+  </div>
+</template>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import SetupComponent from './SetupComponent.vue';
+import DefineComponent from './DefineComponent.vue';
+
+const setupRef = ref();
+const defineRef = ref();
+onMounted(() => {
+  console.log('setup 语法糖:', setupRef.value);
+  console.log('defineComponent:', defineRef.value);
+});
+</script>
+```
+
+执行结果如下:
+![prototype](../assets/images/setupComponent.png)
+从执行结果来看,setup 语法糖组件实例仅对外暴露了 get 和 set 函数,而 defineComponent 组件实例对外暴露$emit、$props、$data、$el、$watch 等一系列函数,这是因为在 defineComponent setup 函数中提供了一个 expose 函数(允许手动调用对外暴露属性或函数),默认会导出一系列组件相关的 api。虽然 setup 语法糖与 defineComponent 编译后结果类似,但是 setup 语法糖经过编译后只调用了 expose(),并不对外部暴露任何属性或方法。由于 defineComponent 组件实例对外暴露了一系列 api,使得外部有可能修改这些 api,从而产生异常行为。
 
 ## Pinia 对比 Vuex 的优点?
 
@@ -766,20 +866,110 @@ Pinia 和 Vuex 都是 Vue.js 中非常流行的状态管理库。Pinia 对比 Vu
 - 更简单的 API。Pinia 的 API 更简单直观,不需要像 Vuex 那样编写大量的模板代码。它也更容易理解和维护,因为它更加模块化和解耦。Pinia 基于 Vue3 的 Composition API 组织代码,而 Vuex 更注重使用重命名空间和模块化组织代码。在 Vuex 引入了 state、mutation、action、getter 四个概念,其中触发 mutation 用于同步修改状态,触发 action 用于异步修改状态。而 Pinia 仅引入了 state、action、getter,触发 action 不仅可以同步修改状态,也可以异步修改状态。
 - 更好的拓展性。Pinia 采用插件化的设计,使得开发者可以很方便地扩展和定制库的功能,比如添加插件以支持异步状态管理或数据持久化。
 
-## 26.详细说说 Vue 中的 DIFF 算法
+## 26.详细说说 Vue 中的 DIFF 算法?
 
-## 27.Vue 与 React 的区别?
+Virtual DOM 是 JavaScript 对象的树结构,它是对真实 DOM 的抽象表示。每次状态发生变化时,Vue 会生成新的 Virtual DOM 树,并通过 Diff 算法对比新旧两棵树,从而得出需要更新的最小 DOM 操作。
+
+### 26.1 Vue2 Diff 算法
+
+Vue 2 中的 Diff 算法使用了一种启发式算法,它主要依赖于以下几个步骤:
+
+- 同层比较:Vue 2 中的 Diff 算法只会对同一层级的节点进行比较,而不会跨层级比较。这是因为跨层级比较的复杂度较高,会显著影响性能。
+- 双端比较:Vue2 Diff 算法采用双端比较的策略,从两边同时向中间进行比较,尽可能地减少节点移动,从而快速找到相同的节点。对于一个大小为 n 的列表,最坏情况下(所有节点都需要重新排列)算法可能需要遍历列表中的每一个节点,并在每次查找中进行最多 n 次的比较,这种情况下,时间复杂度为 O(n)的平方;实际情况中,特别是在列表发生小范围更新时,时间复杂度通常接近于线性 O(n)。双端比较的过程如下:
+  - 头对头:新旧节点树的头节点进行比较。
+  - 尾对尾:新旧节点树的尾节点进行比较。
+  - 新头对旧尾:新的头节点和旧的尾节点进行比较。
+  - 新尾对旧头:新的尾节点和旧的头节点进行比较。
+- 处理相同节点:当找到两个相同节点时(通过 key 判断),会进行深度对比,即递归比较子节点,从而找出具体的差异。
+- 创建和删除节点:如果一个节点在新树中存在而在旧树中不存在,则会创建新的节点并插入到 DOM 中。如果一个节点在旧树中存在而在新树中不存在,则会删除该节点。
+- 移动节点:如果两个节点相同(通过 key 判断),但是位置不同,则会将节点移动到新的位置。
+
+Vue 2 的 Diff 算法通过同层比较和双端比较策略,高效地对比新旧 Virtual DOM 树,找出最小的修改集合,并据此高效地更新实际的 DOM。这种启发式算法在绝大多数情况下性能表现良好,确保了 Vue 在更新界面时的高效性和响应性。
+
+### 26.2 Vue3 Diff 算法
+
+Vue.js 3 在 Diff 算法上做了一些改进和优化,相比 Vue.js 2,Vue.js 3 的 Diff 算法更高效,并且更注重性能和内存优化。以下是 Vue.js 3 和 Vue.js 2 的 Diff 算法主要区别:
+
+- 更高效的双端 Diff 算法:在 Vue.js 2 中,Diff 算法已经采用了双端比较策略,但 Vue.js 3 对这一策略进行了进一步优化,使其在大多数情况下更高效。Vue.js 2 使用头对头、尾对尾、新头对旧尾、新尾对旧头的双端比较方式来尝试最小化 DOM 操作。Vue.js 3 对双端比较算法进行了优化,使其在处理节点移动、添加和删除时更加高效。这些优化包括但不限于:
+  - 更智能的节点复用策略,减少不必要的节点删除和创建。
+  - 更优化的节点位置计算,避免重复计算。
+  - 引入了新的 PatchFlag 标记,以优化静态节点的处理。
+- PatchFlag 的引入:Vue.js 3 引入了 PatchFlag 来标记动态节点的变化。PatchFlag 是编译阶段生成的一组位标识,用于指示特定的更新类型。这种优化使得 Vue.js 3 可以在运行时更高效地判断哪些部分需要更新,从而减少不必要的比较和 DOM 操作。
+
+```ts
+const PatchFlags = {
+  TEXT: 1, // 动态文本节点
+  CLASS: 2, // 动态 class
+  STYLE: 4, // 动态 style
+  PROPS: 8, // 动态属性
+  FULL_PROPS: 16, // 需要完整 diff 的属性
+  // 更多的标志...
+};
+```
+
+- 静态提升和缓存:在 Vue.js 3 中,静态节点和静态属性会被提升到渲染函数之外,从而避免每次渲染时重复创建这些节点。这一优化大大减少了内存占用和渲染开销。此外,Vue.js 3 还会缓存一些可以重复使用的节点和属性,进一步提高性能。
+
+- Fragment 和多个根节点支持:Vue.js 3 支持 Fragment 和多个根节点,这要求 Diff 算法更加智能,能够处理更多类型的节点结构。在 Vue.js 2 中,每个组件只能有一个根节点,而 Vue.js 3 允许多个根节点,这使得 Diff 算法需要适应更复杂的情况。
+
+Vue.js 3 的 Diff 算法在 Vue.js 2 的基础上进行了多方面的优化,包括双端比较的改进、PatchFlag 的引入、静态提升和缓存等。这些优化使得 Vue.js 3 在处理复杂视图更新时更加高效,性能更佳,同时内存使用也更为合理。
+
+## 27.Vue key 属性的作用?
+
+在 Vue 中,key 属性用于唯一标识列表中的每一个节点,从而帮助 Vue 在虚拟 DOM 的 diff 算法中高效地判断和追踪每个节点的变化。key 主要作用于如下:
+
+- 唯一标识节点:key 属性用于唯一标识每个节点。通过 key,Vue 可以在进行 diff 运算时准确地找到对应的节点,而不是仅仅根据节点的顺序来判断节点是否发生变化。
+- 更高效的 diff 算法:在没有 key 的情况下,Vue 会使用默认的算法来尝试最小化 DOM 操作。它会根据新旧节点的顺序和类型进行对比。如果顺序发生变化或有新增/删除的节点,Vue 可能会进行大量的 DOM 操作。通过使用 key 属性,Vue 能够更准确和高效地进行节点的复用、移动、删除和创建操作,从而优化性能。
+- 避免不必要的组件重渲染:在使用组件列表时,key 还能避免组件的重渲染问题。如果没有 key,当列表顺序变化时,组件可能会被错误地复用,导致组件状态不正确。通过 key 属性,Vue 可以确保组件在顺序变化时被正确地复用或销毁和重新创建,从而避免状态问题。
+
+## 28.Vue 与 React 的区别?
+
+Vue 与 React 在 UI 描述均采用声明式编程模型,这种模型使得开发者可以更直观地描述 UI 和数据的关系,而不需要手动操作 DOM。通过响应式系统、模板语法(Vue)和 JSX(React)等技术,这些框架能够高效地管理和更新 UI,提升开发体验和应用性能。其区别如下:
 
 - 从 UI 描述来看,Vue 使用模板(或者 JSX)描述 UI,而 React 使用 JSX 描述 UI。模板相比较 JSX 的优点在于提供模板语法糖(例如 v-for、v-if)、编译时可以根据编译信息进行优化,其缺点是不如 JSX 灵活。
 - 从数据流方面来看,Vue 中数据属于可变数据(Mutable),React 中的数据属于不可变数据(Immutable)。Vue 内部提供了响应系统,通过拦截操作,修改一个数据的同时也会收集依赖,然后数据修改的时候去通知更新 DOM。简单来说修改 Vue 中的响应式数据,可以触发组件重新渲染。React 的范式更偏向函数式编程,在 React 中定义的状态是不可变的,修改状态时需要返回一个新的状态,直接修改状态并不会触发组件重新渲染。
 - 从运行环境来看,Vue 偏编译时和运行时,而 React 属于重运行时。Vue 在运行时和预编译取了一个很好地权衡,保留了虚拟 dom,通过响应式控制虚拟 dom 的颗粒度,在预编译阶段里又做了足够多的性能优化。React 的 Runtime 相比较 Vue 更重一些,在 React 中数据发生变化后,并没有直接去操作 dom,而是生成一个新的虚拟 dom,并且通过 diff 算法得出最小的操作行为,该过程全部发生在运行时阶段。
 - 从抽象层面来看,Vue 抽象层级较低,React 抽象层次较高。React 中定义了 Component、State、Hooks、Effect 等概念,抽象层次较高,上手难度较大。而 Vue 中仅了解 SFC、data、methods 等概念即可上手。
 
-## 什么是 Teleport?
+## 29.什么是 Keepalive?
 
-Teleport 是 Vue3 内置的一个组件,它可以将一个组件内部的一部分模板"传送"到该组件的 DOM 结构外层的位置去。渲染的 DOM 结构,它不会影响组件间的逻辑关系,因此 Teleport 常用于解决弹出层层级问题,例如弹出层使用绝对布局,而外层元素设置为相对布局,由于弹出层是相对外层元素布局的,此时外层元素会影响弹出层布局。使用 Teleport
-组件可以将组件内容传送至指定 DOM(例如 body),可以避免外层元素产生的布局影响。
+Vue 的 KeepAlive 组件用于缓存动态组件,以避免不必要的重新渲染,从而提升性能。在单页面应用中,频繁切换路由或组件时,KeepAlive 能显著减少组件的创建和销毁次数。KeepAlive 内部维护一个缓存对象 (cache) 和一个组件实例对象 (keys)。当组件第一次被渲染时,KeepAlive 会缓存该组件的 VNode 和实例:
 
-## 什么是 Suspense?
+- 首次渲染:当组件第一次渲染时,KeepAlive 会调用组件的 render 函数生成 VNode,并将该 VNode 和组件实例存入缓存对象。
+- 缓存策略:KeepAlive 使用 name 和 key 来唯一标识组件实例。如果组件未设置 key,则使用 VNode 的 tag 作为默认 key。
+
+当组件被切换时,KeepAlive 会根据缓存策略决定是激活缓存中的组件还是重新渲染新组件。如果组件在缓存中存在,KeepAlive 会直接从缓存中取出组件实例,并调用组件的 activated 钩子函数。当组件从显示状态切换到隐藏状态时,KeepAlive 会调用组件的 deactivated 钩子函数,并将其保存在缓存中,而不是销毁。
+
+## 30.什么是 Teleport?
+
+Teleport 是 Vue3 内置的一个组件,它可以将一个组件内部的一部分模板"传送"到该组件的 DOM 结构外层的位置去。渲染的 DOM 结构,它不会影响组件间的逻辑关系,因此 Teleport 常用于解决弹出层层级问题,例如弹出层使用绝对布局,而外层元素设置为相对布局,由于弹出层是相对外层元素布局的,此时外层元素会影响弹出层布局。使用 Teleport 组件可以将组件内容传送至指定 DOM(例如 body),可以避免外层元素产生的布局影响。Teleport 实现流程如下:
+
+process 函数是 Teleport 的核心部分,它负责处理 vnode 的挂载、更新和卸载。
+
+- 在挂载阶段时,process 函数首先调用 resolveTarget 函数来解析目标位置。在下面例子,目标位置被解析成`document.querySelector('#teleport-target')`。
+
+```vue
+<teleport to="#teleport-target">
+  <div class="modal">
+    <h2>Modal Content</h2>
+  </div>
+</teleport>
+```
+
+- 解析出目标位置后,调用 遍历 Teleport 组件的子节点,并调用 move 函数将每个子节点移动到目标位置。在上面例子中 moveTeleport 会将 `<div class="modal">` 移动到 `#teleport-target`。
+- 调用 patchChildren 将子节点渲染到目标节点。在更新阶段,process 函数会先解析新的目标位置,如果目标位置变化则重新移动子节点,接着更新子节点的内容。
+
+## 31.什么是 Suspense?
 
 Suspense 是 Vue3 提供内置的一个组件,用于处理在组件树中协调对异步依赖,它可以在组件树上层等待下层的多个嵌套异步依赖项解析完成,并可以在等待时渲染一个加载状态。
+
+## 32.Vue 性能优化?
+
+虽然 Vue 在内部做了大量优化工作,但是在实际开发中,仍可能会出现性能问题,常见优化策略如下:
+
+- 代码分割。代码分割是指构建工具将构建后的 JavaScript 包拆分为多个较小的,可以按需或并行加载的文件。通过适当的代码分割,页面加载时需要的功能可以立即下载,而额外的块只在需要时才加载,从而提高性能。目前主流打包工具(Webpack、Rollup)可以通过分析 ESM 动态导入的语法来自动进行代码分割。在实际开发中,可以使用 defineAsyncComponent()或 import()懒加载资源,从而减少首次渲染耗时。
+- 使用 v-once 或 v-memo 指令跳过不必要的渲染。
+  - v-once 是一个内置的指令,可以用来渲染依赖运行时数据但无需再更新的内容。它的整个子树都会在未来的更新中被跳过。
+  - v-memo 是一个内置指令,可以用来有条件地跳过某些大型子树或者 v-for 列表的更新。
+- shallowRef()/shallowReactive()代替 ref()/reactive()。Vue 的响应性系统默认是深度的,在数据量巨大时(大型数组或层级很深的对象时),深度响应性也会导致不小的性能负担,因为每个属性访问都将触发代理的依赖追踪。Vue 确实也为此提供了一种解决方案,通过使用 shallowRef() 和 shallowReactive() 来绕开深度响应。浅层式 API 创建的状态只在其顶层是响应式的,对所有深层的对象不会做任何处理。这使得对深层级属性的访问变得更快,但代价是,我们现在必须将所有深层级对象视为不可变的,并且只能通过替换整个根状态来触发更新
+- 使用虚拟列表:所有的前端应用中最常见的性能问题就是渲染大型列表。无论一个框架性能有多好,渲染成千上万个列表项都会变得很慢,因为浏览器需要处理大量的 DOM 节点。虚拟列表不会渲染所有 DOM 节点,仅渲染位于可视区域的数据,能避免渲染大量 DOM。当滚动可视区域时,虚拟列表会根据滚动偏移量在内存中动态计算可视区域数据,可以保证渲染不必要的 DOM 节点。
+- 使用 SSR(服务端渲染):在实际开发中,大多数采用纯客户端渲染,而纯客户端的 SPA 在首屏加载和 SEO 方面有显著的问题,因为浏览器会收到一个巨大的 HTML 空页面,只有等到 JavaScript 加载完毕才会渲染出内容。Vue 提供了一系列 API,支持将一个 Vue 应用在服务端渲染成 HTML 字符串。这能让服务器直接返回渲染好的 HTML,让用户在 JavaScript 下载完毕前就看到页面内容。Vue 之后会在客户端对应用进行“激活 (hydrate)”使其重获可交互性。这被称为服务端渲染 (SSR),它能够极大地改善应用在 Web 核心指标上的性能表现,如最大内容绘制 (LCP)。使用 SSR 可以有效地提示首页加载速度,而且有利于搜索引擎 SEO。

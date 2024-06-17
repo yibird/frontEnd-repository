@@ -1,26 +1,40 @@
 export default {
-  text: "React",
+  text: 'React',
   collapsible: true,
   collapsed: true,
   items: [
     {
-      text: "HOC(高阶组件)",
-      link: "/react/hoc.md",
+      text: 'HOC(高阶组件)',
+      link: '/react/hoc.md',
       items: [],
     },
     {
-      text: "hooks",
-      link: "/react/hooks.md",
+      text: 'hooks',
+      link: '/react/hooks.md',
       items: [],
     },
     {
-      text: "自定义Hooks",
-      link: "/react/customizeHooks.md",
+      text: '自定义Hooks',
+      link: '/react/customizeHooks.md',
       items: [],
     },
     {
-      text: "Redux源码分析",
-      link: "/react/redux.md",
+      text: 'React源码分析',
+      items: [
+        {
+          text: 'React源码分析',
+          link: '/react/sourceCode/introduction.md',
+        },
+      ],
+    },
+    {
+      text: 'Redux源码分析',
+      link: '/react/redux.md',
+      items: [],
+    },
+    {
+      text: 'Zustand源码分析',
+      link: '/react/zustand.md',
       items: [],
     },
   ],

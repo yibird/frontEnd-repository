@@ -1,4 +1,4 @@
-## 1.手写 Object.create()
+## 1.Object.create()
 
 Object.create(proto,propertiesObject?)用于创建一个新对象,允许接收一个对象为参数,使用参数来提供新创建的对象的`__proto__`(会返回一个新对象,带着指定的原型对象和属性)。proto 为新创建对象的原型对象,propertiesObject 用来给新创建的对象添加可枚举属性,与 Object.defineProperies 方法第二个参数用法一样。
 
@@ -9,7 +9,7 @@ Object.create(proto,propertiesObject?)用于创建一个新对象,允许接收�
 ```js
 // 实现Object.create(),暂不考虑第二个参数
 function create(proto) {
-  const isObject = typeof proto === "object" || typeof proto === "function";
+  const isObject = typeof proto === 'object' || typeof proto === 'function';
   // (1).参数检查。create() 仅支持传入对象或函数类型的参数
   if (typeof proto === undefined || !isObject) {
     throw new TypeError(
@@ -34,18 +34,18 @@ function create(proto) {
 
 // 测试
 function Base() {
-  this.name = "z乘风";
+  this.name = 'z乘风';
 }
 Base.age = 18;
 Base.prototype.say = function () {
-  return "hello";
+  return 'hello';
 };
 
 const obj = create(Base);
 console.log(obj.__proto__ === Base); // true
 ```
 
-## 2.手写 Object.freeze()
+## 2.Object.freeze()
 
 Object.freeze()用于冻结一个对象,接收一个对象作为参数,返回被冻结后的对象,冻结后的对象不能被修改,不能添加新属性,不能删除已有属性,不能修改该对象已有属性的可枚举性、可配置性、可写性,以及不能修改已有属性的值,被冻结对象的原型也不能被修改。freeze()实现原理是:**使用 Object.seal()密封对象,使得被密封对象不可删除属性、添加新属性,使用 Object.defineProperty()将对象属性配置为不可写,对于对象嵌套使用递归实现深层次的冻结。**在 Vue 或 Vuex 中如果对于 data 或 vuex 里使用 freeze 冻结了的对象,vue 不会做 getter 和 setter 的转换。如果有一个巨大数组且确信不会发生变化,使用 Object.freeze()可以让性能大幅提升。
 
@@ -72,26 +72,26 @@ function freeze(obj) {
     }
     return obj;
   } else {
-    throw new TypeError("obj not an object");
+    throw new TypeError('obj not an object');
   }
 }
 
 // Object.freeze()例子
-const obj = { name: "z乘风", age: 18, city: "鸡城" };
+const obj = { name: 'z乘风', age: 18, city: '鸡城' };
 const newObj = Object.freeze(obj);
-newObj.name = "zxp";
+newObj.name = 'zxp';
 console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"} 无法修改属性值
 delete newObj.city; // false 无法删除属性
-newObj["like"] = "美女";
+newObj['like'] = '美女';
 console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"} 无法添加属性值
 
 // 手写freeze()例子
-const obj = { name: "z乘风", age: 18, city: "鸡城" };
+const obj = { name: 'z乘风', age: 18, city: '鸡城' };
 const newObj = freeze(obj);
-newObj.name = "zxp";
+newObj.name = 'zxp';
 console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"}
 delete newObj.city; // false
-newObj["like"] = "美女";
+newObj['like'] = '美女';
 console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"}
 ```
 
@@ -107,7 +107,7 @@ Object.assign()原理是通过遍历需要合并对象数组,挨个遍历合并�
 Object.myAssign = function (target, sources) {
   // 为null抛出异常
   if (target === null)
-    throw new TypeError("Cannot convert undefined or null to object");
+    throw new TypeError('Cannot convert undefined or null to object');
   /**
    * 通过Object构造函数将target包装成一个新对象,Object()包装对象特点:
    * (1).如果包装值是null或undefined会返回一个空对象,否则它将返回一个包装值相对应的类型的对象。
@@ -138,8 +138,8 @@ Object.myAssign = function (target, sources) {
   }
   return to;
 };
-const a = { name: "哈哈", user: { age: 10, obj: { name: "小白" } } };
-const b = { name: "呵呵", user: { obj: { name: "小黑" } } };
+const a = { name: '哈哈', user: { age: 10, obj: { name: '小白' } } };
+const b = { name: '呵呵', user: { obj: { name: '小黑' } } };
 const mergeObj = Object.myAssign(a, b);
 console.log(mergeObj); // { name: '呵呵', user: { obj: { name: '小黑' } } }
 ```
@@ -152,14 +152,14 @@ deepmerge()用于深度合并对象。原理是遍历合并对象判断 target �
 Object.deepmerge = function (target, source) {
   for (let key in source) {
     target[key] =
-      target[key] && typeof target[key].toString() === "[object Object]"
+      target[key] && typeof target[key].toString() === '[object Object]'
         ? Object.deepmerge(target[key], source[key])
         : (target[key] = source[key]);
   }
   return target;
 };
-const a = { name: "哈哈", user: { age: 10, obj: { name: "小白" } } };
-const b = { name: "呵呵", user: { obj: { name: "小黑" } } };
+const a = { name: '哈哈', user: { age: 10, obj: { name: '小白' } } };
+const b = { name: '呵呵', user: { obj: { name: '小黑' } } };
 const mergeObj = Object.deepmerge(a, b);
 console.log(mergeObj);
 ```
@@ -171,7 +171,7 @@ console.log(mergeObj);
 ```js
 function isPlainObject(obj) {
   // 不是对象或是 null,则不是纯对象
-  if (typeof obj !== "object" || obj === null) {
+  if (typeof obj !== 'object' || obj === null) {
     return false;
   }
 

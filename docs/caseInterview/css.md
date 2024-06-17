@@ -79,15 +79,15 @@ function init() {
   // 获取屏幕宽度
   var width = document.documentElement.clientWidth;
   // 设置根元素字体大小。此时为宽的10等分
-  document.documentElement.style.fontSize = width / 10 + "px";
+  document.documentElement.style.fontSize = width / 10 + 'px';
 }
 
-// 首次加载应用，设置一次
+// 首次加载应用,设置一次
 init();
-// 监听手机旋转的事件的时机，重新设置
-window.addEventListener("orientationchange", init);
-// 监听手机窗口变化，重新设置
-window.addEventListener("resize", init);
+// 监听手机旋转的事件的时机,重新设置
+window.addEventListener('orientationchange', init);
+// 监听手机窗口变化,重新设置
+window.addEventListener('resize', init);
 ```
 
 为什么推荐 rem 布局而不是 vw/vh 单位?
@@ -145,7 +145,7 @@ window.addEventListener("resize", init);
 
 减少重绘(Repaint)和重排(Reflow)的措施:
 
-- 不要一条一条地修改 DOM 的样式,可以先定义好 css 的 class，然后修改 DOM 的 className。
+- 不要一条一条地修改 DOM 的样式,可以先定义好 css 的 class,然后修改 DOM 的 className。
 - 禁止在循环内频繁触发重绘或重排,而是将多个操作进行合并,然后再触发重绘或重排,这样只会造成一次重绘或重排。
 - 开启 GPU 的硬件加速。浏览器接收到页面文档后,会将文档中的标记语言解析为 DOM 树。DOM 树和 CSS 结合后形成浏览器构建页面的渲染树。渲染树中包含了大量的渲染元素,每一个渲染元素会被分到一个图层中,每个图层又会被加载到 GPU 形成渲染纹理,而图层在 GPU 中是不会触发 重绘的(Repaint)的。CSS 的`transfrom`、`opacity`、`filter`、`will-change`都支持 GPU 硬件加速(开启 GPU 加速会消耗更多的内存,使用 GPU 渲染会影响字体的抗锯齿效果)。例如使用 transfrom 替代元素的边距进行位移形变,使用 opacity 代替 visibility,使用 will-change 提高页面滚动、动画等渲染性能。
 
@@ -216,7 +216,7 @@ window.addEventListener("resize", init);
 `flex:1`是`flex:1 1 0`的简写,而 flex 是一个复合属性,由 flex-grow、flex-shrink、flex-basis 三个属性组成:
 
 - flex-grow:用于设置弹性项目的放大比例(弹性增长因子),指定弹性项目在弹性容器中分配剩余可用空间的比例。默认为 0,表示即如果存在剩余空间,也不放大。如果所有项目的 flex-grow 属性都为 1,则它们将等分剩余空间(如果有的话)。如果一个项目的 flex-grow 属性为 2,其他项目都为 1,则前者占据的剩余空间将比其他项多一倍。
-- flex-shrink:用于设置弹性项目的缩小比例(弹性缩小因子),指定弹性项目在弹性容器中缺少空间时的收缩比例。默认为 1,即如果空间不足,该项目将缩小。如果所有项目的 flex-shrink 属性都为 1,当空间不足时,都将等比例缩小。如果一个项目的 flex-shrink 属性为 0,其他项目都为 1,则空间不足时，前者不缩小。
+- flex-shrink:用于设置弹性项目的缩小比例(弹性缩小因子),指定弹性项目在弹性容器中缺少空间时的收缩比例。默认为 1,即如果空间不足,该项目将缩小。如果所有项目的 flex-shrink 属性都为 1,当空间不足时,都将等比例缩小。如果一个项目的 flex-shrink 属性为 0,其他项目都为 1,则空间不足时,前者不缩小。
 - flex-basis:用于设置弹性项目的基准大小,指定弹性项目在弹性容器中的初始大小。默认值为 auto,即项目的本来大小。
 
 设置`flex:1`可以使弹性项目可以自动方法或缩小,以填充弹性容器的可用空间,并且它们的初始大小为 0。flex 属性还有 auto(1 1 auto)和 none(0 0 auto)两个快捷值。
@@ -243,7 +243,7 @@ CSS 中的像素（px）是相对单位,其大小取决于显示器的分辨率�
   position: relative;
 }
 .border-half::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -279,7 +279,7 @@ CSS Sprites 是一种优化网站性能的技术,它将多个小图标或背景�
 - 减少了 HTTP 请求的数量。每个 HTTP 请求都会增加页面加载时间,因此通过将多个图像合并为一个图像来减少 HTTP 请求可以显著提高页面加载速度。
 - 减少了图像的下载时间。合并后的图像比单个图像的总下载时间更短。
 - 减少了服务器负载。减少了 HTTP 请求的数量可以降低服务器的负载,从而提高网站的性能和可伸缩性。
-- 改善了用户体验。网站加载速度更快，用户可以更快地浏览和交互，从而提高用户体验。
+- 改善了用户体验。网站加载速度更快,用户可以更快地浏览和交互,从而提高用户体验。
 
 缺点:
 
@@ -304,8 +304,8 @@ CSS Sprites 是一种优化网站性能的技术,它将多个小图标或背景�
 CSS（Cascading Style Sheets）支持多种单位,以下是一些常用的 CSS 单位:
 
 - 像素(px):最常用的单位之一,相对于屏幕分辨率而言,具有固定的像素值。
-- 百分比(%):相对于父元素的大小，例如一个元素宽度设置为 50%,它将会是其父元素宽度的一半。
-- em:相对于父元素的字体大小，例如一个元素字体大小设置为 2em,它将会是其父元素字体大小的两倍。
+- 百分比(%):相对于父元素的大小,例如一个元素宽度设置为 50%,它将会是其父元素宽度的一半。
+- em:相对于父元素的字体大小,例如一个元素字体大小设置为 2em,它将会是其父元素字体大小的两倍。
 - rem:相对于根元素(即 HTML 元素)的字体大小,与 em 类似,但不受父元素影响。
 - vh 和 vw:视窗高度和宽度的百分比,例如一个元素高度设置为 50vh,它将会是视窗高度的一半。
 - pt:磅数,通常用于打印样式表。
@@ -314,3 +314,38 @@ CSS（Cascading Style Sheets）支持多种单位,以下是一些常用的 CSS �
 需要注意的是,不同单位之间不能直接进行计算。例如,不能将一个元素的宽度设置为 10px + 20%。
 
 ## 18.position、display、overflow、float 这些属性相互叠加后会怎么样？
+
+## CSS 中的重绘(Repaint)和重排(Reflow)是什么?如何避免重绘和重排?
+
+- 重绘(Repaint):重绘是指当元素样式的某些属性发生变化,但不影响其布局的情况下,浏览器重新绘制元素的过程。重绘会根据新的样式属性生成新的位图,然后将其绘制在屏幕上,但是不会改变元素的几何属性和位置。例如修改元素的背景色、文字颜色等操作会触发重绘。
+
+- 重排(Reflow):重排是指当 DOM 结构中的部分或全部元素发生变化,影响了元素的几何属性(例如尺寸、位置、边距等),浏览器需要重新计算元素的几何属性,并重新布局（回流）整个文档中受影响的部分。因此,重排会导致浏览器重新计算元素的位置和大小,并且会影响其他相关元素及其子元素的布局。例如改变元素的宽度、高度、边距、定位等属性,或者添加、删除、隐藏元素等操作会触发重排。
+
+由于重绘仅涉及样式的更新,不影响元素的布局,因此开销相对较小。而重排涉及到元素布局的重新计算和更新,开销较大,可能引起页面的闪烁和性能下降。避免重绘和重排的优化策略如下:
+
+- 使用 transform 代替平移属性(margin 或 left、right、top、bottom),这些属性能够利用硬件加速,避免触发重排和重绘。
+- 批量修改样式。避免在 JavaScript 中频繁修改单个元素的样式属性,而是尽量采用批量操作的方式。例如,使用 element.style.cssText 或者修改元素的 class 来一次性更新多个样式属性。
+- 离线操作 DOM。对于需要频繁操作的 DOM 元素,可以先将其从文档中移除,进行离线操作,然后再将其插入回文档中。这样可以减少重排次数。
+
+```js
+// 创建文档片段
+var fragment = document.createDocumentFragment();
+// 离线修改 DOM
+for (var i = 0; i < 10; i++) {
+  var div = document.createElement('div');
+  div.textContent = 'Item ' + i;
+  fragment.appendChild(div);
+}
+// 一次性插入文档中
+document.body.appendChild(fragment);
+```
+
+- 使用 requestAnimationFrame。对于需要执行动画或者频繁更新的操作,推荐使用 requestAnimationFrame 来优化性能。requestAnimationFrame 会在浏览器下一次重绘之前执行回调函数,从而将多个重排重绘操作合并为一次执行。
+
+## CSS 中的 BEM 命名规范是什么?它有什么好处?
+
+BEM(Block Element Modifier)是一种用于命名 CSS 类的命名约定,旨在帮助开发者更好地组织和管理样式表,特别是在大型项目或团队协作中非常有用。BEM 命名可以提供清晰可读的命名、避免样式冲突、提高可复用性。BEM 命名规范由以下部分组成:
+
+- Block(块):块是一个独立的、可复用的组件或模块,代表一个完整的 UI 组件。命名格式为 .block,例如 .button、.menu。
+- Element(元素):元素是块的一部分,没有独立存在的意义,必须在块的上下文中使用。元素以块名为前缀,通过双下划线 `__` 连接,例如 `.button__text`、.`menu__item`。
+- Modifier(修饰符):修饰符用于表示块或元素的不同状态或变体。修饰符以块或元素名为前缀,通过单个下划线 `_`连接,例如 `.button--primary`、.`menu_item--active`。

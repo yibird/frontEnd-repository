@@ -30,15 +30,15 @@ Array.from({ length: 5 }); // [空属性 × 5]
 Array.from({ length: 12 }, (v, i) => i + 1); // [1,2,3,4,5,6,7,8,9,10,11,12]
 ```
 
-## 2.手写 Array 原型函数
+## 2.Array 原型函数
 
-### 2.1 手写 Array.prototype.forEach()
+### 2.1 Array.prototype.forEach()
 
 ```js
 Array.prototype.myForEach = function (callback, thisArg) {
-  if (!Array.isArray(this)) throw new Error("只有数组才有forEach()");
-  if (callback && typeof callback !== "function") {
-    throw new Error("callback必须是个函数");
+  if (!Array.isArray(this)) throw new Error('只有数组才有forEach()');
+  if (callback && typeof callback !== 'function') {
+    throw new Error('callback必须是个函数');
   }
   const len = this.length;
   if (len === 0) return;
@@ -50,14 +50,14 @@ Array.prototype.myForEach = function (callback, thisArg) {
 };
 ```
 
-### 2.2 手写 Array.prototype.map()
+### 2.2 Array.prototype.map()
 
 ```js
 // map
 Array.prototype.myMap = function (callback, thisArg) {
-  if (!Array.isArray(this)) throw new Error("只有数组才有map()");
-  if (callback && typeof callback !== "function") {
-    throw new Error("callback必须是个函数");
+  if (!Array.isArray(this)) throw new Error('只有数组才有map()');
+  if (callback && typeof callback !== 'function') {
+    throw new Error('callback必须是个函数');
   }
   const len = this.length,
     arr = [];
@@ -74,17 +74,17 @@ Array.prototype.myMap = function (callback, thisArg) {
 };
 ```
 
-### 2.3 手写 Array.prototype.reduce()
+### 2.3 Array.prototype.reduce()
 
 ```js
 Array.prototype.myReduce = function (callback, initialValue) {
-  if (!Array.isArray(this)) throw new Error("Reduce does not exist in array");
-  if (callback && typeof callback !== "function") {
+  if (!Array.isArray(this)) throw new Error('Reduce does not exist in array');
+  if (callback && typeof callback !== 'function') {
     throw new Error(`${callback} is not a function`);
   }
   const len = this.length;
-  if (len === 0 && initialValue === "undefined") {
-    throw new Error("Reduce of empty array with no initial value");
+  if (len === 0 && initialValue === 'undefined') {
+    throw new Error('Reduce of empty array with no initial value');
   }
   initialValue = initialValue || this[0];
   for (let i = 1; i < len; i++) {
@@ -102,15 +102,15 @@ const result = [1, 2, 3].myReduce((prev, next, currentIndex, array) => {
 console.log(result); // 6
 ```
 
-#### 2.4 手写 Array.prototype.filter()
+### 2.4 Array.prototype.filter()
 
 ```js
 Array.prototype.myFilter = function (callback, thisArg) {
-  if (!Array.isArray(this)) throw new Error("只有数组才有filter()");
+  if (!Array.isArray(this)) throw new Error('只有数组才有filter()');
   const len = this.length,
     arr = [];
   if (len === 0) return arr;
-  if (typeof callback !== "function") throw new Error("callback必须是个函数");
+  if (typeof callback !== 'function') throw new Error('callback必须是个函数');
   for (let i = 0; i < len; i++) {
     const result =
       arguments.length > 1
@@ -121,12 +121,12 @@ Array.prototype.myFilter = function (callback, thisArg) {
 };
 ```
 
-#### 2.5 手写 Array.prototype.find()
+### 2.5 Array.prototype.find()
 
 ```js
 Array.prototype.myFind = function (callback, thisArg) {
-  if (!Array.isArray(this)) throw new Error("只有数组才有find()");
-  if (typeof callback !== "function") throw new Error("callback必须是个函数");
+  if (!Array.isArray(this)) throw new Error('只有数组才有find()');
+  if (typeof callback !== 'function') throw new Error('callback必须是个函数');
   const len = this.length;
   for (let i = 0; i < len; i++) {
     const result =
@@ -141,13 +141,13 @@ Array.prototype.myFind = function (callback, thisArg) {
 };
 ```
 
-#### 2.6 手写 Array.prototype.flatMap()
+### 2.6 手写 Array.prototype.flatMap()
 
 ## 3.数组去重
 
 ### 3.1 利用 Set 元素唯一去重
 
-原理:将数组转为 Set,利用 Set 结构相同元素不能重复的特性去除数组中相同元素,然后将 Set 转为数组。
+将数组转为 Set,利用 Set 结构相同元素不能重复的特性去除数组中相同元素,然后将 Set 转为数组。
 
 ```js
 /*
@@ -163,7 +163,7 @@ console.log(distinct(arr)); // [1,2,3]
 
 ### 3.2 利用 indexOf()或 includes()
 
-原理:创建一个新数组利用 indexOf()或 indecludes()判断原数组的元素是否存在新数组中,若不存在则往新数组添加该元素。
+创建一个新数组利用 indexOf()或 indecludes()判断原数组的元素是否存在新数组中,若不存在则往新数组添加该元素。
 
 ```js
 /*
@@ -172,7 +172,7 @@ console.log(distinct(arr)); // [1,2,3]
  */
 const distinct = (arr) => {
   if (!Array.isArray(arr)) {
-    throw new Error("arr not an array");
+    throw new Error('arr not an array');
   }
   const newArr = [];
   for (let i = 0, len = arr.length; i < len; i++) {
@@ -188,7 +188,7 @@ console.log(distinct(arr)); // [1,2,3]
 
 ### 3.3 通过 filter()去重
 
-原理:利用 filter()过滤相同元素。
+利用 filter()过滤相同元素。
 
 ```js
 const distinct = (arr) => {
@@ -201,6 +201,8 @@ console.log(distinct(arr)); // [1,2,3]
 ```
 
 ### 3.4 利用对象键名唯一去重
+
+对象的 key 在同一个对象中必须是唯一的,对于相同的 key 后者会覆盖前者。
 
 ```js
 const distinct = (arr) => {
@@ -318,12 +320,12 @@ console.log(fn(arr)); // [1, 2, 3, 4, 5, 6,7, 8, 9, 10, 11, 12,13, 14]
 ```ts
 // 将arr根据pid与id的关系转树形结构
 const arr = [
-  { id: 1, label: "1", pid: -1 },
-  { id: 2, label: "2", pid: -1 },
-  { id: 3, label: "1-1", pid: 1 },
-  { id: 4, label: "1-2", pid: 1 },
-  { id: 5, label: "2-1", pid: 2 },
-  { id: 6, label: "1-1-1", pid: 3 },
+  { id: 1, label: '1', pid: -1 },
+  { id: 2, label: '2', pid: -1 },
+  { id: 3, label: '1-1', pid: 1 },
+  { id: 4, label: '1-2', pid: 1 },
+  { id: 5, label: '2-1', pid: 2 },
+  { id: 6, label: '1-1-1', pid: 3 },
 ];
 ```
 
@@ -361,36 +363,36 @@ console.log(JSON.stringify(arrayToTree(arr)));
 [
   {
     id: 1,
-    label: "1",
+    label: '1',
     pid: -1,
     children: [
       {
         id: 3,
-        label: "1-1",
+        label: '1-1',
         pid: 1,
         children: [
           {
             id: 6,
-            label: "1-1-1",
+            label: '1-1-1',
             pid: 3,
           },
         ],
       },
       {
         id: 4,
-        label: "1-2",
+        label: '1-2',
         pid: 1,
       },
     ],
   },
   {
     id: 2,
-    label: "2",
+    label: '2',
     pid: -1,
     children: [
       {
         id: 5,
-        label: "2-1",
+        label: '2-1',
         pid: 2,
       },
     ],
@@ -431,36 +433,36 @@ console.log(JSON.stringify(arrayToTree(arr)));
 const tree = [
   {
     id: 1,
-    label: "1",
+    label: '1',
     pid: -1,
     children: [
       {
         id: 3,
-        label: "1-1",
+        label: '1-1',
         pid: 1,
         children: [
           {
             id: 6,
-            label: "1-1-1",
+            label: '1-1-1',
             pid: 3,
           },
         ],
       },
       {
         id: 4,
-        label: "1-2",
+        label: '1-2',
         pid: 1,
       },
     ],
   },
   {
     id: 2,
-    label: "2",
+    label: '2',
     pid: -1,
     children: [
       {
         id: 5,
-        label: "2-1",
+        label: '2-1',
         pid: 2,
       },
     ],
@@ -487,65 +489,65 @@ console.log(JSON.stringify(treeToArray(tree)));
 [
   {
     id: 1,
-    label: "1",
+    label: '1',
     pid: -1,
     children: [
       {
         id: 3,
-        label: "1-1",
+        label: '1-1',
         pid: 1,
         children: [
           {
             id: 6,
-            label: "1-1-1",
+            label: '1-1-1',
             pid: 3,
           },
         ],
       },
       {
         id: 4,
-        label: "1-2",
+        label: '1-2',
         pid: 1,
       },
     ],
   },
   {
     id: 3,
-    label: "1-1",
+    label: '1-1',
     pid: 1,
     children: [
       {
         id: 6,
-        label: "1-1-1",
+        label: '1-1-1',
         pid: 3,
       },
     ],
   },
   {
     id: 6,
-    label: "1-1-1",
+    label: '1-1-1',
     pid: 3,
   },
   {
     id: 4,
-    label: "1-2",
+    label: '1-2',
     pid: 1,
   },
   {
     id: 2,
-    label: "2",
+    label: '2',
     pid: -1,
     children: [
       {
         id: 5,
-        label: "2-1",
+        label: '2-1',
         pid: 2,
       },
     ],
   },
   {
     id: 5,
-    label: "2-1",
+    label: '2-1',
     pid: 2,
   },
 ];
@@ -553,7 +555,7 @@ console.log(JSON.stringify(treeToArray(tree)));
 
 ### 6.2 通过 reduce 树形结构转数组
 
-```ts
+```js
 const treeToArray = (tree) => {
   if (!Array.isArray(tree) || !tree.length) return [];
   const arr = [];
@@ -563,4 +565,76 @@ const treeToArray = (tree) => {
   return arr;
 };
 console.log(JSON.stringify(treeToArray(tree)));
+```
+
+## 7.数组分组
+
+```js
+/**
+ * 根据指定属性对目标对象数组进行分组
+ * @param target 目标对象数组
+ * @param prop 分组属性,可以是一个字符串或返回指定分组属性的好函数s
+ */
+function groupBy(target, prop) {
+  if (!Array.isArray(target)) {
+    throw new Error('target must be an array');
+  }
+  if (typeof prop !== 'string' && typeof prop !== 'function') {
+    throw new Error('prop can only be a string or function');
+  }
+  const result = {};
+  for (let i = 0, len = target.length; i < len; i++) {
+    if (typeof target[i] === 'object' && target[i] != null) {
+      const key = typeof prop === 'string' ? prop : prop(target[i], i);
+      if (target[i].hasOwnProperty(key)) {
+        const value = target[i][key];
+        result[value] = result[value]
+          ? result[value].concat(target[i])
+          : [target[i]];
+      }
+    }
+  }
+  return result;
+}
+const arr = [
+  {
+    name: 'Joker',
+    age: 12,
+  },
+  {
+    name: 'Lover',
+    age: 12,
+  },
+  {
+    name: 'Joker',
+    age: 30,
+  },
+  {
+    name: 'Q',
+    age: 24,
+  },
+  {
+    name: 'Joker',
+    age: 40,
+  },
+];
+const result1 = groupBy(arr, 'age');
+const result2 = groupBy(arr, (obj, i) => {
+  return i <= 1 ? 'age' : 'name';
+});
+console.log(result1, result2);
+
+/**
+  {
+    "12": [{"name": "Joker","age": 12},{"name": "Lover","age": 12}],
+    "24": [{"name": "Q","age": 24}],
+    "30": [{"name": "Joker","age": 30}],
+    "40": [{"name": "Joker","age": 40}]
+  }
+  {
+    "12": [{"name": "Joker","age": 12},{"name": "Lover","age": 12}],
+    "Joker": [{"name": "Joker","age": 30},{"name": "Joker","age": 40}],
+    "Q": [{"name": "Q","age": 24}]
+  }
+ */
 ```

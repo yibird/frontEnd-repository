@@ -18,15 +18,14 @@
 - 卸载相关钩子函数:componentWillUnmount。
 - 错误处理相关钩子函数:static getDerivderStateFromError、componentDidCatch。
 
-## 2.组件通讯方式有哪些?
+## 2.组件通信方式有哪些?
 
-- 通过 Props 父传子。
-- 通过 Props 提供回调函数方式子改父。
+- 通过 Props 父传子或通过 Props 提供回调函数方式子改父。
 - 通过 Ref 获取组件实例。
 - 通过 Context 实现多层级组件通讯。
 - 基于发布订阅模式实现多层级组件通讯。
 - 使用第三方状态管理库进行多层级组件通讯。例如 jotai、zustand、redux。
-- 浏览器存储机制。例如 cookie、localStorage、SessionStorage、IndexDB。
+- 浏览器存储机制。例如 cookie、localStorage、SessionStorage、IndexedDB。
 
 ## 3.什么是受控组件和非受控组件?
 
@@ -54,7 +53,7 @@ JSX(JavaScript XML)是一种 JavaScript 的语法扩展,它允许在 JavaScript 
 React Render Props 是 React 组件的一种模式,旨在让组件之间共享行为逻辑。这种模式通过将一个或多个函数作为 React 组件的 props 传递,从而让组件能够共享一部分渲染逻辑。这些函数通常会返回 JSX 元素,可以进行自定义渲染,使得组件能够更加灵活地适应不同的需求。使用 Render Props 模式可以使得组件复用性更高,同时也可以提高代码的可读性和可维护性。
 
 ```tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 interface Props {
   render: (count: number, increment: () => void) => React.ReactNode;
 }
@@ -85,7 +84,7 @@ RenderPropsExample 组件通过 props 接收一个名为 render 的函数,render
 
 ## 7.React 合成事件是什么?
 
-React 合成事件是 React 框架中的一个事件系统,它是在原生 DOM 事件的基础上封装而来的。它提供了一种跨浏览器的、与原生 DOM 事件一致的、高性能的事件处理方式,虽然合成事件实现了跨浏览器兼容和性能提升,但也增加了 React 包体积,在 Preact(一个精简版的 React 库,提供与 React 相同的特性)中,为了体积考虑并未添加合成事件的支持。在 React 中,合成事件通过事件委托机制在顶层的 document 对象上统一绑定监听函数,然后通过事件冒泡的方式传递到组件中进行处理。相比原生 DOM 事件,合成事件具有以下特点：
+React 合成事件是 React 框架中的一个事件系统,它是在原生 DOM 事件的基础上封装而来的。它提供了一种跨浏览器的、与原生 DOM 事件一致的、高性能的事件处理方式,虽然合成事件实现了跨浏览器兼容和性能提升,但也增加了 React 包体积,在 Preact(一个精简版的 React 库,提供与 React 相同的特性)中,为了体积考虑并未添加合成事件的支持。在 React 中,合成事件通过事件委托机制在顶层的 document 对象上统一绑定监听函数,然后通过事件冒泡的方式传递到组件中进行处理。相比原生 DOM 事件,合成事件具有以下特点:
 
 - **跨浏览器兼容**。React 会自动处理不同浏览器之间的差异,保证事件在不同浏览器下的行为一致。
 - **性能优化**。React 会对事件进行池化,避免频繁创建和销毁事件对象,从而提高性能。
@@ -101,7 +100,7 @@ React 错误边界组件是一种容错机制,用于在 React 组件树中捕获
 ::: details ErrorBoundary 组件实现
 
 ```tsx
-import React, { PropsWithChildren, ErrorInfo } from "react";
+import React, { PropsWithChildren, ErrorInfo } from 'react';
 
 interface Props {
   fallback?: React.ReactNode;
@@ -149,8 +148,8 @@ export default class ErrorBoundary extends React.Component<
 ::: details 使用 ErrorBoundary 组件
 
 ```tsx
-import React from "react";
-import ErrorBoundary from "./ErrorBoundary";
+import React from 'react';
+import ErrorBoundary from './ErrorBoundary';
 
 function MyComponent(props) {
   // This will throw an error
@@ -161,7 +160,7 @@ function App() {
   return (
     <div>
       <ErrorBoundary>
-        <MyComponent text="Hello, world!" />
+        <MyComponent text='Hello, world!' />
       </ErrorBoundary>
     </div>
   );
@@ -205,6 +204,42 @@ React 使用 key 的建议:
 ## 13.React HOC 是什么?有什么作用?
 
 高阶函数是接收一个函数做为参数或者是返回一个函数的函数,高阶组件与高阶函数类似,简单来说高阶组件是一种用于复用组件逻辑的技术,它接收一个组件作为参数,并返回一个新的组件。
+
+## React 的执行流程?
+
+### React15 架构
+
+在 React15 架构中主要分为 Reconciler、Renderer 两层:
+
+- Reconciler(协调器):负责找出变化的组件。在 React 中 this.setState、this.forceUpdate、ReactDOM.render 等 API 触发更新。当更新发生时,Reconciler 将执行如下流程:
+  - 调用函数组件、或 class 组件的 render 方法,将返回的 JSX 使用 babel 转化为虚拟 DOM。
+  - 将虚拟 DOM 和上次更新时的虚拟 DOM 对比。
+  - 通过对比找出本次更新中变化的虚拟 DOM。
+  - 通知 Renderer 将变化的虚拟 DOM 渲染到页面上。
+- Renderer(渲染器):负责将变化的组件渲染到页面上。
+
+### React16 新架构
+
+## ReactDOM.render()执行流程?
+
+## 什么是 Fiber 架构,它解决了什么问题?
+
+在 React 的旧版本中,当组件状态发生变化时,React 会将整个组件树进行递归遍历,生成新的虚拟 DOM 树,并与旧的虚拟 DOM 树进行比较,找出需要更新的部分,然后将这些部分更新到 UI 中。这种遍历方式虽然简单,但是在组件树变得非常大、复杂的情况下,会产生如下问题:
+
+- 渲染阻塞:如果某个组件的更新需要花费大量的计算时间,整个更新过程会阻塞 UI 渲染,导致页面卡顿或响应缓慢。
+- 优先级控制困难:递归调度难以在运行时中断或暂停,导致难以实现对任务优先级的灵活控制。比如,高优先级的用户交互事件（如点击、输入）可能被低优先级的渲染任务阻塞。
+- 无法中断和恢复:由于递归调度的特性,一旦开始了更新过程,很难在中途中断或恢复,这对于实现异步渲染和增量更新是一个挑战。
+
+为了解决组件树递归渲染且不可中断等问题,React 团队在 React 16 引入了 Fiber 架构,旨在于解决:
+
+- 可中断性和增量渲染: Fiber 架构将递归调度改为循环调度,将任务分割成多个较小的单元（Fiber 节点）,并且支持任务的中断、暂停和恢复。这使得 React 能够更好地响应用户交互和优化渲染过程,实现增量渲染。
+- 优先级调度: Fiber 架构引入了任务优先级的概念,可以根据任务的优先级调度执行顺序,从而优化用户体验。高优先级的任务可以中断低优先级的任务,确保用户交互的响应速度和流畅性。
+- 时间切片(Time Slicing): Fiber 架构中引入了时间切片的概念,将工作分割成小的时间片段,在每个时间片段中执行一部分任务,然后根据剩余时间决定是否继续执行下一个时间片段。这样可以确保长时间运行的任务不会阻塞整个渲染过程,提高了页面的响应速度和流畅性。
+- 并发模式支持: Fiber 架构为未来的并发模式（如 Concurrent Mode）打下了基础,允许多个更新任务以并发方式执行,从而进一步提升性能和用户体验。
+
+Fiber 架构是 React 16 中引入的新的协调算法和架构设计,通过可中断的、增量的、优先级的任务调度方式,解决了 React 在处理复杂组件结构、大量数据和高频更新时可能遇到的性能问题和用户体验问题。它的核心思想是将任务分割成小的可中断单元,支持优先级调度和时间切片,使得 React 应用能够更好地响应用户操作,提高页面渲染的效率和流畅度。
+
+## Fiber 与 React.createElement 的关系?
 
 ## 14.什么是 React Hooks?
 
@@ -251,10 +286,10 @@ useState()与 setState()有所区别,Class 组件存储的是状态的引用,而
 ```jsx
 const ClassApp = () => {
   const [count, setCount] = useState(0);
-  const [name, setName] = useState("z乘风");
+  const [name, setName] = useState('z乘风');
   const asyncHandle = () => {
     setCount(count + 1);
-    setName("zchengfeng");
+    setName('zchengfeng');
   };
   useEffect(() => {
     /**
@@ -278,14 +313,14 @@ const ClassApp = () => {
 const ClassApp = () => {
   const [state, setState] = useState({
     count: 0,
-    name: "z乘风",
+    name: 'z乘风',
   });
   const stateRef = useRef(state);
 
   const asyncHandle = () => {
     stateRef.current = {
       count: 1,
-      name: "zchengfeng",
+      name: 'zchengfeng',
     };
     setState(stateRef.current);
     console.log(stateRef.current); // {count: 1, name: 'zchengfeng'}
@@ -304,17 +339,19 @@ const ClassApp = () => {
 useEffect()是 React 提供用于处理组件副作用的 Hooks,例如网络请求、改变 DOM、添加订阅、设置定时器、记录日志等场景,而 useLayoutEffect()是 React 提供用于处理布局相关副作用的 Hooks,其接收参数用法与 useEffect()类似,useLayoutEffect()与 useEffect()区别在于:
 
 - useEffect()不会 block(阻塞)浏览器渲染,而 useLayoutEffect()会阻塞浏览器渲染,注意:useLayoutEffect()会损坏性能,应尽量避免使用 useLayoutEffect()。
-- useEffect()会在浏览器渲染结束后执行,useLayoutEffect()则是在 DOM 更新完成后,浏览器绘制之前执行。
+- useEffect()会在浏览器渲染结束后执行,useLayoutEffect()则是在 DOM 更新完成后(DOMContentLoaded 事件),浏览器绘制之前执行。
 
-## 什么是 Fiber 架构,它解决了什么问题?
+## React.Context 实现原理?
 
-在 React 的旧版本中,当组件状态发生变化时,React 会将整个组件树进行递归遍历,生成新的虚拟 DOM 树,并与旧的虚拟 DOM 树进行比较,找出需要更新的部分,然后将这些部分更新到 UI 中。这种遍历方式虽然简单,但是在组件树变得非常大、复杂的情况下,会导致渲染和更新性能下降,造成页面卡顿甚至无法响应用户操作的情况。
+## React Suspense 的实现原理?
 
-## Fiber 与 React.createElement 的关系?
+## ReactDOM.createPortal()实现原理?
 
 ## 什么是并发模式?
 
 并发模式(Concurrent Mode)是 React18 新特性之一,可以使 React 应用程序通过渲染组件树来提高响应速度,而不会阻塞主 UI 线程。相比较多线程中的并发,并发模式并不是真正意义上的并发。在 React 中不同任务被分为不同优先级,React 可以中断长时间运行的渲染来处理高优先级的任务。并发模式的并发是在主线程中执行多个任务,通过 React 调度每个任务都可以允许在"运行"和"暂停"两种状态之间切换,从而给用户造成了一种任务并发执行的假象。并发模式与 CPU 的执行原理类似,React 基于时间分片(Time Slicing)策略将渲染工作分成多个时间片(小的时间段),以确保用户界面在加载大量数据或复杂计算时仍然保持响应性。
+
+## React Server Components?
 
 ## React diff 算法的时间复杂度是多少?
 
@@ -334,6 +371,12 @@ Diff 算法(差异算法)是一种用于比较两个数据集之间的不同之�
 
 ## React 与 Vue 的 diff 算法有何不同?
 
+## React 性能优化策略有哪些?
+
+## React SSR 实现原理?
+
 ## React-Router 工作原理
 
 ## Hooks 实现原理?
+
+## Zustand 实现原理?

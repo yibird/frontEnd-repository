@@ -1,8 +1,8 @@
-## 1.手写 call()、apply()、bind()
+## 1.call()、apply()、bind()
 
 call()、apply()、bind()三个函数皆为 Function 原型上的函数,都可以强制改变函数的 this 指向,即使用它们会强制改变调用函数的 this 指向为它们的第一个入参,注意:在非严格模式下指定 null 或 undefined 为 call()、apply()、bind()的第一个参数时会自动替换的函数 this 指向全局对象(浏览器环境下是 window,NodeJS 环境下是 global)。call()、apply()、bind()三者区别如下:
 
-### 1.1 手写 call()
+### 1.1 call()
 
 ```js
 // call实现
@@ -32,94 +32,84 @@ Function.prototype.myCall = function (context) {
 
 // 测试
 const obj = {
-  name: "大黄",
+  name: '大黄',
   age: 4,
   func: function (hobby) {
     console.log(`${this.name}今年${this.age}岁,它喜欢${hobby}`);
   },
 };
 // this隐式绑定,func()的this指向obj
-obj.func("睡觉"); // 大黄今年4岁,它喜欢睡觉
+obj.func('睡觉'); // 大黄今年4岁,它喜欢睡觉
 
 const newObj = {
-  name: "小白",
+  name: '小白',
   age: 3,
-  hobby: "吃饭",
+  hobby: '吃饭',
 };
 // 使用myCall()将obj.func()中的this强制指向newObj
 obj.func.myCall(newObj, newObj.hobby); // 小白今年3岁,它喜欢吃饭
 ```
 
-### 1.2 手写 apply()
+### 1.2 apply()
 
 ```js
 // apply实现
 Function.prototype.myApply = function (context, args) {
   // (1).初始化context。如果context不为空时就指向自己本身,否则指向全局对象
   context = context || window;
-
   /*
    * (2).挂载函数。将this挂载到context的func上,this表示调用myCall的函数,
    * 即将调用函数挂载到context.func上,在调用context.func()时由于遵循隐式this绑定原则,
    * 此时调用函数的this指向context
    */
   context.func = this;
-
   // (3).获取函数执行结果
   const result = args.length ? context.func(...args) : context.func();
-
   // (4).删除属性,避免造成全局污染
   delete context.func;
-
   // (5).返回函数结果
   return result;
 };
 
 // 测试
 const obj = {
-  name: "大黄",
+  name: '大黄',
   age: 4,
   func: function (hobby) {
     console.log(`${this.name}今年${this.age}岁,它喜欢${hobby}`);
   },
 };
 // this隐式绑定,func()的this指向obj
-obj.func("睡觉"); // 大黄今年4岁,它喜欢睡觉
+obj.func('睡觉'); // 大黄今年4岁,它喜欢睡觉
 
 const newObj = {
-  name: "小白",
+  name: '小白',
   age: 3,
-  hobby: "吃饭",
+  hobby: '吃饭',
 };
 // 使用myApply()将obj.func()中的this强制指向newObj
 obj.func.myApply(newObj, [newObj.hobby]); // 小白今年3岁,它喜欢吃饭
 ```
 
-### 1.3 手写 bind()
+### 1.3 bind()
 
 ```js
 // bind实现
 Function.prototype.myBind = function (context) {
   // (1).初始化context。对context进行深拷贝,防止bind执行后返回函数未执行期间,context被修改
   context = JSON.parse(JSON.stringify(context)) || window;
-
   // (2).挂载函数。将调用函数挂载到context上。
   context.func = this;
-
   // (3).获取调用函数除context外的参数。
   const args = Array.from(arguments).slice(1);
-
   // (4).返回一个新的函数
   return () => {
     // (4-1).拼接参数。将外部调用参数和返回新函数的参数进行合并
     const fnArgs = args.concat(Array.from(arguments));
-
     // (4-2).执行函数获取结果
     const result = fnArgs.length ? context.func(fnArgs) : context.func();
-
     // (4-3).删除挂载函数防止全局污染
     delete context.func;
-
     // (4-4).返回结果
     return result;
   };
@@ -127,28 +117,28 @@ Function.prototype.myBind = function (context) {
 
 // 测试
 const obj = {
-  name: "大黄",
+  name: '大黄',
   age: 4,
   func: function (hobby) {
     console.log(`${this.name}今年${this.age}岁,它喜欢${hobby}`);
   },
 };
 // this隐式绑定,func()的this指向obj
-obj.func("睡觉"); // 大黄今年4岁,它喜欢睡觉
+obj.func('睡觉'); // 大黄今年4岁,它喜欢睡觉
 
 const newObj = {
-  name: "小白",
+  name: '小白',
   age: 3,
-  hobby: "吃饭",
+  hobby: '吃饭',
 };
 // 使用myBind()将obj.func()中的this强制指向newObj,myBind返回一个函数
 const bindFunc = obj.func.myBind(newObj, [newObj.hobby]);
 bindFunc(); // 小白今年3岁,它喜欢吃饭
 ```
 
-## 2.手写 isType()
+## 2.isType()
 
-在 JavaScript 常用`typeof`、`instanceof`、`构造器`等方式判断表达式的类型。但这三种方法具有如下缺点,这三种方式在一些特定场景下无法准确的判断表达式的类型,若要准确的判断表达式的类型推荐使用`Object.prototype.toString.call()`,`Object.prototype.toString`可以准确的获取任意对象的类型,`call()`是 Function 上的一个函数,用于强制改变函数中的 this 指向,使用`call()`可以强制改变调用函数 this 指向为`call()`的第一个参数。
+在 JavaScript 常用`typeof`、`instanceof`、`构造器`等方式判断表达式的类型。但这三种方法具有如下缺点,这三种方式在一些特定场景下无法准确的判断表达式的类型:
 
 - typeof 操作符在判断 Null、Array、Object 类型时都为 object。
 - instanceof 操作符在判断 Array 和 Function 类型时都为 true。
@@ -158,7 +148,7 @@ bindFunc(); // 小白今年3岁,它喜欢吃饭
 // typeof 例子
 console.log(typeof 123); // number
 console.log(typeof 123); // number
-console.log(typeof "zxp"); // string
+console.log(typeof 'zxp'); // string
 console.log(typeof true); // boolean
 console.log(typeof undefined); // undefined
 console.log(typeof function () {}); // function
@@ -178,7 +168,7 @@ console.log(function () {} instanceof Object); // true
 
 // constructor 例子
 var a = 123,
-  s = "zxp",
+  s = 'zxp',
   b = false,
   obj = {},
   arr = [],
@@ -195,11 +185,13 @@ console.log(nul.constructor === Object); // TypeError: Cannot read properties of
 console.log(udef.constructor === Object); // TypeError: Cannot read properties of null (reading 'constructor')
 
 // Object.prototype.toString.call() 例子
-console.log(Object.prototype.toString.call("")); //[object String]
+console.log(Object.prototype.toString.call('')); //[object String]
 console.log(Object.prototype.toString.call(null)); //[object Null]
 console.log(Object.prototype.toString.call([])); //[object Array]
 console.log(Object.prototype.toString.call({})); //[object Object]
 ```
+
+若要准确的判断表达式的类型推荐使用`Object.prototype.toString.call()`,`Object.prototype.toString`可以准确的获取任意对象的类型,`call()`是 Function 上的一个函数,用于强制改变函数中的 this 指向,使用`call()`可以强制改变调用函数 this 指向为`call()`的第一个参数
 
 ```js
 // 封装成一个普通函数:判断obj是否是type类型
@@ -208,22 +200,22 @@ function isType(obj, type) {
   return typeinof.substring(8, typeinof.length - 1) === type;
 }
 // 测试
-console.log(isType({}, "Object")); //true
-console.log(isType([], "Object")); //false
-console.log(isType(null, "Object")); //false
+console.log(isType({}, 'Object')); //true
+console.log(isType([], 'Object')); //false
+console.log(isType(null, 'Object')); //false
 
 // 封装成高阶函数:判断obj是否是type类型
 const isType = (obj) => (type) =>
   Object.prototype.toString.call(obj) === `[object ${type}]`;
 // 测试
-console.log(isType("123")("String")); //true
-console.log(isType("123")("Number")); //false
-console.log(isType({})("Object")); // true
+console.log(isType('123')('String')); //true
+console.log(isType('123')('Number')); //false
+console.log(isType({})('Object')); // true
 ```
 
-## 3.手写深拷贝函数
+## 3.深拷贝函数
 
-- 浅拷贝是指创建一个新对象,新对象具有原始对象的一份精确拷贝。如果属性是基本类型,拷贝的就是基本类型的值,如果属性是引用类型，拷贝的就是内存地址,所以如果其中一个对象改变了这个地址,就会影响到另一个对象。浅拷贝的实现方式有`Object.assign()`、`...`扩展运算符。
+- 浅拷贝是指创建一个新对象,新对象具有原始对象的一份精确拷贝。如果属性是基本类型,拷贝的就是基本类型的值,如果属性是引用类型,拷贝的就是内存地址,所以如果其中一个对象改变了这个地址,就会影响到另一个对象。浅拷贝的实现方式有`Object.assign()`、`...`扩展运算符。
 - 深拷贝会拷贝所有的属性,并拷贝属性指向的动态分配的内存。当对象和它所引用的对象一起拷贝时即发生深拷贝。深拷贝相比于浅拷贝速度较慢并且花销较大,但是拷贝前后两个对象互不影响。深拷贝的实现方式有 `JSON.parse(JSON.stringify())`,该方案具有如下缺点:
   - 无法拷贝 function、undefined、symbol。
   - NaN 和 Infinity 格式的数值及 null 都会被当做 null。
@@ -238,13 +230,13 @@ function deepCopy(obj) {
   // 定义一个空对象接收拷贝后的值
   let result;
   // 判断obj是否是引用类型,typeof判断Object、Array结果都是"object"
-  if (typeof obj === "object") {
+  if (typeof obj === 'object') {
     // 根据obj的构造函数判断obj是否是一个数组,是数组则赋一个空数组,否则赋值一个空对象
     result = obj.constructor === Array ? [] : {};
     // 遍历obj,for in通常用于遍历对象
     for (let k in obj) {
       // 判断obj[k]是否是引用类型,如果是则递归拷贝(因为obj可能会出现对象嵌套对象的情况),否则返回obj[k]
-      result[k] = typeof obj[k] === "object" ? deepCopy(obj[k]) : obj[k];
+      result[k] = typeof obj[k] === 'object' ? deepCopy(obj[k]) : obj[k];
     }
   } else {
     // 如果obj是基本类型就直接返回
@@ -253,7 +245,7 @@ function deepCopy(obj) {
   return result;
 }
 
-var user = { name: "zxp", age: 18 };
+var user = { name: 'zxp', age: 18 };
 var obj = { count: 5, user };
 var newObj = deepCopy(obj);
 console.log(newObj); // {"count":5,"user":{"name":"zxp","age":18}}
@@ -269,21 +261,21 @@ console.log(deepCopy(obj1)); // Uncaught RangeError: Maximum call stack size exc
 ```js
 const typeEnum = {
   /** 可继续遍历的数据类型 */
-  mapType: "[object Map]",
-  setType: "[object Set]",
-  arrayType: "[object Array]",
-  objectType: "[object Object]",
-  argsType: "[object Arguments]",
+  mapType: '[object Map]',
+  setType: '[object Set]',
+  arrayType: '[object Array]',
+  objectType: '[object Object]',
+  argsType: '[object Arguments]',
 
   /** 不可继续遍历的数据类型 */
-  boolType: "[object Boolean]",
-  dateType: "[object Date]",
-  errorType: "[object Error]",
-  numberType: "[object Number]",
-  stringType: "[object String]",
-  regexpType: "[object RegExp]",
-  symbolType: "[object Symbol]",
-  funcType: "[object Function]",
+  boolType: '[object Boolean]',
+  dateType: '[object Date]',
+  errorType: '[object Error]',
+  numberType: '[object Number]',
+  stringType: '[object String]',
+  regexpType: '[object RegExp]',
+  symbolType: '[object Symbol]',
+  funcType: '[object Function]',
 };
 // 获取类型
 const getType = (target) => Object.prototype.toString.call(target);
@@ -293,7 +285,7 @@ const isType = (target) => (type) =>
 // 判断target是否是引用类型
 const isObject = (target) => {
   const type = typeof target;
-  return type !== null && (type !== "function" || type !== "object");
+  return type !== null && (type !== 'function' || type !== 'object');
 };
 // 初始化对象
 const init = (target) => new target.constructor();
@@ -332,7 +324,7 @@ function cloneFunc(target) {
     // 判断函数中的参数是否为空
     if (param) {
       // 获取函数的参数
-      const paramArr = param[0].split(",");
+      const paramArr = param[0].split(',');
       return new Function(...paramArr, body[0]);
     } else {
       return new Function(body[0]);
@@ -424,13 +416,13 @@ function clone(target, map = new WeakMap()) {
 
 /**  测试  **/
 const obj = {
-  name: "zxp",
-  sex: "man",
-  sb: Object(Symbol("asd")),
-  set: new Set().add({ like: "女人" }).add({ love: "woman" }),
-  map: new Map().set("name", "zmap"),
+  name: 'zxp',
+  sex: 'man',
+  sb: Object(Symbol('asd')),
+  set: new Set().add({ like: '女人' }).add({ love: 'woman' }),
+  map: new Map().set('name', 'zmap'),
   arr: [1, 2, 3],
-  ctx: { name: "zzz", sex: "woman" },
+  ctx: { name: 'zzz', sex: 'woman' },
   reg: /^w/,
   date: new Date(),
   func1: function () {
@@ -439,7 +431,7 @@ const obj = {
 };
 const cloneObj = clone(obj);
 console.log(cloneObj === obj); // false
-cloneObj.name = "zzzzz";
+cloneObj.name = 'zzzzz';
 console.log(obj.name, cloneObj.name); // zxp zzzzz
 console.log(cloneObj);
 /**
@@ -460,7 +452,7 @@ console.log(cloneObj);
 
 ## 4.手写防抖节流函数
 
-## 5.手写解析 URL 参数函数
+## 5.解析 URL 参数函数
 
 ### 5.1 通过 URLSearchParams()解析 URL 参数
 
@@ -480,24 +472,24 @@ const params = Object.fromEntries(urlSearchParams.entries()); // {user: 'z乘风
 function getParams(url) {
   const res = {};
   // 判断是否有查询参数
-  if (url.includes("?")) {
+  if (url.includes('?')) {
     // 以?号分割得到数组最后二个元素
-    const str = url.split("?")[1];
+    const str = url.split('?')[1];
     // 分割&号得到参数数组
-    const arr = str.split("&");
+    const arr = str.split('&');
     arr.forEach((item) => {
-      const key = item.split("=")[0],
-        value = item.split("=")[1];
+      const key = item.split('=')[0],
+        value = item.split('=')[1];
       res[key] = decodeURIComponent(value); // 解码
     });
   }
   return res;
 }
-const url = "https://www.baidu.com/?user=z%E4%B9%98%E9%A3%8E&age=18";
+const url = 'https://www.baidu.com/?user=z%E4%B9%98%E9%A3%8E&age=18';
 console.log(getParams(url)); // {user: 'z乘风', age: '18'}
 ```
 
-## 6.手写发布订阅
+## 6.发布订阅
 
 发布订阅模式是开发中最为常见最有精髓的设计模式,例如在 Vue2.x 中的 EventBus、$on、$emit、$off,其实现原理是在其内部维护一个事件列表,存储已订阅的事件,当订阅事件时会将事件添加到事件列表,并向对应事件添加回调函数。当发布事件后会获取事件列表中事件对应的回调函数列表,并遍历回调函数列表挨个执行回调函数。
 
@@ -531,15 +523,15 @@ class EventEmitter {
   // 删除订阅的事件
   off(event, callback) {
     // 如果什么都没传,重置事件列表
-    if (typeof event === "undefined") {
+    if (typeof event === 'undefined') {
       this.events = {};
     }
-    if (typeof event === "string") {
+    if (typeof event === 'string') {
       /*
        * 如果callback是函数则删除事件对应的回调函数,否则将重置该事件
        */
       this.events[event] =
-        typeof callback === "function"
+        typeof callback === 'function'
           ? this.events[event].filter((cb) => cb !== callback)
           : [];
     }
@@ -566,33 +558,33 @@ class EventEmitter {
 // 测试
 const emitter = new EventEmitter();
 const callback1 = (name, sex) => {
-  console.log(name, sex, "callback1");
+  console.log(name, sex, 'callback1');
 };
 const callback2 = (name, sex) => {
-  console.log(name, sex, "callback2");
+  console.log(name, sex, 'callback2');
 };
 const callback3 = (name, sex) => {
-  console.log(name, sex, "callback3");
+  console.log(name, sex, 'callback3');
 };
 
 emitter
-  .on("event01", callback1)
-  .on("event01", callback2)
+  .on('event01', callback1)
+  .on('event01', callback2)
   // 仅会执行一次回调
-  .once("event01", callback3);
+  .once('event01', callback3);
 /*
  * z乘风 男 callback1
  * z乘风 男 callback2
  * z乘风 男 callback3
  */
-emitter.emit("event01", "z乘风", "男");
+emitter.emit('event01', 'z乘风', '男');
 
 // 删除事件
-emitter.off("event01", callback1);
-emitter.emit("event01", "z乘风", "男"); // z乘风 男 callback2
+emitter.off('event01', callback1);
+emitter.emit('event01', 'z乘风', '男'); // z乘风 男 callback2
 ```
 
-## 7.手写 trim()
+## 7.trim()
 
 trim()的作用是去除字符串两端的空白字符,空白字符包括所有的空白字符(space, tab, no-break space 等)以及所有行终止符字符(如 LF,CR 等)。常见实现方式如下:
 
@@ -610,13 +602,13 @@ String.prototype.trim = function () {
    * 或全局匹配匹配任意个以空白字符
    */
   const reg = /^\s*|\s*$/g;
-  return this.replace(reg, "");
+  return this.replace(reg, '');
 };
 // 测试
-console.log(" z乘风 ".trim()); // z乘风
-console.log("z乘风 ".trim()); // z乘风
-console.log(" z乘风".trim()); // z乘风
-console.log(" z 乘风 ".trim()); // z 乘风
+console.log(' z乘风 '.trim()); // z乘风
+console.log('z乘风 '.trim()); // z乘风
+console.log(' z乘风'.trim()); // z乘风
+console.log(' z 乘风 '.trim()); // z 乘风
 ```
 
 ### 7.2 字符提取法
@@ -625,18 +617,18 @@ console.log(" z 乘风 ".trim()); // z 乘风
 // 方式2:字符提取法
 String.prototype.trim = function () {
   const reg = /^\s*(.*?)\s*$/g;
-  this.replace(reg, "$1");
+  this.replace(reg, '$1');
 };
 // 测试
-console.log(" z乘风 ".trim()); // z乘风
-console.log("z乘风 ".trim()); // z乘风
-console.log(" z乘风".trim()); // z乘风
-console.log(" z 乘风 ".trim()); // z 乘风
+console.log(' z乘风 '.trim()); // z乘风
+console.log('z乘风 '.trim()); // z乘风
+console.log(' z乘风'.trim()); // z乘风
+console.log(' z 乘风 '.trim()); // z 乘风
 ```
 
 ## 8.数字千位分割
 
-### 8.1 通过 toLocaleString()实现千位分割
+### 8.1 toLocaleString()实现千位分割
 
 通过 toLocaleString()实现千位分割 toLocaleString()是 JS 内置函数,用于返回数字或字符串在特定语言环境下的表示字符串,可以通过 toLocaleString()实现数字千位分割,对于小数部分会进行四舍五入。
 
@@ -653,11 +645,11 @@ console.log(num02.toLocaleString()); // 123,456.454 (小数部分四舍五入了
 每三位添加一个分隔符(即 i%3===0,而且需要排除 i===0),得到结果数组后再转为正序,如果存在小数部分则拼接小数部分,否则直接返回结果数组的字符串。
 
 ```js
-function numFormat(num, separator = ",") {
+function numFormat(num, separator = ',') {
   // 分割小数点得到数组,num[0]表示整数部分,num[1]表示小数部分
-  num = num.toString().split(".");
+  num = num.toString().split('.');
   // 获取整数内容并倒序排列
-  const arr = num[0].split("").reverse();
+  const arr = num[0].split('').reverse();
   const res = [];
   for (let i = 0, len = arr.length; i < len; i++) {
     // i % 3 && i !==0 表示满足千位,则添加分割符
@@ -671,7 +663,7 @@ function numFormat(num, separator = ",") {
   res.reverse();
 
   // 如果存在小数部分则拼接小数部分,否则返回整数部分
-  return num[1] ? res.join("").concat("." + num[1]) : res.join("");
+  return num[1] ? res.join('').concat('.' + num[1]) : res.join('');
 }
 
 const a = 123456789;
@@ -680,10 +672,10 @@ console.log(numFormat(a)); // 123,456,789
 console.log(numFormat(b)); // 123,456.4542
 ```
 
-#### 8.3 通过 replace()+正则实现千位分割
+### 8.3 通过 replace()+正则实现千位分割
 
 ```js
-function numFormat(num, separator = ",") {
+function numFormat(num, separator = ',') {
   // \d+表示匹配多个数字,仅会匹配到小数点之前的内容
   return num.toString().replace(/\d+/, (n) => {
     // \d表示匹配数字,(?=(\d{3})+$)/g表示全局捕获以三位数字结尾的内容,$1为捕获到的内容
@@ -699,7 +691,7 @@ console.log(numFormat(a)); // 123,456,789
 console.log(numFormat(b)); // 12,345.45562123
 ```
 
-## 9.手写深度合并函数
+## 9.深度合并函数
 
 deepmergeAll()支持数组对象深度合并,而不是覆盖。
 
@@ -712,11 +704,11 @@ const toString = Object.prototype.toString;
  * @returns
  */
 const isMergeableObject = (val) => {
-  const nonNullObject = val && typeof val === "object";
+  const nonNullObject = val && typeof val === 'object';
   return (
     nonNullObject &&
-    toString.call(val) !== "[object RegExp]" &&
-    toString.call(val) !== "[object Date]"
+    toString.call(val) !== '[object RegExp]' &&
+    toString.call(val) !== '[object Date]'
   );
 };
 /**
@@ -736,7 +728,7 @@ const emptyTarget = (val) => (Array.isArray(val) ? [] : {});
 const defaultArrayMerge = (target, source, optionsArgument) => {
   let destination = target.slice();
   source.forEach(function (e, i) {
-    if (typeof destination[i] === "undefined") {
+    if (typeof destination[i] === 'undefined') {
       destination[i] = cloneIfNecessary(e, optionsArgument);
     } else if (isMergeableObject(e)) {
       destination[i] = deepmerge(target[i], e, optionsArgument);
@@ -809,7 +801,7 @@ const deepmergeAll = (array, optionsArgument) => {
   // 数组长度为2才也允许合并
   if (!Array.isArray(array) || array.length < 2) {
     throw new Error(
-      "first argument should be an array with at least two elements"
+      'first argument should be an array with at least two elements'
     );
   }
   // 循环调用deepmerge()深度合并
@@ -820,9 +812,9 @@ const deepmergeAll = (array, optionsArgument) => {
 
 // 测试
 const result = deepmergeAll([
-  { level1: { level2: { name: "David", parts: ["head", "shoulders"] } } },
-  { level1: { level2: { face: "meh", parts: ["knees", "toes"] } } },
-  { level1: { level2: { eyes: "more meh", parts: ["eyes"] } } },
+  { level1: { level2: { name: 'David', parts: ['head', 'shoulders'] } } },
+  { level1: { level2: { face: 'meh', parts: ['knees', 'toes'] } } },
+  { level1: { level2: { eyes: 'more meh', parts: ['eyes'] } } },
 ]);
 console.log(result);
 /*
@@ -845,7 +837,7 @@ console.log(result);
 */
 ```
 
-## 10.手写模板编译功能
+## 10.模板编译功能
 
 模板编译最常用的实现方式是通过正则表达式进行解析,当匹配指定规则时则使用数据对象替换。
 
@@ -857,12 +849,12 @@ console.log(result);
 const reg = /{{\s*?(\w+)\s*?}}/g;
 const render = (template: string, data: Record<string, any>) => {
   return template.replace(reg, (match, key) => {
-    return key && data.hasOwnProperty(key) ? data[key] : "";
+    return key && data.hasOwnProperty(key) ? data[key] : '';
   });
 };
 // 测试
 const template = `name:{{name}},age:{{age}}`;
-const data = { name: "zchengfeng", age: 18 };
+const data = { name: 'zchengfeng', age: 18 };
 console.log(render(template, data)); // name:zchengfeng,age:18
 ```
 
@@ -872,18 +864,18 @@ console.log(render(template, data)); // name:zchengfeng,age:18
 
 setInterval 常用于计时场景,例如倒计时组件,由于 setInterval 的缺点,通常不会直接使用 setInterval 实现计时功能,而是借助 setTimeout 模拟 setInterval,setInterval 的缺点如下:
 
-- 执行时机不准:setInterval 的执行时间间隔是近似的，并不能保证在指定的时间间隔内准确执行。实际执行时间可能会受到 JavaScript 引擎当前的负载和其他因素的影响，导致执行时间不稳定。
-- 积累的延迟:如果回调函数的执行时间比设定的时间间隔更长，多个回调函数会积累在一起等待执行，导致回调函数的执行时间出现延迟。这可能导致一些计时器任务的堆积，使得回调函数的执行与预期不符
+- 执行时机不准:setInterval 的执行时间间隔是近似的,并不能保证在指定的时间间隔内准确执行。实际执行时间可能会受到 JavaScript 引擎当前的负载和其他因素的影响,导致执行时间不稳定。
+- 积累的延迟:如果回调函数的执行时间比设定的时间间隔更长,多个回调函数会积累在一起等待执行,导致回调函数的执行时间出现延迟。这可能导致一些计时器任务的堆积,使得回调函数的执行与预期不符
 - 容易发生内存泄漏风险。如果回调函数存在问题导致无法执行完毕,会持续占用内存资源。
 
 ### 12.1 使用 setTimeout 模拟 setInterval
 
 使用 setTimeout 替代 setInterval 的优势如下:
 
-- 更准确的时间间隔：使用 setTimeout 可以手动控制每次回调函数的执行时间间隔，而不受 JavaScript 引擎的负载和其他因素的影响。这样可以更精确地控制回调函数的执行间隔，并减少误差。
-- 避免积累的延迟：setInterval 的一个常见问题是如果回调函数的执行时间比设定的时间间隔更长，多个回调函数会积累在一起等待执行，导致回调函数的执行时间出现延迟。使用 setTimeout 可以避免这个问题，因为每次回调函数执行完成后，手动设置下一个 setTimeout，确保下一个回调函数按照指定的时间间隔执行。
-- 动态调整时间间隔：使用 setTimeout 可以在每次回调函数执行时动态地设置下一个回调的时间间隔。这样可以根据实际需求灵活地调整时间间隔，例如根据回调函数的执行情况来调整执行频率，实现更高级的调度逻辑。
-- 可暂停和恢复：通过使用 setTimeout，可以通过清除计时器的方式实现暂停和恢复功能。可以使用 clearTimeout 清除当前计时器，从而停止回调函数的执行，并在需要时再次调用 setTimeout 来恢复执行。
+- 更准确的时间间隔：使用 setTimeout 可以手动控制每次回调函数的执行时间间隔,而不受 JavaScript 引擎的负载和其他因素的影响。这样可以更精确地控制回调函数的执行间隔,并减少误差。
+- 避免积累的延迟：setInterval 的一个常见问题是如果回调函数的执行时间比设定的时间间隔更长,多个回调函数会积累在一起等待执行,导致回调函数的执行时间出现延迟。使用 setTimeout 可以避免这个问题,因为每次回调函数执行完成后,手动设置下一个 setTimeout,确保下一个回调函数按照指定的时间间隔执行。
+- 动态调整时间间隔：使用 setTimeout 可以在每次回调函数执行时动态地设置下一个回调的时间间隔。这样可以根据实际需求灵活地调整时间间隔,例如根据回调函数的执行情况来调整执行频率,实现更高级的调度逻辑。
+- 可暂停和恢复：通过使用 setTimeout,可以通过清除计时器的方式实现暂停和恢复功能。可以使用 clearTimeout 清除当前计时器,从而停止回调函数的执行,并在需要时再次调用 setTimeout 来恢复执行。
 
 使用 setTimeout 模拟 setInterval 核心在于:在回调函数内部使用递归调用 setTimeout 来实现循环执行。
 
@@ -905,13 +897,13 @@ function mySetInterval(callback, interval) {
 
 // 测试
 const clearIntervalFn = mySetInterval(function () {
-  console.log("Repeated execution");
+  console.log('Repeated execution');
 }, 2000);
 ```
 
 ### 12.1 使用 requestAnimationFrame 实现 setInterval
 
-requestAnimationFrame 是浏览器提供的一个用于执行动画和其他重绘操作的优化定时器函数,使用 requestAnimationFrame 来模拟 setInterval 可以提供更精确和更流畅的定时效果，并且对于可见性更好，因为它会自动暂停和恢复，以适应页面激活和非激活状态。
+requestAnimationFrame 是浏览器提供的一个用于执行动画和其他重绘操作的优化定时器函数,使用 requestAnimationFrame 来模拟 setInterval 可以提供更精确和更流畅的定时效果,并且对于可见性更好,因为它会自动暂停和恢复,以适应页面激活和非激活状态。
 
 ```js
 function mySetInterval(callback, interval) {
@@ -940,7 +932,7 @@ function mySetInterval(callback, interval) {
 }
 ```
 
-## 13.手写 once 函数
+## 13.once 函数
 
 once 用于保证函数只执行一次,常用于只执行一次的初始化、订阅事件或执行一次性操作的场景(Vue 提供 once 函数的实现)。
 
@@ -962,13 +954,13 @@ function once(callback) {
 
 // 测试
 const func = once(function () {
-  console.log("This function will only be called once.");
+  console.log('This function will only be called once.');
 });
 func(); // 输出:This function will only be called once.
 func(); // 无输出,函数不会再次调用
 ```
 
-## 14.手写版本号对比函数
+## 14.版本号对比函数
 
 实际项目开发中,通常需要版本管理功能以实现版本包更新功能,因此需要对比最新包版本号是否大于本地包版本号(当前版本),判断是否需要更新。
 
@@ -980,11 +972,11 @@ func(); // 无输出,函数不会再次调用
  */
 function compareVersion(version1, version2) {
   // 边界判断
-  if (typeof version1 !== "string" || typeof version2 !== "string")
+  if (typeof version1 !== 'string' || typeof version2 !== 'string')
     return false;
   // 根据 . 号分割字符串为数组
-  const v1 = version1.split("."),
-    v2 = version2.split(".");
+  const v1 = version1.split('.'),
+    v2 = version2.split('.');
   // 获取分割后数组的最大长度,由于两个数组长度可能会不一致,最小长度的数组元素需要补0
   for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
     const n1 = i < v1.length ? parseInt(v1[i]) : 0;
@@ -995,8 +987,22 @@ function compareVersion(version1, version2) {
 }
 
 // 测试
-compareVersion1(1.0, 2.0); // false
-compareVersion1("0.0.2", "0.0.1"); // false
-compareVersion1("0.0.1", "0.0.2"); // true
-compareVersion1("0.0.1", "0.0.11"); // true
+compareVersion(1.0, 2.0); // false
+compareVersion('0.0.2', '0.0.1'); // false
+compareVersion('0.0.1', '0.0.2'); // true
+compareVersion('0.0.1', '0.0.11'); // true
 ```
+
+## Promise 异常处理函数
+
+## 惰性函数
+
+## 函数式编程工具函数
+
+### compose
+
+### pipeline
+
+### 柯里化函数
+
+### memo

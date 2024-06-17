@@ -44,7 +44,7 @@ ESLint 配置:
 }
 ```
 
-## 1.UseState()
+## 1.useState()
 
 useState(initialState)用于声明函数式中的状态,其中 initialState 表示状态的初始值,initialState 既可以是一个初始值又可以是一个返回初始值的惰性初始化函数,惰性初始化函数仅在组件首次渲染被执行,通常用于初始化数据量较大的状态,惰性初始化函数能提升组件渲染效率。
 useState(initialState)返回一个数组,该数组由状态值(state)和设置状态值函数(setState)两项组成,其中设置状态值函数既可以接收一个更新值又可以接收一个返回更新值的回调函数,在该回调函数可以获取上一次的状态值。手动调用设置状态值函数可以触发组件重新渲染。只有更新 state 与 state 值不相等时才会触发组件重新渲染,React 底层使用 Object.is()来比较更新前的 state 和更新的 state,只有两者不相等时组件才会被重新渲染。
@@ -71,7 +71,7 @@ function useState<S = undefined>(): [
 ```
 
 ```tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface Item {
   id: number;
@@ -80,7 +80,7 @@ interface Item {
 }
 
 function Example() {
-  console.log("Example render...");
+  console.log('Example render...');
 
   /**
    * useState()初始值写法。useState()返回一个数组,数组由状态值和设置状态值函数组成
@@ -93,9 +93,9 @@ function Example() {
    */
   const [list, setList] = useState<Item[]>(() => {
     return [
-      { id: 1, name: "name_1", address: "address_1" },
-      { id: 2, name: "name_2", address: "address_2" },
-      { id: 3, name: "name_3", address: "address_3" },
+      { id: 1, name: 'name_1', address: 'address_1' },
+      { id: 2, name: 'name_2', address: 'address_2' },
+      { id: 3, name: 'name_3', address: 'address_3' },
     ];
   });
 
@@ -158,7 +158,7 @@ export default Example;
 - 引用类型的情况下,Class State 不需要传入新的引用,而 Function State 必须保证是个新的引用。
 
 ```tsx
-import React, { Component } from "react";
+import React, { Component } from 'react';
 // 1s内点击button count值10
 class App extends Component {
   constructor(props) {
@@ -180,7 +180,7 @@ class App extends Component {
 ```
 
 ```tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 // 1s内点击button10次 count值为1
 function App() {
   const [count, setCount] = useState(0);
@@ -232,16 +232,16 @@ useState()与 setState()有所区别,Class 组件存储的是状态的引用,而
 - 通过 useEffect()侦听 state。
 
 ```tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 function Example() {
-  console.log("Example render...");
+  console.log('Example render...');
   const [count, setCount] = useState(0);
   /**
    * 通过useEffect监听依赖项变化,当依赖项发生变化时,就会触发组件重新渲染
    */
   useEffect(() => {
-    console.log("count change...");
+    console.log('count change...');
   }, [count]);
 
   return (
@@ -260,10 +260,10 @@ export default Example;
 - 通过 useRef()引用 state。
 
 ```tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 
 function Example() {
-  console.log("Example render...");
+  console.log('Example render...');
   const [count, setCount] = useState(0);
   // 通过useRef()声明状态的引用,通过引用总能获取最新的值,更新引用时并不会触发组件重新渲染
   const countRef = useRef(count);
@@ -280,7 +280,7 @@ function Example() {
 export default Example;
 ```
 
-## useRef()
+## 2.useRef()
 
 useRef 用于在函数式组件创建一个 ref(ref 即引用,是 reference 的简称)。useRef 返回一个可变对象(RefObject/MutableRefObject),该对象拥有一个 current 属性,并且不管函数组件执行多少次,而 useRef 返回的对象永远都不会发生变化(永远都是原来那一个),而且修改 ref 值并不会触发组件重新渲染。useRef()函数签名如下:
 
@@ -313,10 +313,10 @@ RefObject 和 MutableRefObject 内部都定义了一个{current:T},其区别在�
 ```tsx
 // 例子:
 const ref = useRef<string | null>(null);
-ref.current = ""; // OK,ref的类型为MutableRefObject,current属性是可变的
+ref.current = ''; // OK,ref的类型为MutableRefObject,current属性是可变的
 
 const ref = useRef<string>(null);
-ref.current = ""; // ERROR,ref的类型为RefObject,current属性是只读的
+ref.current = ''; // ERROR,ref的类型为RefObject,current属性是只读的
 ```
 
 ### 2.1 使用 useRef()引用状态
@@ -324,7 +324,7 @@ ref.current = ""; // ERROR,ref的类型为RefObject,current属性是只读的
 通过 useRef()解决 useState()在 setTimeout()中 1s 点击 10 次无法获取最新值问题。
 
 ```tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 // 1s内点击button10次 count值为10
 function Example() {
   const [count, setCount] = useState(0);
@@ -356,7 +356,7 @@ export default Example;
 ### 2.2 使用 useRef()引用 DOM 元素
 
 ```tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 
 /**
  * DOM类型的继承关系如下(从父类型到子类型):EventTarget > Node > Element > HTMLElement。
@@ -375,22 +375,22 @@ import React, { useState, useRef } from "react";
  * // ...省略其他类型
  */
 function Example() {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    console.log("通过event对象获取输入值:", e.target.value);
+    console.log('通过event对象获取输入值:', e.target.value);
     // 通过ref引用获取DOM元素
     const inputEl = inputRef.current;
     if (!inputEl) return;
-    console.log("通过ref引用DOM元素获取输入值:", inputEl.value);
+    console.log('通过ref引用DOM元素获取输入值:', inputEl.value);
     setText(inputEl.value);
   };
   return (
     <div>
       <div>
         <div>text:{text}</div>
-        <input ref={inputRef} onChange={onChange} type="text" />
+        <input ref={inputRef} onChange={onChange} type='text' />
       </div>
     </div>
   );
@@ -413,7 +413,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   RefAttributes,
-} from "react";
+} from 'react';
 
 interface ChildProps {}
 
@@ -447,7 +447,7 @@ const Child = forwardRef<ChildProps, RefAttributes<ChildRef>>(function Child(
     () => {
       return {
         sayHi() {
-          console.log("sayHi...");
+          console.log('sayHi...');
         },
       };
     },
@@ -529,7 +529,7 @@ const App = () => {
   return (
     <div>
       <div
-        style={{ marginTop: 100, width: 100, height: 100, background: "red" }}
+        style={{ marginTop: 100, width: 100, height: 100, background: 'red' }}
         ref={ref}
       />
     </div>
@@ -557,7 +557,7 @@ const App = () => {
   return (
     <div>
       <div
-        style={{ marginTop: 100, width: 100, height: 100, background: "red" }}
+        style={{ marginTop: 100, width: 100, height: 100, background: 'red' }}
         ref={ref}
       />
     </div>
@@ -585,7 +585,7 @@ useCallback()的使用场景比较单一,在 JS 环境中创建函数的开销�
 - 未使用 useCallback():组件重新渲染都会创建 handleSubmit()函数,handleSubmit()函数作为 Child 组件的 Props,即使 Child 使用 React.memo()包装仍会导致被重新渲染,这是因为 React.memo()会通过 Object.is()比较组件的上次 props 和本次 props 是否一致,如果一致组件则跳过渲染。由于父组件重新渲染总会创建一个新的 handleSubmit()函数,React.memo()每次比较的 props 都不相等,因此父组件重新渲染也会导致 Child 组件重复渲染。
 
 ```tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from 'react';
 
 // 父组件重新渲染总会导致Child组件被渲染,即使使用React.memo()Child组件仍会被渲染
 const Child = React.memo(function Child({
@@ -593,7 +593,7 @@ const Child = React.memo(function Child({
 }: {
   handleSubmit: () => void;
 }) {
-  console.log("child render...");
+  console.log('child render...');
   handleSubmit();
   return <div>child</div>;
 });
@@ -609,7 +609,7 @@ const Child = React.memo(function Child({
 function Parent() {
   const [count, setCount] = useState(0);
   const handleSubmit = () => {
-    console.log("submit");
+    console.log('submit');
   };
   return (
     <div>
@@ -626,7 +626,7 @@ export default Parent;
 - 使用 useCallback()记忆 handleSubmit()函数:useCallback 记忆 handleSubmit()函数,如果依赖项未发生变化,父组件重新渲染并不会创建新的 handleSubmit()函数,而是会使用被记忆的 handleSubmit()函数,因此在 React.memo()比较 Props 时,每次比较都是一致,所以会跳过组件的无效渲染。
 
 ```tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from 'react';
 
 // 父组件重新渲染总会导致Child组件被渲染,即使使用React.memo()Child组件仍会被渲染
 const Child = React.memo(function Child({
@@ -634,7 +634,7 @@ const Child = React.memo(function Child({
 }: {
   handleSubmit: () => void;
 }) {
-  console.log("child render...");
+  console.log('child render...');
   handleSubmit();
   return <div>child</div>;
 });
@@ -648,7 +648,7 @@ const Child = React.memo(function Child({
 function Parent() {
   const [count, setCount] = useState(0);
   const handleSubmit = useCallback(() => {
-    console.log("submit");
+    console.log('submit');
   }, []);
   return (
     <div>
@@ -674,7 +674,7 @@ useMemo<T>(factory: () => T, deps: DependencyList | undefined)
 - deps:依赖数组,当依赖数组中的依赖发生变化时会触发 useMemo()重新计算。
 
 ```tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 function Example() {
   const [location, setLocation] = useState({ w: 100, h: 100 });
@@ -705,7 +705,7 @@ export default Example;
 getArea()函数根据宽高计算面积,由于 setState()组件状态会触发组件重新渲染,即使变化状态与 location 无关,仍会导致 getArea()被重新计算,而 getArea()计算只关乎 location,所以其他状态的变化不应该触发 getArea()重新计算。使用 useMemo()优化如下:
 
 ```tsx
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 
 function Example() {
   const [location, setLocation] = useState({ w: 100, h: 100 });
@@ -742,7 +742,7 @@ export default Example;
 - 子孙组件使用 useContext()根据指定上下文对象父组件获取传递的数据。
 
 ```tsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
 interface DataContextType {
   count: number;
@@ -828,7 +828,7 @@ useReducer()返回一个数组,该数组由 reducer()函数处理后的状态(st
 - 使用 dispatch()根据 action 进行调度,从而触发 reducer()函数对应的修改 state 逻辑,并使组件重新渲染。
 
 ```tsx
-import React, { useReducer, Reducer } from "react";
+import React, { useReducer, Reducer } from 'react';
 
 /*********************** TS类型定义 ***************************** */
 interface Item {
@@ -838,12 +838,12 @@ interface Item {
 // 定义reducer状态类型
 type StateType = Item[];
 // 定义添加元素action类型
-type AddItemAction = { type: "add"; payload: Item };
+type AddItemAction = { type: 'add'; payload: Item };
 // 定义删除元素action类型
-type DelItemAction = { type: "del"; payload: number };
+type DelItemAction = { type: 'del'; payload: number };
 // 定义修改元素action类型
 type UpdateItemAction = {
-  type: "update";
+  type: 'update';
   payload: { index: number; item: Item };
 };
 // 定义reducer函数action类型
@@ -862,13 +862,13 @@ type ExampleReducer = Reducer<StateType, ActionType>;
  */
 function reducer(state: StateType, action: ActionType) {
   switch (action.type) {
-    case "add": {
+    case 'add': {
       return [...state, action.payload];
     }
-    case "del": {
+    case 'del': {
       return state.filter((_, index) => index !== action.payload);
     }
-    case "update": {
+    case 'update': {
       const { index, item } = action.payload;
       /**
        * 由于reducer()是一个纯函数,直接修改state是无效的,应返回一个新的state。
@@ -883,9 +883,9 @@ function reducer(state: StateType, action: ActionType) {
   }
 }
 
-const initialList = [{ name: "name_1", address: "address_1" }];
+const initialList = [{ name: 'name_1', address: 'address_1' }];
 function Example() {
-  console.log("render...");
+  console.log('render...');
   /**
    * useReducer()返回一个数组,该数组由处理状态(state)和调度函数(dispatch)组成,调度函数
    * 用于触发reducer函数,注意该调度函数会触发组件重新渲染,即使state未发生变化的情况仍会
@@ -897,21 +897,21 @@ function Example() {
   const handleAdd = () => {
     // 触发reducer函数中的"add"分支逻辑
     dispatch({
-      type: "add",
+      type: 'add',
       payload: { name: `name_${len + 1}`, address: `address_${len + 1}` },
     });
   };
   const handleDel = (index: number) => {
     // 触发reducer函数中的"del"分支逻辑
-    dispatch({ type: "del", payload: index });
+    dispatch({ type: 'del', payload: index });
   };
   const handleUpdate = (index: number) => {
     // 触发reducer函数中的"update"分支逻辑
     dispatch({
-      type: "update",
+      type: 'update',
       payload: {
         index: index,
-        item: { name: "namexxxx", address: "addressxxxx" },
+        item: { name: 'namexxxx', address: 'addressxxxx' },
       },
     });
   };
@@ -948,7 +948,7 @@ import React, {
   Reducer,
   useContext,
   useReducer,
-} from "react";
+} from 'react';
 
 // (1).声明状态类型
 interface State {
@@ -981,9 +981,9 @@ const ContextProvider: React.FC<PropsWithChildren> = (props) => {
   function reducer(state: State, action: ActionType) {
     const type = action.type;
     switch (type) {
-      case "increment":
+      case 'increment':
         return { ...state, count: state.count + 1 };
-      case "decrement":
+      case 'decrement':
         return { ...state, count: state.count - 1 };
       default:
         return state;
@@ -1004,9 +1004,9 @@ function Consumer() {
   const { state, dispatch } = useContext<Context>(Context);
   return (
     <div>
-      <button onClick={() => dispatch({ type: "decrement" })}>-</button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
       <span>count:{state.count}</span>
-      <button onClick={() => dispatch({ type: "increment" })}>+</button>
+      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
       <div>Example</div>
     </div>
   );
@@ -1047,7 +1047,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   RefAttributes,
-} from "react";
+} from 'react';
 
 interface ChildProps {}
 
@@ -1081,7 +1081,7 @@ const Child = forwardRef<ChildProps, RefAttributes<ChildRef>>(function Child(
     () => {
       return {
         sayHi() {
-          console.log("sayHi...");
+          console.log('sayHi...');
         },
       };
     },
@@ -1123,7 +1123,7 @@ function useDeferredValue<T>(value: T): T;
 - 不使用 useDeferredValue()渲染列表:列表状态的更新会阻塞 input 输入状态更新,此时输入非常卡顿。
 
 ```tsx
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useState } from 'react';
 
 function SlowItem({ text }: { text: string }) {
   let startTime = performance.now();
@@ -1146,7 +1146,7 @@ const SlowList = React.memo(function SlowList({ query }: { query: string }) {
 });
 
 function Example() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   // const deferredQuery = useDeferredValue(query);
   return (
     <div>
@@ -1162,7 +1162,7 @@ export default Example;
 - 使用 useDeferredValue()渲染列表后,input 输入更加流畅了:
 
 ```tsx
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useState } from 'react';
 
 function SlowItem({ text }: { text: string }) {
   let startTime = performance.now();
@@ -1185,7 +1185,7 @@ const SlowList = React.memo(function SlowList({ query }: { query: string }) {
 });
 
 function Example() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   /**
    * 定义延迟值,SlowList组件使用了deferredQuery,渲染优先级低于input输入,
    * 因此input输入显得更加流畅
@@ -1218,12 +1218,12 @@ useTransition()不接收任何参数,返回一个两个元素的数组:
 下面示例中,当 input 进行输入时会从 5 万个数字进行过滤并展示结果,由于过滤的数据量比较大,输入 input 时会有明显的卡顿,这是因为输入 input 时会触发 onChange 事件并修改 query 的状态值,而 setState 的修改操作是同步更新的,会导致长时间占用主线程,无法及时响应 input 输入。可以把更新状态和 input 输入分为两个任务,由于更新状态是同步执行的,因此优先级高于 input 输入,大量计算会导致 input 响应延迟,因此降低更新状态的优先级能很大程度上避免 input 输入卡顿。
 
 ```tsx
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from 'react';
 
 const numbers = [...new Array(50000).keys()];
 
 function App() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -1231,7 +1231,7 @@ function App() {
 
   return (
     <div>
-      <input type="number" onChange={handleChange} />
+      <input type='number' onChange={handleChange} />
       <div>
         {numbers.map((i, index) =>
           query ? (
@@ -1251,11 +1251,11 @@ export default App;
 使用 useTransition()返回 isPending 和 startTransition()函数两个元素,在 startTransition()函数中执行状态更新以降低任务优先级,通过 isPending 可以判断 React 中是否还有等待的任务,以此来决定是否更新 UI。通过 useTransition()优化后,降低了更新操作的优先级,确保了用户和输入框的交互操作保持流畅。
 
 ```tsx
-import { useState, ChangeEvent, useTransition } from "react";
+import { useState, ChangeEvent, useTransition } from 'react';
 
 const numbers = [...new Array(50000).keys()];
 function App() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   const [isPending, startTransition] = useTransition();
 
@@ -1275,8 +1275,8 @@ function App() {
 
   return (
     <div>
-      <input type="number" onChange={handleChange} />
-      <div>{isPending ? "Loading..." : list}</div>
+      <input type='number' onChange={handleChange} />
+      <div>{isPending ? 'Loading...' : list}</div>
     </div>
   );
 }
@@ -1288,7 +1288,7 @@ export default App;
 useId()用于在组件顶层生成唯一 id,通常用于元素的可访问属性,以保证属性值的唯一性,例如 id 属性。React 并不推荐使用 useId()生成的唯一 id 作为绑定 key 的值。
 
 ```tsx
-import React, { useId } from "react";
+import React, { useId } from 'react';
 
 function Example() {
   const inputId = useId();
@@ -1301,4 +1301,27 @@ function Example() {
 }
 
 export default Example;
+```
+
+## 13.自定义 Hooks
+
+Hooks 可以简单理解为包含组件相关逻辑的工具函数,虽然 React 有很多开源 Hooks 库(例如 Ahooks、ReactUse 等等),但是在实际开发中,需要根据业务逻辑自定义 Hooks。
+
+### 13.1 useMounted、useUnMounted
+
+useEffect()除了监听状态外,也可以模拟组件挂载和卸载钩子,但是 useEffect()写法比较复杂,可以通过 useEffect 自定义挂载 Hook 和卸载 Hook。
+
+```ts
+import { useEffect } from 'react';
+type Fn = () => void;
+
+export function useMounted(fn: Fn) {
+  useEffect(() => fn(), []);
+}
+
+export function useUnMounted(fn: Fn) {
+  useEffect(() => {
+    return () => fn();
+  }, []);
+}
 ```
