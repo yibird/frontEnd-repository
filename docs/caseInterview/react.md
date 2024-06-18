@@ -239,6 +239,66 @@ React 使用 key 的建议:
 
 Fiber 架构是 React 16 中引入的新的协调算法和架构设计,通过可中断的、增量的、优先级的任务调度方式,解决了 React 在处理复杂组件结构、大量数据和高频更新时可能遇到的性能问题和用户体验问题。它的核心思想是将任务分割成小的可中断单元,支持优先级调度和时间切片,使得 React 应用能够更好地响应用户操作,提高页面渲染的效率和流畅度。
 
+在 React 16 中,FiberNode 是一个复杂的数据结构,用于描述组件和其相关状态:
+
+```js
+const NoEffect = /* 0b00000000000000000000 */ 0;
+const NoPriority = /* 0b00000000000000000000 */ 0;
+const NoLane = /* 0b00000000000000000000 */ 0;
+
+// FiberNode 的定义
+class FiberNode {
+  constructor(tag, pendingProps, key) {
+    /**
+     * 标记节点类型,如 HostComponent(原生 DOM 节点)、ClassComponent(类组件)、
+     * FunctionComponent(函数式组件)、HostRoot(根节点)等
+     */
+    this.tag = tag;
+    /**
+     * 表示当前 FiberNode 所代表的元素类型或组件类型。例如,对于原生 DOM 元素,
+     * type 是字符串（如 "div"）；对于函数或类组件,type 是函数或类的引用。
+     */
+    this.type = type;
+    // 当前 props,记录当前渲染的属性
+    this.pendingProps = pendingProps;
+    // 存储上一次渲染时的属性值,用于比较 props 是否发生变化
+    this.memoizedProps = null;
+    // 当前状态,记录当前组件的 state
+    this.stateNode = null;
+    // 用于列表渲染的唯一标识符
+    this.key = key;
+
+    /**
+     * child、sibling、return分别指向该 FiberNode 的第一个子节点、下一个兄弟节点和父节点。
+     * 通过这些指针,React 可以在组件树中进行深度优先的遍历和更新
+     */
+    this.child = null;
+    this.sibling = null;
+    this.return = null;
+
+    // 标记该 FiberNode 需要执行的操作类型，如插入、更新、删除等
+    this.effectTag = NoEffect;
+    // 指向上一次渲染的 FiberNode,支持双缓存机制,用于比对新旧 FiberNode 的差异。
+    this.alternate = null;
+    // 存储更新队列
+    this.updateQueue = null;
+    // 存储在 render 阶段产生的状态,用于保存上一次渲染的状态
+    this.memoizedState = null;
+
+    // 用于调度渲染的优先级,决定更新的优先级
+    this.priority = null;
+    // 用于调度的时间戳
+    this.lane = NoLane;
+
+    // 指向当前正在工作的 Hook,在 Hooks 链表中使用
+    this.currentHook = null;
+  }
+
+  // 其它必要的属性...
+  // 可以添加更多属性来满足实际需求,如 context、refs 等
+}
+```
+
 ## Fiber 与 React.createElement 的关系?
 
 ## 14.什么是 React Hooks?
