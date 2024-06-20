@@ -31,14 +31,14 @@ const rawType = (val: unknown) => {
 };
 // 判断val是否是Function类型
 function isFunc(val: unknown): val is Function {
-  return typeof val === "function";
+  return typeof val === 'function';
 }
 // 方式1:通过检查目标对象上是否具有Promise.prototype.then()
 function isPromise<T = any>(val: unknown): val is Promise<T> {
   return (
-    rawType(val) === "Promise" &&
+    rawType(val) === 'Promise' &&
     val !== null &&
-    typeof val === "object" &&
+    typeof val === 'object' &&
     isFunc((val as any).then) &&
     isFunc((val as any).catch)
   );
@@ -47,9 +47,9 @@ function isPromise<T = any>(val: unknown): val is Promise<T> {
 // 方式2:Promise.resolve()函数判断目标对象是否是Promise
 function isPromise<T = any>(val: unknown): val is Promise<T> {
   return (
-    rawType(val) === "Promise" &&
+    rawType(val) === 'Promise' &&
     val !== null &&
-    typeof val === "object" &&
+    typeof val === 'object' &&
     Promise.resolve(val) === val
   );
 }
@@ -61,9 +61,9 @@ function isPromise<T = any>(val: unknown): val is Promise<T> {
 
 ```js
 const person = {
-  name: "John",
+  name: 'John',
   age: 30,
-  city: "New York",
+  city: 'New York',
 };
 ```
 
@@ -100,15 +100,15 @@ Number.isNaN()方法和 isNaN()的区别在于,Number.isNaN()不会将传入的�
 ```ts
 console.log(isNaN(NaN)); // true
 console.log(isNaN(true)); // true
-console.log(isNaN("aa")); // true
-console.log(isNaN("")); // false
+console.log(isNaN('aa')); // true
+console.log(isNaN('')); // false
 console.log(isNaN(null)); // false
 console.log(isNaN(undefined)); // false
 
 console.log(Number.isNaN(NaN)); // true
 console.log(Number.isNaN(true)); // false
-console.log(Number.isNaN("aa")); // false
-console.log(Number.isNaN("")); // false
+console.log(Number.isNaN('aa')); // false
+console.log(Number.isNaN('')); // false
 console.log(Number.isNaN(null)); // false
 console.log(Number.isNaN(undefined)); // false
 ```
@@ -160,7 +160,7 @@ console.log(a === 1 && a === 2 && a === 3); // false
 // 定义全局变量,即window.value
 var value = 0;
 // 监听window对象的a属性getter操作,每次访问window.a都会执行get函数
-Object.defineProperty(window, "a", {
+Object.defineProperty(window, 'a', {
   get: function () {
     return (this.value += 1);
   },
@@ -180,8 +180,8 @@ let handler = {
    * - target:指向原始的读操作所在的那个对象,一般是Proxy对象。
    */
   get: function (target, key, receiver) {
-    console.log("receiver:", receiver);
-    if (key === "value") {
+    console.log('receiver:', receiver);
+    if (key === 'value') {
       return ++target.value;
     }
   },
@@ -198,7 +198,7 @@ console.log(obj.value === 1 && obj.value === 2 && obj.value === 3); // 输出 tr
 ```js
 // 变量提升,在变量声明之前使用变量会产生undefined值
 console.log(a); // undefined
-var a = "hello";
+var a = 'hello';
 
 // 函数提升
 foo(); // 1
@@ -208,9 +208,9 @@ function foo() {
 
 // 函数提升的优先级高于变量提升,因为函数声明的优先级高于变量声明的优先级
 foo(); // "hello"
-var foo = "world";
+var foo = 'world';
 function foo() {
-  console.log("hello");
+  console.log('hello');
 }
 ```
 
@@ -407,7 +407,7 @@ module.exports = {
 };
 
 // main.js
-var lib = require("./lib");
+var lib = require('./lib');
 console.log(lib.counter); // 3
 lib.incCounter();
 console.log(lib.counter); // 3
@@ -435,7 +435,7 @@ export function incCounter() {
 }
 
 // mian.js
-import { counter, incCounter } from "./lib";
+import { counter, incCounter } from './lib';
 console.log(counter); // 3
 incCounter();
 console.log(counter); // 4
@@ -527,7 +527,7 @@ function currySquare() {
 }
 // 创建柯里化的平方计算函数
 const delayedSquare = currySquare();
-// 调用延迟计算函数，传递参数
+// 调用延迟计算函数,传递参数
 const squareOf2 = delayedSquare(2);
 // 在需要时执行计算
 const result = squareOf2(); // 此时才计算 2 * 2 的结果
@@ -547,11 +547,11 @@ function createValidator(rule) {
 
 // 基本的验证规则
 function isRequired(value) {
-  return value !== undefined && value !== null && value !== "";
+  return value !== undefined && value !== null && value !== '';
 }
 
 function isEmail(value) {
-  // 此处简化验证逻辑，实际应用中应该使用更复杂的邮箱验证规则
+  // 此处简化验证逻辑,实际应用中应该使用更复杂的邮箱验证规则
   return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(value);
 }
 
@@ -565,11 +565,11 @@ const validateEmail = createValidator(isEmail);
 const validateNumeric = createValidator(isNumeric);
 
 // 使用验证函数
-const userInput = "";
+const userInput = '';
 
 console.log(validateRequired(userInput)); // false
-console.log(validateEmail("example.com")); // false
-console.log(validateNumeric("123abc")); // false
+console.log(validateEmail('example.com')); // false
+console.log(validateNumeric('123abc')); // false
 ```
 
 ## 26.FileReader 的作用?
@@ -628,12 +628,109 @@ Web Worker 的应用场景包括:
 
 ## 30.什么是事件循环
 
-## 31.什么是事件冒泡和事件捕获
+## 31.什么是事件冒泡和事件捕获?
+
+在 DOM 事件模型中,事件传播经历三个阶段:捕获阶段(Capturing Phase)、目标阶段(Target Phase)和冒泡阶段(Bubbling Phase)。这些阶段共同定义了事件在 DOM 树中的传播路径:
+
+- 捕获阶段(Capturing Phase):事件从根开始向下传播,直到到达事件目标。
+- 目标阶段(Target Phase):事件在目标元素上触发。
+- 冒泡阶段(Bubbling Phase):事件从目标元素开始向上冒泡,直到到达根。
+
+事件冒泡（Event Bubbling）和事件捕获（Event Capturing）是 JavaScript 中处理 DOM 事件的两个阶段。它们定义了事件在 DOM 树中的传播路径。
+
+- 事件冒泡(Event Bubbling):事件冒泡是指事件从最具体的元素(事件发生的目标元素)开始向上传播到最不具体的元素(通常是文档或窗口)。简单来说,在触发事件时事件冒泡将从目标元素向外层(向上层)传播事件。
+- 事件捕获(Event Capturing):事件捕获是指事件从最不具体的元素(通常是 document 或 window)开始向下传播到最具体的元素(事件发生的目标元素)。简单来说,在触发事件时事件捕获将从顶层元素向内层(向上层)目标元素传播事件。
+
+在 JavaScript 中,可以使用 addEventListener 方法来设置事件处理函数,并通过传递第三个参数来指定事件处理函数是在事件捕获阶段还是事件冒泡阶段执行,设置 false 表示在冒泡阶段执行(默认),设置 true 表示在捕获阶段执行。
+
+```html
+<div id="grandparent">
+  <div id="parent">
+    <button id="child">Click me</button>
+  </div>
+</div>
+
+<script>
+  // 设置在捕获阶段执行的事件处理函数
+  document
+    .getElementById('grandparent')
+    .addEventListener(
+      'click',
+      () => console.log('Grandparent capturing'),
+      true
+    );
+  document
+    .getElementById('parent')
+    .addEventListener('click', () => console.log('Parent capturing'), true);
+  document
+    .getElementById('child')
+    .addEventListener('click', () => console.log('Child capturing'), true);
+  // 设置在冒泡阶段执行的事件处理函数
+  document
+    .getElementById('grandparent')
+    .addEventListener(
+      'click',
+      () => console.log('Grandparent bubbling'),
+      false
+    );
+  document
+    .getElementById('parent')
+    .addEventListener('click', () => console.log('Parent bubbling'), false);
+  document
+    .getElementById('child')
+    .addEventListener('click', () => console.log('Child bubbling'), false);
+  /**
+   * 点击 button 元素时,事件捕获阶段的控制台输出:
+   * Grandparent capturing
+   * Parent capturing
+   * Child capturing
+   *
+   * 点击 button 元素时,事件冒泡阶段的控制台输出:
+   * Child capturing
+   * Parent capturing
+   * Grandparent capturing
+   */
+</script>
+```
+
+在 JavaScript 中,可以通过调用事件对象的 stopPropagation() 或 stopImmediatePropagation()方法来阻止事件冒泡和事件捕获:
+
+- stopPropagation():阻止事件进一步传播(既阻止事件冒泡也阻止事件捕获)。
+- stopImmediatePropagation():不仅阻止事件进一步传播,还阻止当前元素上后续的其他事件处理程序的执行。
 
 ## 32.event.target 和 event.currentTarget 的区别
 
-## 33.['1', '2', '3'].map(parseInt)的结果
+event.target 和 event.currentTarget 是 JavaScript 事件对象 (Event) 中的两个属性,它们在事件处理过程中提供了不同的信息:
+
+- event.target:event.target 表示触发事件的最深层次的元素,即实际被点击、悬停等的元素。通常用于确定事件最初发生的具体元素,可以用来获取用户直接交互的元素。
+- event.currentTarget:event.currentTarget 表示当前处理事件的元素,即事件处理程序附加到的元素。在事件处理程序中,event.currentTarget 始终指向绑定事件处理程序的元素。
+
+## 33.事件委托?
+
+事件委托是一种在 JavaScript 中处理事件的技术,它利用事件冒泡机制,将事件处理程序附加到一个父元素上,而不是每个子元素上。这种方法特别适合处理多个子元素需要类似的事件处理的情况,从而减少内存消耗和提高性能。例如在 React 合成事件中使用事件委托的机制,将所有组件的事件处理程序统一绑定到根节点(通常是 document 或 root 节点)上,而不是直接绑定到各个组件的 DOM 节点上,以减少事件处理程序的数量,节省内存,并提高性能。 事件委托常用于以下场景:
+
+- 如果有大量的子元素,每个子元素都绑定一个事件处理程序会消耗大量内存。事件委托可以将事件处理程序绑定到父元素上,从而减少事件处理程序的数量。
+- 如果子元素是动态添加或删除的,使用事件委托可以避免在每次操作时重新绑定事件处理程序。
+
+## 33.[1, 2, 3].map(parseInt)的结果
+
+对于 map 方法,每次迭代调用 parseInt 时,会传递当前元素、当前元素的下标、原数组三个参数,parseInt 接受要解析的字符串和基数(即解析数字的进制,默认是十进制)两个参数。
+
+```txt
+[1, 2, 3].map(parseInt) 等同 [1, 2, 3].map((item,index)=>parseInt(item,index))
+
+可拆解为:
+- parseInt(1,0),1的0进制结果为1,
+- parseInt(2,1),2的1进制不能表示结果为NaN,
+- parseInt(3,2),3的2进制不能表示结果为NaN,
+
+因此最终结果为:[1,NaN,NaN]
+```
 
 ## 34.[3, 15, 8, 29, 102, 22].sort()的结果
 
 sort()是 Array.prototype 上用于元素排序的函数,根据 MDN 上对 Array.sort()的解释,默认的排序方法会将数组元素转换为字符串,然后比较字符串中字符的 UTF-16 编码顺序来进行排序。
+
+```txt
+最终结果为:['102', '15', '22', '29', '3', '8']
+```
