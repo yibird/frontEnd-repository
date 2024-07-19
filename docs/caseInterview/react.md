@@ -91,6 +91,8 @@ React 合成事件是 React 框架中的一个事件系统,它是在原生 DOM �
 - **事件委托**。所有的事件都被绑定到顶层的 document 对象上,而不是每个组件都绑定一次,从而减少了内存占用。
 - **API 一致**。合成事件提供具有与原生 DOM 事件相同的属性和方法。
 
+在 React 事件处理中,事件并非原生 DOM 事件对象,而是 React 合成事件对象,通过合成事件对象的 nativeEvent 属性可以获取原生事件对象。
+
 ## 8.React 错误边界组件
 
 React 错误边界组件是一种容错机制,用于在 React 组件树中捕获并处理 JavaScript 错误,从而避免这些错误导致整个应用程序崩溃。通常情况下,React 组件中的错误会向上冒泡直至顶层组件,导致整个应用程序崩溃。错误边界组件可以在组件树中的特定点捕获错误,防止错误冒泡到更高的组件并导致整个应用程序崩溃。当 React 组件内部出现错误时,错误边界组件会渲染备用 UI,以便用户可以继续使用应用程序而不会影响其他组件。
@@ -276,7 +278,7 @@ class FiberNode {
     this.sibling = null;
     this.return = null;
 
-    // 标记该 FiberNode 需要执行的操作类型，如插入、更新、删除等
+    // 标记该 FiberNode 需要执行的操作类型,如插入、更新、删除等
     this.effectTag = NoEffect;
     // 指向上一次渲染的 FiberNode,支持双缓存机制,用于比对新旧 FiberNode 的差异。
     this.alternate = null;
@@ -325,6 +327,8 @@ React 内置了如下 Hooks:
   - 在 Context 对象的 Provide 组件 的子组件中使用 useContext()根据 Context 对象获取共享状态。
 
 ## 为什么在无法在条件分支或判断分支中使用 Hooks?
+
+函数组件首次渲染时,React 会创建一个 Hook 链表来跟踪每个 Hook 的状态,这个链表用于记录当前组件使用的每一个 Hook 调用及其状态。当在一个函数组件中调用 useState、useEffect 等 Hook 时,React 会按照调用顺序将它们添加到当前组件的 Hook 链表中。每个 Hook 调用在链表中都有一个固定的索引,这个索引在组件的整个生命周期内保持不变。。在后续的更新中,React 会重用这个 Hook 链表,而不是重新创建。条件语句可能导致某些 Hooks 在某些渲染中被跳过,违反了初次渲染与后续更新之间的 Hook 调用一致性。
 
 ## 15.useState()/setState()是异步的还是同步的?
 
@@ -440,3 +444,5 @@ Diff 算法(差异算法)是一种用于比较两个数据集之间的不同之�
 ## Hooks 实现原理?
 
 ## Zustand 实现原理?
+
+Zustand 核心是利用发布订阅模式+React useSyncExternalStore Hooks,实现 React 全局状态管理。
