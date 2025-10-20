@@ -122,58 +122,58 @@ HTTP 缓存工作流程图如下:
 
 ```js
 // 强缓存例子
-const Koa = require("koa");
-const fs = require("fs");
-const path = require("path");
+const Koa = require('koa')
+const fs = require('fs')
+const path = require('path')
 const mimes = {
-  css: "text/css",
-  less: "text/css",
-  gif: "image/gif",
-  html: "text/html",
-  ico: "image/x-icon",
-  jpeg: "image/jpeg",
-  jpg: "image/jpeg",
-  js: "text/javascript",
-  json: "application/json",
-  pdf: "application/pdf",
-  png: "image/png",
-  svg: "image/svg+xml",
-  swf: "application/x-shockwave-flash",
-  tiff: "image/tiff",
-  txt: "text/plain",
-  wav: "audio/x-wav",
-  wma: "audio/x-ms-wma",
-  wmv: "video/x-ms-wmv",
-  xml: "text/xml",
-};
+  css: 'text/css',
+  less: 'text/css',
+  gif: 'image/gif',
+  html: 'text/html',
+  ico: 'image/x-icon',
+  jpeg: 'image/jpeg',
+  jpg: 'image/jpeg',
+  js: 'text/javascript',
+  json: 'application/json',
+  pdf: 'application/pdf',
+  png: 'image/png',
+  svg: 'image/svg+xml',
+  swf: 'application/x-shockwave-flash',
+  tiff: 'image/tiff',
+  txt: 'text/plain',
+  wav: 'audio/x-wav',
+  wma: 'audio/x-ms-wma',
+  wmv: 'video/x-ms-wmv',
+  xml: 'text/xml',
+}
 
 // 获取文件的类型
 function parseMime(url) {
   // path.extname获取路径中文件的后缀名
-  let extName = path.extname(url);
-  extName = extName ? extName.slice(1) : "unknown";
-  return mimes[extName];
+  let extName = path.extname(url)
+  extName = extName ? extName.slice(1) : 'unknown'
+  return mimes[extName]
 }
 
 // 将文件转成传输所需格式
 const parseStatic = (dir) => {
   return new Promise((resolve) => {
-    resolve(fs.readFileSync(dir), "binary");
-  });
-};
+    resolve(fs.readFileSync(dir), 'binary')
+  })
+}
 
-const app = new Koa();
+const app = new Koa()
 app.use(async (ctx) => {
-  const url = ctx.request.url;
-  if (url === "/") {
+  const url = ctx.request.url
+  if (url === '/') {
     // 访问根路径返回index.html
-    ctx.set("Content-Type", "text/html");
-    const htmlPath = path.join(__dirname, "./index.html");
-    ctx.body = await parseStatic(htmlPath);
+    ctx.set('Content-Type', 'text/html')
+    const htmlPath = path.join(__dirname, './index.html')
+    ctx.body = await parseStatic(htmlPath)
   } else {
-    const filePath = path.resolve(__dirname, `.${url}`);
+    const filePath = path.resolve(__dirname, `.${url}`)
     // 设置类型
-    ctx.set("Content-Type", parseMime(url));
+    ctx.set('Content-Type', parseMime(url))
 
     /**
      * HTTP 请求头配置Expires、Cache-Control设置强缓存。
@@ -181,19 +181,19 @@ app.use(async (ctx) => {
      * 访问浏览器缓存,命中缓存则返回该资源,并返回200状态码。
      */
     // 设置 Expires 请求头,缓存过期时间为 1000毫秒,
-    const time = new Date(Date.now() + 1000).toUTCString();
-    ctx.set("Expires", time);
+    const time = new Date(Date.now() + 1000).toUTCString()
+    ctx.set('Expires', time)
     // 设置 Cache-Control 请求头,缓存过期时间为10秒
-    ctx.set("Cache-Control", "max-age=10");
+    ctx.set('Cache-Control', 'max-age=10')
 
     // 设置传输
-    ctx.body = await parseStatic(filePath);
+    ctx.body = await parseStatic(filePath)
   }
-});
+})
 
 app.listen(8888, () => {
-  console.log("start at port 8888");
-});
+  console.log('start at port 8888')
+})
 ```
 
 ![alt 强缓存](../assets/images/http-cache02.gif)
@@ -222,71 +222,71 @@ Last-Modified/If-Modified-Since 的工作流程如下:
 - 比对结果如果两个时间相同,则说明此资源没修改过,那就是命中缓存,那就返回 304,如果不相同,则说明此资源修改过了,则未命中缓存,则返回修改过后的新资源。
 
 ```js
-const Koa = require("koa");
-const fs = require("fs");
-const path = require("path");
+const Koa = require('koa')
+const fs = require('fs')
+const path = require('path')
 const mimes = {
-  css: "text/css",
-  less: "text/css",
-  gif: "image/gif",
-  html: "text/html",
-  ico: "image/x-icon",
-  jpeg: "image/jpeg",
-  jpg: "image/jpeg",
-  js: "text/javascript",
-  json: "application/json",
-  pdf: "application/pdf",
-  png: "image/png",
-  svg: "image/svg+xml",
-  swf: "application/x-shockwave-flash",
-  tiff: "image/tiff",
-  txt: "text/plain",
-  wav: "audio/x-wav",
-  wma: "audio/x-ms-wma",
-  wmv: "video/x-ms-wmv",
-  xml: "text/xml",
-};
+  css: 'text/css',
+  less: 'text/css',
+  gif: 'image/gif',
+  html: 'text/html',
+  ico: 'image/x-icon',
+  jpeg: 'image/jpeg',
+  jpg: 'image/jpeg',
+  js: 'text/javascript',
+  json: 'application/json',
+  pdf: 'application/pdf',
+  png: 'image/png',
+  svg: 'image/svg+xml',
+  swf: 'application/x-shockwave-flash',
+  tiff: 'image/tiff',
+  txt: 'text/plain',
+  wav: 'audio/x-wav',
+  wma: 'audio/x-ms-wma',
+  wmv: 'video/x-ms-wmv',
+  xml: 'text/xml',
+}
 
 // 获取文件的类型
 function parseMime(url) {
   // path.extname获取路径中文件的后缀名
-  let extName = path.extname(url);
-  extName = extName ? extName.slice(1) : "unknown";
-  return mimes[extName];
+  let extName = path.extname(url)
+  extName = extName ? extName.slice(1) : 'unknown'
+  return mimes[extName]
 }
 
 // 将文件转成传输所需格式
 const parseStatic = (dir) => {
   return new Promise((resolve) => {
-    resolve(fs.readFileSync(dir), "binary");
-  });
-};
+    resolve(fs.readFileSync(dir), 'binary')
+  })
+}
 // 获取文件信息
 const getFileStat = (path) => {
   return new Promise((resolve) => {
     fs.stat(path, (_, stat) => {
-      resolve(stat);
-    });
-  });
-};
-const app = new Koa();
+      resolve(stat)
+    })
+  })
+}
+const app = new Koa()
 app.use(async (ctx) => {
-  const url = ctx.request.url;
-  if (url === "/") {
+  const url = ctx.request.url
+  if (url === '/') {
     // 访问根路径返回index.html
-    ctx.set("Content-Type", "text/html");
-    const htmlPath = path.join(__dirname, "./index.html");
-    ctx.body = await parseStatic(htmlPath);
+    ctx.set('Content-Type', 'text/html')
+    const htmlPath = path.join(__dirname, './index.html')
+    ctx.body = await parseStatic(htmlPath)
   } else {
     // 获取请求资源路径
-    const filePath = path.resolve(__dirname, `.${url}`);
+    const filePath = path.resolve(__dirname, `.${url}`)
     // 设置类型
-    ctx.set("Content-Type", parseMime(url));
+    ctx.set('Content-Type', parseMime(url))
 
     // 获取请求头的if-modified-since
-    const ifModifiedSince = ctx.request.header["if-modified-since"];
-    const fileStat = await getFileStat(filePath);
-    console.log("文件最后一次修改时间戳:", fileStat.mtime.toGMTString());
+    const ifModifiedSince = ctx.request.header['if-modified-since']
+    const fileStat = await getFileStat(filePath)
+    console.log('文件最后一次修改时间戳:', fileStat.mtime.toGMTString())
     /**
      * 如果当前请求的if-modified-since(相当于资源上次修改时间)与文件最后修改时间一致,
      * 则说明文件无变化,命中协商缓存,状态码返回304。
@@ -294,17 +294,17 @@ app.use(async (ctx) => {
      * 若没有命中协商缓存,说明请求资源内容发生变化,则重新设置Last-Modified的值为文件
      * 文件最后一次修改时间,然后返回最新的请求资源文件。
      */
-    console.log(ifModifiedSince === fileStat.mtime.toGMTString());
+    console.log(ifModifiedSince === fileStat.mtime.toGMTString())
     if (ifModifiedSince === fileStat.mtime.toGMTString()) {
-      ctx.status = 304;
+      ctx.status = 304
     } else {
-      ctx.set("Last-Modified", fileStat.mtime.toGMTString());
-      ctx.body = await parseStatic(filePath);
+      ctx.set('Last-Modified', fileStat.mtime.toGMTString())
+      ctx.body = await parseStatic(filePath)
     }
   }
-});
+})
 
-app.listen(8888, () => {});
+app.listen(8888, () => {})
 ```
 
 首次加载由于 ifModifiedSince 与请求资源最后修改时间不一致,所以会向服务端请求返回资源,状态码返回 200,第二次 ifModifiedSince 与请求资源最后修改时间一致,则从缓存中获取资源,状态码返回 304。当修改请求资源内容时,保存后最后修改时间也会发生变化,所以请求资源 ifModifiedSince 与请求资源最后修改时间不一致,状态码返回 200,如果再次请求资源则会命中缓存,返回 304 状态码。
@@ -318,80 +318,80 @@ Etag/If-None-Match 的工作流程跟 Last-Modified/If-Modified-Since 类似,只
 /**
  * 协商缓存:Etag/If-None-Match
  */
-const Koa = require("koa");
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
+const Koa = require('koa')
+const fs = require('fs')
+const path = require('path')
+const crypto = require('crypto')
 const mimes = {
-  css: "text/css",
-  less: "text/css",
-  gif: "image/gif",
-  html: "text/html",
-  ico: "image/x-icon",
-  jpeg: "image/jpeg",
-  jpg: "image/jpeg",
-  js: "text/javascript",
-  json: "application/json",
-  pdf: "application/pdf",
-  png: "image/png",
-  svg: "image/svg+xml",
-  swf: "application/x-shockwave-flash",
-  tiff: "image/tiff",
-  txt: "text/plain",
-  wav: "audio/x-wav",
-  wma: "audio/x-ms-wma",
-  wmv: "video/x-ms-wmv",
-  xml: "text/xml",
-};
+  css: 'text/css',
+  less: 'text/css',
+  gif: 'image/gif',
+  html: 'text/html',
+  ico: 'image/x-icon',
+  jpeg: 'image/jpeg',
+  jpg: 'image/jpeg',
+  js: 'text/javascript',
+  json: 'application/json',
+  pdf: 'application/pdf',
+  png: 'image/png',
+  svg: 'image/svg+xml',
+  swf: 'application/x-shockwave-flash',
+  tiff: 'image/tiff',
+  txt: 'text/plain',
+  wav: 'audio/x-wav',
+  wma: 'audio/x-ms-wma',
+  wmv: 'video/x-ms-wmv',
+  xml: 'text/xml',
+}
 
 // 获取文件的类型
 function parseMime(url) {
   // path.extname获取路径中文件的后缀名
-  let extName = path.extname(url);
-  extName = extName ? extName.slice(1) : "unknown";
-  return mimes[extName];
+  let extName = path.extname(url)
+  extName = extName ? extName.slice(1) : 'unknown'
+  return mimes[extName]
 }
 
 // 将文件转成传输所需格式
 const parseStatic = (dir) => {
   return new Promise((resolve) => {
-    resolve(fs.readFileSync(dir), "binary");
-  });
-};
+    resolve(fs.readFileSync(dir), 'binary')
+  })
+}
 // 获取文件信息
 const getFileStat = (path) => {
   return new Promise((resolve) => {
     fs.stat(path, (_, stat) => {
-      resolve(stat);
-    });
-  });
-};
+      resolve(stat)
+    })
+  })
+}
 
-const app = new Koa();
+const app = new Koa()
 
 app.use(async (ctx) => {
-  const url = ctx.request.url;
-  if (url === "/") {
+  const url = ctx.request.url
+  if (url === '/') {
     // 访问根路径返回index.html
-    ctx.set("Content-Type", "text/html");
-    const htmlPath = path.join(__dirname, "./index.html");
-    ctx.body = await parseStatic(htmlPath);
+    ctx.set('Content-Type', 'text/html')
+    const htmlPath = path.join(__dirname, './index.html')
+    ctx.body = await parseStatic(htmlPath)
   } else {
     // 获取请求资源路径
-    const filePath = path.resolve(__dirname, `.${url}`);
+    const filePath = path.resolve(__dirname, `.${url}`)
     // 设置类型
-    ctx.set("Content-Type", parseMime(url));
-    ctx.set("Cache-Control", "no-cache");
+    ctx.set('Content-Type', parseMime(url))
+    ctx.set('Cache-Control', 'no-cache')
 
-    const fileBuffer = await parseStatic(filePath);
+    const fileBuffer = await parseStatic(filePath)
     // 从请求头上获取if-none-match,if-none-match是上一次请求的etag
-    const ifNoneMatch = ctx.request.header["if-none-match"];
+    const ifNoneMatch = ctx.request.header['if-none-match']
     // 生成内容hash值
-    const hash = crypto.createHash("md5");
-    hash.update(fileBuffer);
-    const etag = `"${hash.digest("hex")}"`;
+    const hash = crypto.createHash('md5')
+    hash.update(fileBuffer)
+    const etag = `"${hash.digest('hex')}"`
 
-    console.log("文件hash:", etag);
+    console.log('文件hash:', etag)
     /**
      * 如果当前请求的if-none-match(相当于资源上次内容hash)与文件内容hash一致,
      * 则说明文件无变化,命中协商缓存,状态码返回304。
@@ -401,13 +401,13 @@ app.use(async (ctx) => {
      */
 
     if (ifNoneMatch === etag) {
-      ctx.status = 304;
+      ctx.status = 304
     } else {
-      ctx.set("etag", etag);
-      ctx.body = await parseStatic(filePath);
+      ctx.set('etag', etag)
+      ctx.body = await parseStatic(filePath)
     }
   }
-});
+})
 
-app.listen(8888, () => {});
+app.listen(8888, () => {})
 ```

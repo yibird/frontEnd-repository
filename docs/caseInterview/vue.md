@@ -107,13 +107,13 @@ Vue 之所以将组件组件的 Props 设计为单向流,是因为可以防止�
   <Child :visible.sync="visible" />
 </template>
 <script>
-export default {
-  data() {
-    return {
-      visible: false,
-    };
-  },
-};
+  export default {
+    data() {
+      return {
+        visible: false,
+      }
+    },
+  }
 </script>
 
 <!-- 子组件 -->
@@ -121,20 +121,20 @@ export default {
   <button @click="changeVisible">change visible</button>
 </template>
 <script>
-export default {
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
+  export default {
+    props: {
+      visible: {
+        type: Boolean,
+        default: false,
+      },
     },
-  },
-  methods: {
-    changeVisible() {
-      // 通过触发 "update:visible" 事件修改父组件的visible为true
-      this.$emit('update:visible', true);
+    methods: {
+      changeVisible() {
+        // 通过触发 "update:visible" 事件修改父组件的visible为true
+        this.$emit('update:visible', true)
+      },
     },
-  },
-};
+  }
 </script>
 ```
 
@@ -162,19 +162,19 @@ export default {
 ```js
 // 判断两个vnode的标签和key是否相同 如果相同 就可以认为是同一节点就地复用
 function isSameVnode(oldVnode, newVnode) {
-  return oldVnode.tag === newVnode.tag && oldVnode.key === newVnode.key;
+  return oldVnode.tag === newVnode.tag && oldVnode.key === newVnode.key
 }
 
 // 根据key来创建老的儿子的index映射表  类似 {'a':0,'b':1} 代表key为'a'的节点在第一个位置 key为'b'的节点在第二个位置
 function makeIndexByKey(children) {
-  let map = {};
+  let map = {}
   children.forEach((item, index) => {
-    map[item.key] = index;
-  });
-  return map;
+    map[item.key] = index
+  })
+  return map
 }
 // 生成的映射表
-let map = makeIndexByKey(oldCh);
+let map = makeIndexByKey(oldCh)
 ```
 
 ## 9. v-for 和 v-if 优先级?
@@ -183,8 +183,8 @@ let map = makeIndexByKey(oldCh);
 
 ```js
 // vue-template-compiler是一个可以将Vue模板编译为渲染函数的工具库
-const compiler = require('vue-template-compiler');
-const template = `<div v-if="false" v-for="n in 3"></div>`;
+const compiler = require('vue-template-compiler')
+const template = `<div v-if="false" v-for="n in 3"></div>`
 /**
  * compile用于编译模板字符串并返回已编译的 JavaScript 代码,返回对象格式如下:
  * {
@@ -195,8 +195,8 @@ const template = `<div v-if="false" v-for="n in 3"></div>`;
      errors:Array<string>  // 模板语法错误,如果任何
    } 
  */
-const ast = compiler.compile(template);
-console.log(ast.render);
+const ast = compiler.compile(template)
+console.log(ast.render)
 // 结果:with(this){return _l((3),function(n){return (false)?_c('div'):_e()})}
 
 /**
@@ -233,12 +233,12 @@ console.log(ast.render);
 ::: details v-if 条件为 true
 
 ```js
-<template>
-  <div v-if='true' v-for='n in 3'></div>
-</template>;
+;<template>
+  <div v-if="true" v-for="n in 3"></div>
+</template>
 
 // 编译结果如下:
-const __sfc__ = {};
+const __sfc__ = {}
 import {
   // 渲染列表函数
   renderList as _renderList,
@@ -252,7 +252,7 @@ import {
   createElementVNode as _createElementVNode,
   // 用于创建一个注释虚拟节点
   createCommentVNode as _createCommentVNode,
-} from 'vue';
+} from 'vue'
 function render(_ctx, _cache) {
   return true
     ? (_openBlock(),
@@ -260,27 +260,27 @@ function render(_ctx, _cache) {
         _Fragment,
         { key: 0 },
         _renderList(3, (n) => {
-          return _createElementVNode('div');
+          return _createElementVNode('div')
         }),
-        64 /* STABLE_FRAGMENT */
+        64 /* STABLE_FRAGMENT */,
       ))
-    : _createCommentVNode('v-if', true);
+    : _createCommentVNode('v-if', true)
 }
-__sfc__.render = render;
-__sfc__.__file = 'App.vue';
-export default __sfc__;
+__sfc__.render = render
+__sfc__.__file = 'App.vue'
+export default __sfc__
 ```
 
 :::
 ::: details v-if 条件为 false
 
 ```js
-<template>
-  <div v-if='false' v-for='n in 3'></div>
-</template>;
+;<template>
+  <div v-if="false" v-for="n in 3"></div>
+</template>
 
 // 编译结果如下:
-const __sfc__ = {};
+const __sfc__ = {}
 import {
   // 渲染列表函数
   renderList as _renderList,
@@ -294,7 +294,7 @@ import {
   createElementVNode as _createElementVNode,
   // 用于创建一个注释虚拟节点
   createCommentVNode as _createCommentVNode,
-} from 'vue';
+} from 'vue'
 function render(_ctx, _cache) {
   return false
     ? (_openBlock(),
@@ -302,15 +302,15 @@ function render(_ctx, _cache) {
         _Fragment,
         { key: 0 },
         _renderList(3, (n) => {
-          return _createElementVNode('div');
+          return _createElementVNode('div')
         }),
-        64 /* STABLE_FRAGMENT */
+        64 /* STABLE_FRAGMENT */,
       ))
-    : _createCommentVNode('v-if', true);
+    : _createCommentVNode('v-if', true)
 }
-__sfc__.render = render;
-__sfc__.__file = 'App.vue';
-export default __sfc__;
+__sfc__.render = render
+__sfc__.__file = 'App.vue'
+export default __sfc__
 ```
 
 :::
@@ -359,17 +359,17 @@ new Vue({
   data() {
     return {
       timer: null,
-    };
+    }
   },
   mounted() {
     this.timer = setInterval(() => {
-      console.log('clear...');
-    }, 1000);
+      console.log('clear...')
+    }, 1000)
   },
   beforeDestroy() {
-    clearInterval(this.timer);
+    clearInterval(this.timer)
   },
-});
+})
 ```
 
 这种做法需要在 vue 实例上定义一个变量接收定时器函数,而且定时器定义的代码跟清除代码独立分离
@@ -380,13 +380,13 @@ new Vue({
 new Vue({
   mounted() {
     const timer = setInterval(() => {
-      console.log('clear');
-    }, 1000);
+      console.log('clear')
+    }, 1000)
     this.$once('hook:beforeDestroy', () => {
-      clearInterval(timer);
-    });
+      clearInterval(timer)
+    })
   },
-});
+})
 ```
 
 ## 14.Vue 如何强制刷新组件?
@@ -404,14 +404,14 @@ new Vue({
   data: { message: 'Hello Vue.js!' },
   methods: {
     updateMessage() {
-      this.message = 'Hello World!';
+      this.message = 'Hello World!'
       this.$nextTick(function () {
         // 在下次 DOM 更新循环结束后执行
-        this.$refs.message.innerHTML = 'Updated!';
-      });
+        this.$refs.message.innerHTML = 'Updated!'
+      })
     },
   },
-});
+})
 ```
 
 在上面的例子中,当 updateMessage() 方法被调用时,它会先更新数据,然后在 $nextTick() 方法中执行回调函数,以确保 DOM 元素已经被更新。
@@ -421,16 +421,16 @@ new Vue({
 ::: details $nextTick()源码
 
 ```ts
-import { noop } from 'shared/util';
-import { handleError } from './error';
-import { isIE, isIOS, isNative } from './env';
+import { noop } from 'shared/util'
+import { handleError } from './error'
+import { isIE, isIOS, isNative } from './env'
 
 // 是否使用微任务
-export let isUsingMicroTask = false;
+export let isUsingMicroTask = false
 // 任务队列,用于存放$nextTick()回调函数
-const callbacks: Array<Function> = [];
+const callbacks: Array<Function> = []
 // 执行状态,true表示执行中
-let pending = false;
+let pending = false
 
 /**
  * 刷新任务队列,执行该函数后,首先会将执行状态设置为false,然后对任务队列进行了一份浅拷贝,
@@ -438,31 +438,31 @@ let pending = false;
  */
 function flushCallbacks() {
   // 设置执行状态
-  pending = false;
+  pending = false
   // 对任务队列进行浅拷贝
-  const copies = callbacks.slice(0);
+  const copies = callbacks.slice(0)
   // 重置任务队列
-  callbacks.length = 0;
+  callbacks.length = 0
   // 遍历浅拷贝的任务队列执行每一个$nextTick()回调函数
   for (let i = 0; i < copies.length; i++) {
-    copies[i]();
+    copies[i]()
   }
 }
 
-let timerFunc;
+let timerFunc
 // 如果当前环境支持Promise,则使用Promise.then()执行刷新任务队列
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
-  const p = Promise.resolve();
+  const p = Promise.resolve()
   timerFunc = () => {
-    p.then(flushCallbacks);
+    p.then(flushCallbacks)
     /**
      * 在有问题的UIWebViews中,Promise.then并没有完全崩溃,但它可能会陷入一种奇怪的状态,
      * 回调被推入微任务队列,但队列不会被刷新,直到浏览器需要做一些其他工作,例如处理计时器。
      * 因此,我们可以通过添加一个空计时器来“强制”刷新微任务队列。
      */
-    if (isIOS) setTimeout(noop);
-  };
-  isUsingMicroTask = true;
+    if (isIOS) setTimeout(noop)
+  }
+  isUsingMicroTask = true
 }
 // 如果当前环境支持MutationObserver,则使用MutationObserver()执行刷新任务队列
 else if (
@@ -472,55 +472,55 @@ else if (
     // PhantomJS and iOS 7.x
     MutationObserver.toString() === '[object MutationObserverConstructor]')
 ) {
-  let counter = 1;
-  const observer = new MutationObserver(flushCallbacks);
-  const textNode = document.createTextNode(String(counter));
+  let counter = 1
+  const observer = new MutationObserver(flushCallbacks)
+  const textNode = document.createTextNode(String(counter))
   observer.observe(textNode, {
     characterData: true,
-  });
+  })
   timerFunc = () => {
-    counter = (counter + 1) % 2;
-    textNode.data = String(counter);
-  };
-  isUsingMicroTask = true;
+    counter = (counter + 1) % 2
+    textNode.data = String(counter)
+  }
+  isUsingMicroTask = true
 }
 // 如果当前环境支持setImmediate,则使用setImmediate()执行刷新任务队列
 else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   timerFunc = () => {
-    setImmediate(flushCallbacks);
-  };
+    setImmediate(flushCallbacks)
+  }
 } else {
   /**
    * 如果当前环境不支持Promise、MutationObserver、setImmediate,
    * 则使用setTimeout执行刷新任务队列函数。
    */
   timerFunc = () => {
-    setTimeout(flushCallbacks, 0);
-  };
+    setTimeout(flushCallbacks, 0)
+  }
 }
 
 export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
-  let _resolve;
+  let _resolve
   // 任务队列添加回调函数
   callbacks.push(() => {
     if (cb) {
       try {
-        cb.call(ctx);
+        cb.call(ctx)
       } catch (e: any) {
-        handleError(e, ctx, 'nextTick');
+        handleError(e, ctx, 'nextTick')
       }
     } else if (_resolve) {
-      _resolve(ctx);
+      _resolve(ctx)
     }
-  });
+  })
   if (!pending) {
-    pending = true;
-    timerFunc();
+    pending = true
+    timerFunc()
   }
   if (!cb && typeof Promise !== 'undefined') {
     return new Promise((resolve) => {
-      _resolve = resolve;
-    });
+      _resolve = resolve
+    })
   }
 }
 ```
@@ -608,13 +608,13 @@ VueRouter 目前提供了 abstract、history、hash 三种模式。history 模�
  * router.onError() 注册过的回调。
  */
 // 全局前置守卫,当一个导航触发时,全局前置守卫按照创建顺序调用
-router.beforeEach((to, from, next) => {});
+router.beforeEach((to, from, next) => {})
 
 // 全局解析守卫,在导航被确认之前,同时在所有组件内守卫和异步路由组件被解析之后调用
-router.beforeResolve((to, from, next) => {});
+router.beforeResolve((to, from, next) => {})
 
 // 全局后置守卫,导航确认之后调用
-router.afterEach((to, from) => {});
+router.afterEach((to, from) => {})
 ```
 
 - 路由独享守卫:在进入路由时调用 beforeEnter 守卫。
@@ -630,7 +630,7 @@ const router = new VueRouter({
       },
     },
   ],
-});
+})
 ```
 
 - 组件守卫:
@@ -653,7 +653,7 @@ const Foo = {
    * 导航离开该组件的对应路由时调用,可访问组件实例 `this`
    */
   beforeRouteLeave(to, from, next) {},
-};
+}
 ```
 
 ## 23.VueRouter 路由传值方式有哪些?
@@ -704,12 +704,12 @@ function render(ctx) {
       createVNode('p', null, 'static text'),
       createVNode('p', null, ctx.title, 1 /* TEXT */),
     ])
-  );
+  )
 }
 
 //--- 静态提升后的例子
 // 将静态节点提升到渲染函数外,渲染函数重新执行时并不会重新创建静态虚拟节点,从而避免了额外开销
-const hoist1 = createVNode('p', null, 'static text');
+const hoist1 = createVNode('p', null, 'static text')
 function render(ctx) {
   return (
     openBlock(),
@@ -718,7 +718,7 @@ function render(ctx) {
       hoist1,
       createVNode('p', null, ctx.title, 1 /* TEXT */),
     ])
-  );
+  )
 }
 ```
 
@@ -765,9 +765,9 @@ const state = reactive({
     name: 'John',
     age: 30,
   },
-});
+})
 // 响应式丢失,name 和 age 是原始值的拷贝,解构赋值导致它们失去了与 state.user 之间的响应式链接
-const { name, age } = state.user;
+const { name, age } = state.user
 ```
 
 解决方法如下:
@@ -777,7 +777,7 @@ const { name, age } = state.user;
 
 ```ts
 // 不会丢失响应式,通过toRefs包装解构对象中的每个属性都会转为ref
-const { name, age } = toRefs(state.user);
+const { name, age } = toRefs(state.user)
 ```
 
 - 使用 computed 包装解构属性解构。在 Vue3 中 reactive、ref、computed 都可以定义响应式状态。
@@ -802,19 +802,19 @@ setup 语法糖和 defineComponent 都支持定义组件,两者区别如下:
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-export default defineComponent({
-  setup(props, { expose }) {
-    const count = ref(0);
-    const addCount = () => {
-      count.value++;
-    };
-    return {
-      count,
-      addCount,
-    };
-  },
-});
+  import { defineComponent, ref } from 'vue'
+  export default defineComponent({
+    setup(props, { expose }) {
+      const count = ref(0)
+      const addCount = () => {
+        count.value++
+      }
+      return {
+        count,
+        addCount,
+      }
+    },
+  })
 </script>
 
 <!-- setup语法糖组件 -->
@@ -825,11 +825,11 @@ export default defineComponent({
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
-const count = ref(0);
-const addCount = () => {
-  count.value++;
-};
+  import { ref } from 'vue'
+  const count = ref(0)
+  const addCount = () => {
+    count.value++
+  }
 </script>
 
 <!-- 测试组件,打印组件实例 -->
@@ -840,16 +840,16 @@ const addCount = () => {
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import SetupComponent from './SetupComponent.vue';
-import DefineComponent from './DefineComponent.vue';
+  import { ref, onMounted } from 'vue'
+  import SetupComponent from './SetupComponent.vue'
+  import DefineComponent from './DefineComponent.vue'
 
-const setupRef = ref();
-const defineRef = ref();
-onMounted(() => {
-  console.log('setup 语法糖:', setupRef.value);
-  console.log('defineComponent:', defineRef.value);
-});
+  const setupRef = ref()
+  const defineRef = ref()
+  onMounted(() => {
+    console.log('setup 语法糖:', setupRef.value)
+    console.log('defineComponent:', defineRef.value)
+  })
 </script>
 ```
 
@@ -904,7 +904,7 @@ const PatchFlags = {
   PROPS: 8, // 动态属性
   FULL_PROPS: 16, // 需要完整 diff 的属性
   // 更多的标志...
-};
+}
 ```
 
 - 静态提升和缓存:在 Vue.js 3 中,静态节点和静态属性会被提升到渲染函数之外,从而避免每次渲染时重复创建这些节点。这一优化大大减少了内存占用和渲染开销。此外,Vue.js 3 还会缓存一些可以重复使用的节点和属性,进一步提高性能。

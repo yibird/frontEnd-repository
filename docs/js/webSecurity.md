@@ -23,7 +23,7 @@
 
 ```js
 // 两个页面都设置
-document.domain = "test.com";
+document.domain = 'test.com'
 ```
 
 ### 1.2 window.postMessage()解决跨域
@@ -36,17 +36,17 @@ postMessage 是 html5 引入的 API,postMessage()方法允许来自不同源的�
 
 ```js
 // 父窗口打开一个子窗口,父窗口的URL是http://test01.com
-var openWindow = window.open("http://test02.com", "title");
+var openWindow = window.open('http://test02.com', 'title')
 
 // 调用postMessage()父窗口向子窗口发送数据,参数1是发送的消息,参数2是接收消息窗口的URL
-openWindow.postMessage("hell", "http://test02.com");
+openWindow.postMessage('hell', 'http://test02.com')
 
 // 子窗口监听message事件接收父窗口发送的信息
-window.addEventListener("message", (e) => {
-  console.log("发送消息的窗口:", e.source);
-  console.log("发送消息的URL:", e.origin);
-  console.log("发送消息:", e.data);
-});
+window.addEventListener('message', (e) => {
+  console.log('发送消息的窗口:', e.source)
+  console.log('发送消息的URL:', e.origin)
+  console.log('发送消息:', e.data)
+})
 ```
 
 ### 1.3 JSONP 解决跨域
@@ -61,7 +61,7 @@ JSONP 是服务器与客户端跨源通信的常用方法。最大特点就是�
 <script src="http://test.com/jsonp?callback=hello"></script>
 <script type="text/javascript">
   function hello(res) {
-    console.log(res);
+    console.log(res)
   }
 </script>
 ```
@@ -167,14 +167,14 @@ HttpOnly Cookie 是一种预防 XSS 攻击窃取用户 cookie 最有效的防御
 
 ```js
 function escape(str) {
-  str = str.replace(/&/g, "&amp;");
-  str = str.replace(/</g, "&lt;");
-  str = str.replace(/>/g, "&gt;");
-  str = str.replace(/"/g, "&quto;");
-  str = str.replace(/'/g, "&#39;");
-  str = str.replace(/`/g, "&#96;");
-  str = str.replace(/\//g, "&#x2F;");
-  return str;
+  str = str.replace(/&/g, '&amp;')
+  str = str.replace(/</g, '&lt;')
+  str = str.replace(/>/g, '&gt;')
+  str = str.replace(/"/g, '&quto;')
+  str = str.replace(/'/g, '&#39;')
+  str = str.replace(/`/g, '&#96;')
+  str = str.replace(/\//g, '&#x2F;')
+  return str
 }
 ```
 

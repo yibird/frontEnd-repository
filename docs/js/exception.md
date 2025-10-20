@@ -3,8 +3,8 @@ JavaScript 是一门动态语言,动态语言是特点是非常灵活,但缺点�
 ```js
 /* js中奇葩的结果 */
 
-console.log(1 / 0); // Infinity,在Java报错
-console.log(1 / "s"); // NaN,在Java报错
+console.log(1 / 0) // Infinity,在Java报错
+console.log(1 / 's') // NaN,在Java报错
 ```
 
 ## 1.JavaScript 错误类型
@@ -103,31 +103,31 @@ new TypeError([message[, fileName[, lineNumber]]])
 - lineNumber 可选,包含引发异常的代码的行号。
 
 ```js
-const a = 1;
-console.log(a.sort()); // TypeError: a.sort is not a function
+const a = 1
+console.log(a.sort()) // TypeError: a.sort is not a function
 
 try {
-  null.f();
+  null.f()
 } catch (e) {
-  console.log(e instanceof TypeError); // true
-  console.log(e.message); // "null has no properties"
-  console.log(e.name); // "TypeError"
-  console.log(e.fileName); // "Scratchpad/1"
-  console.log(e.lineNumber); // 2
-  console.log(e.columnNumber); // 2
-  console.log(e.stack); // "@Scratchpad/2:2:3\n"
+  console.log(e instanceof TypeError) // true
+  console.log(e.message) // "null has no properties"
+  console.log(e.name) // "TypeError"
+  console.log(e.fileName) // "Scratchpad/1"
+  console.log(e.lineNumber) // 2
+  console.log(e.columnNumber) // 2
+  console.log(e.stack) // "@Scratchpad/2:2:3\n"
 }
 
 try {
-  throw new TypeError("Hello", "someFile.js", 10);
+  throw new TypeError('Hello', 'someFile.js', 10)
 } catch (e) {
-  console.log(e instanceof TypeError); // true
-  console.log(e.message); // "Hello"
-  console.log(e.name); // "TypeError"
-  console.log(e.fileName); // "someFile.js"
-  console.log(e.lineNumber); // 10
-  console.log(e.columnNumber); // 0
-  console.log(e.stack); // "@Scratchpad/2:2:9\n"
+  console.log(e instanceof TypeError) // true
+  console.log(e.message) // "Hello"
+  console.log(e.name) // "TypeError"
+  console.log(e.fileName) // "someFile.js"
+  console.log(e.lineNumber) // 10
+  console.log(e.columnNumber) // 0
+  console.log(e.stack) // "@Scratchpad/2:2:9\n"
 }
 ```
 
@@ -145,15 +145,15 @@ new ReferenceError([message[, fileName[, lineNumber]]])
 ```js
 // 捕获ReferenceError异常
 try {
-  var a = b;
+  var a = b
 } catch (e) {
-  console.log(e instanceof ReferenceError); // true
-  console.log(e.message); // "b is not defined"
-  console.log(e.name); // "ReferenceError"
-  console.log(e.fileName); // "Scratchpad/1"
-  console.log(e.lineNumber); // 2
-  console.log(e.columnNumber); // 6
-  console.log(e.stack); // "@Scratchpad/2:2:7\n"
+  console.log(e instanceof ReferenceError) // true
+  console.log(e.message) // "b is not defined"
+  console.log(e.name) // "ReferenceError"
+  console.log(e.fileName) // "Scratchpad/1"
+  console.log(e.lineNumber) // 2
+  console.log(e.columnNumber) // 6
+  console.log(e.stack) // "@Scratchpad/2:2:7\n"
 }
 ```
 
@@ -171,9 +171,9 @@ new RangeError([message[, fileName[, lineNumber]]])
 ```js
 // 递归不设置出口会触发RangeError错误
 function foo() {
-  foo();
+  foo()
 }
-foo(); // RangeError: Maximum call stack size exceeded(超出了最大调用堆栈大小)
+foo() // RangeError: Maximum call stack size exceeded(超出了最大调用堆栈大小)
 ```
 
 #### 1.5 EvalError
@@ -189,15 +189,15 @@ new EvalError([message[, fileName[, lineNumber]]])
 
 ```js
 try {
-  throw new EvalError("Hello", "someFile.js", 10);
+  throw new EvalError('Hello', 'someFile.js', 10)
 } catch (e) {
-  console.log(e instanceof EvalError); // true
-  console.log(e.message); // "Hello"
-  console.log(e.name); // "EvalError"
-  console.log(e.fileName); // "someFile.js"
-  console.log(e.lineNumber); // 10
-  console.log(e.columnNumber); // 0
-  console.log(e.stack); // "@Scratchpad/2:2:9\n"
+  console.log(e instanceof EvalError) // true
+  console.log(e.message) // "Hello"
+  console.log(e.name) // "EvalError"
+  console.log(e.fileName) // "someFile.js"
+  console.log(e.lineNumber) // 10
+  console.log(e.columnNumber) // 0
+  console.log(e.stack) // "@Scratchpad/2:2:9\n"
 }
 ```
 
@@ -214,15 +214,15 @@ new URIError([message[, fileName[, lineNumber]]])
 
 ```js
 try {
-  decodeURIComponent("%");
+  decodeURIComponent('%')
 } catch (e) {
-  console.log(e instanceof URIError); // true
-  console.log(e.message); // "malformed URI sequence"
-  console.log(e.name); // "URIError"
-  console.log(e.fileName); // "Scratchpad/1"
-  console.log(e.lineNumber); // 2
-  console.log(e.columnNumber); // 2
-  console.log(e.stack); // "@Scratchpad/2:2:3\n"
+  console.log(e instanceof URIError) // true
+  console.log(e.message) // "malformed URI sequence"
+  console.log(e.name) // "URIError"
+  console.log(e.fileName) // "Scratchpad/1"
+  console.log(e.lineNumber) // 2
+  console.log(e.columnNumber) // 2
+  console.log(e.stack) // "@Scratchpad/2:2:3\n"
 }
 ```
 
@@ -373,18 +373,18 @@ task();
 由于 try/catch 无法对跨域错误进行捕获,需要通过重写原生方法捕获错误。
 
 ```js
-const originAddEventListener = EventTarget.prototype.addEventListener;
+const originAddEventListener = EventTarget.prototype.addEventListener
 // 重写addEventListener方法
 EventTarget.prototype.addEventListener = (type, listener, options) => {
   const wrappedListener = (...args) => {
     try {
-      return listener.apply(this, args);
+      return listener.apply(this, args)
     } catch (err) {
-      throw err; // 抛出异常
+      throw err // 抛出异常
     }
-  };
-  return originAddEventListener.call(this, type, wrappedListener, options);
-};
+  }
+  return originAddEventListener.call(this, type, wrappedListener, options)
+}
 ```
 
 x
@@ -394,16 +394,16 @@ x
 当 Promise 发生错误时如果没有使用 catch()方法指定错误处理的回调函数,Promise 对象抛出的错误不会传递到外层代码,所以 try/catch 无法捕获到 Promise 中生产的错误,同样的也无法使用 try/catch 捕获 async 包裹的错误。由于 import()函数返回的也是一个 promise,所以本质上仍无法使用 try/catch 捕获错误。Promise 中产生的错误通过 catch()进行捕获,但这样侵入性太强,而使用 window.addEventListener 监听 unhandledrejection 事件捕获 Promise 产生的错误是最为合理的,当 Promise 被 reject 且没有 reject 处理器的时候,会触发 unhandledrejection 事件(这可能发生在 window 下,但也可能发生在 Worker 中)。window.addEventListener 监听 unhandledrejection 只能捕获 Promise 生产的异常,无法捕获其他异常。
 
 ```js
-window.addEventListener("unhandledrejection", (event) => {
+window.addEventListener('unhandledrejection', (event) => {
   // event是一个PromiseRejectionEvent对象
-  console.log(event); // PromiseRejectionEvent {...}
-});
+  console.log(event) // PromiseRejectionEvent {...}
+})
 const task = () => {
   return new Promise((resolve, reject) => {
-    throw new Error("error"); // Uncaught (in promise) Error: error
-  });
-};
-task();
+    throw new Error('error') // Uncaught (in promise) Error: error
+  })
+}
+task()
 ```
 
 ### 2.6 Vue.config.errorHandler 捕获 Vue 组件错误
@@ -415,8 +415,8 @@ task();
  * 全局捕获Vue错误，直接扔出给onerror处理
  */
 Vue.config.errorHandler = function (err) {
-  console.log(err);
-};
+  console.log(err)
+}
 ```
 
 ### 2.7 声明错误边界组件捕获 React 组件错误
@@ -424,35 +424,35 @@ Vue.config.errorHandler = function (err) {
 通过 componentDidCatch 钩子函数捕获 React 组件产生的错误。当错误边界组件的中的子组件产生错误时均会冒泡到错误边界组件,并触发 componentDidCatch 钩子函数,通过 componentDidCatch 钩子函数就能捕获组件产生的错误(这可能是 React class 组件最后的倔强了吧)。
 
 ```tsx
-import { Component } from "react";
+import { Component } from 'react'
 class ErrorBoundary extends Component {
   constructor(props) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
   static getDerivedStateFromError(error) {
     // 更新 state 使下一次渲染能够显示降级后的 UI
-    return { hasError: true };
+    return { hasError: true }
   }
 
   componentDidCatch(error, errorInfo) {
     // 你同样可以将错误日志上报给服务器
-    logErrorToMyService(error, errorInfo);
+    logErrorToMyService(error, errorInfo)
   }
 
   render() {
     if (this.state.hasError) {
       // 你可以自定义降级后的 UI 并渲染
-      return <h1>Something went wrong.</h1>;
+      return <h1>Something went wrong.</h1>
     }
-    return this.props.children;
+    return this.props.children
   }
 }
 
 // 使用错误边界组件
-<ErrorBoundary>
+;<ErrorBoundary>
   <MyComponent />
-</ErrorBoundary>;
+</ErrorBoundary>
 ```
 
 ## 3.上报错误方案

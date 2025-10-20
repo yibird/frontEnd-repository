@@ -3,23 +3,23 @@
 `Record<Key,Type>`用于构造一个对象类型,它支持两个泛型,Key 用于约束对象属性名的类型,Value 用于约束对象属性值的类型,它用于替代对象结构类型,对象结构类型使用下标方式访问属性时只能访问声明时的属性,无法访问动态添加的属性。
 
 ```ts
-const obj = { name: "z乘风" }; // obj的类型为{name: string;}
-console.log(obj.name); // "z乘风" 因为在obj在声明时定义了name属性
+const obj = { name: 'z乘风' } // obj的类型为{name: string;}
+console.log(obj.name) // "z乘风" 因为在obj在声明时定义了name属性
 // 添加obj动态添加age属性
-Object.assign(obj, { age: 18 });
-console.log(obj.age); // error,类型“{ name: string; }”上不存在属性“age”
+Object.assign(obj, { age: 18 })
+console.log(obj.age) // error,类型“{ name: string; }”上不存在属性“age”
 
 // 解决方式1:通过索引类型,指定对象结构的属性类型为string类型,值类型为any类型
-const obj1: { [K: string]: any } = { name: "z乘风" };
-Object.assign(obj1, { age: 18 });
-console.log(obj1.name); // "z乘风"
-console.log(obj1.age); // 18
+const obj1: { [K: string]: any } = { name: 'z乘风' }
+Object.assign(obj1, { age: 18 })
+console.log(obj1.name) // "z乘风"
+console.log(obj1.age) // 18
 
 // 解决方式2:通过Record类型,指定对象结构的属性类型为string类型,值类型为any类型
-const obj2: Record<string, any> = { name: "z乘风" };
-Object.assign(obj2, { age: 18 });
-console.log(obj2.name); // "z乘风"
-console.log(obj2.age); // 18
+const obj2: Record<string, any> = { name: 'z乘风' }
+Object.assign(obj2, { age: 18 })
+console.log(obj2.name) // "z乘风"
+console.log(obj2.age) // 18
 ```
 
 Record 类型的实现如下:
@@ -33,8 +33,8 @@ Record 类型的实现如下:
  */
 type Record<Key extends keyof any, Value> = {
   // P in 表示属性类型必须是 string|number|symbol交叉类型中其中之一
-  [P in K]: Value;
-};
+  [P in K]: Value
+}
 ```
 
 ## `Partial<Type>`
@@ -44,10 +44,10 @@ type Record<Key extends keyof any, Value> = {
 ```ts
 // name和age属性都是必须的
 interface User {
-  name: string;
-  age: number;
+  name: string
+  age: number
 }
-type PartialUser = Partial<User>; // PartialUser的类型为:{name?:string|undefined;age?:number|undefined;}
+type PartialUser = Partial<User> // PartialUser的类型为:{name?:string|undefined;age?:number|undefined;}
 ```
 
 Partial 实现如下:
@@ -58,8 +58,8 @@ type Partial<T> = {
    * keyof T表示获取T类型中所有属性类型的联合类型,P in keyof T表示P必须属于
    * T类型中所有属性类型的联合类型其中之一,T[P]根据P通过索引类型获取值类型。
    */
-  [P in keyof T]?: T[P];
-};
+  [P in keyof T]?: T[P]
+}
 ```
 
 ## `Required<Type>`
@@ -68,20 +68,20 @@ type Partial<T> = {
 
 ```ts
 type User = {
-  name: string;
-  age?: number;
-  address?: string;
-};
+  name: string
+  age?: number
+  address?: string
+}
 // NewUser的类型为: { name: string;age: number;address: string;}
-type NewUser = Required<User>;
+type NewUser = Required<User>
 ```
 
 `Required` 实现如下:
 
 ```ts
 type Required<T> = {
-  [P in keyof T]: T[p];
-};
+  [P in keyof T]: T[p]
+}
 ```
 
 ## `Pick<T,K>`
@@ -90,17 +90,17 @@ type Required<T> = {
 
 ```ts
 type User = {
-  name: string;
-  age: number;
-  address: string;
-};
+  name: string
+  age: number
+  address: string
+}
 // NewUser的类型为: {name: string;age: number;}
-type NewUser = Pick<User, "name" | "age">;
+type NewUser = Pick<User, 'name' | 'age'>
 
 const user: NewUser = {
-  name: "xx",
+  name: 'xx',
   age: 10,
-};
+}
 ```
 
 `Pick<T,K>`实现如下:
@@ -108,8 +108,8 @@ const user: NewUser = {
 ```ts
 // K继承于T类型所有属性key组合的联合类型
 type Pick<T, K extends keyof T> = {
-  [P in K]: T[P];
-};
+  [P in K]: T[P]
+}
 ```
 
 ## `Exclude<T,U>`
@@ -118,15 +118,15 @@ type Pick<T, K extends keyof T> = {
 
 ```ts
 // T1的类型为: 'c'
-type T1 = Exclude<"a" | "b" | "c", "a" | "b">;
+type T1 = Exclude<'a' | 'b' | 'c', 'a' | 'b'>
 // T2的类型为: string | number
-type T2 = Exclude<string | number | (() => void), Function>;
+type T2 = Exclude<string | number | (() => void), Function>
 ```
 
 `Exclude<T,U>`实现如下:
 
 ```ts
-type Exclude<T, U> = T extends U ? never : T;
+type Exclude<T, U> = T extends U ? never : T
 ```
 
 ## `Extract<T,U>`
@@ -135,15 +135,15 @@ type Exclude<T, U> = T extends U ? never : T;
 
 ```ts
 // T1的类型为: "a" | "b"
-type T1 = Extract<"a" | "b" | "c", "a" | "b">;
+type T1 = Extract<'a' | 'b' | 'c', 'a' | 'b'>
 // T2的类型为: () => void
-type T2 = Extract<string | number | (() => void), Function>;
+type T2 = Extract<string | number | (() => void), Function>
 ```
 
 `Extract<T,U>`实现如下:
 
 ```ts
-type Extract<T, U> = T extends U ? T : never;
+type Extract<T, U> = T extends U ? T : never
 ```
 
 ## `Omit<T,K>`
@@ -152,13 +152,13 @@ type Extract<T, U> = T extends U ? T : never;
 
 ```ts
 interface User {
-  name: string;
-  description: string;
-  age: number;
-  address: string;
+  name: string
+  description: string
+  age: number
+  address: string
 }
 // T1的类型为: { name: string;age: number;}
-type T1 = Omit<User, "description" | "address">;
+type T1 = Omit<User, 'description' | 'address'>
 ```
 
 `Omit<T,K>`实现如下:
@@ -170,7 +170,7 @@ type T1 = Omit<User, "description" | "address">;
  * Exclude<keyof User, "description" | "address">结果为 {name:string;age:number;}
  * 排除后的类型就是所需类型,此时通过Pick根据T提取排除后的类型,即Pick<T, Exclude<keyof T, K>>。
  */
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 ```
 
 ## `NonNullable<T,K>`
@@ -179,19 +179,19 @@ type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 ```ts
 // T1的类型为: never
-type T1 = NonNullable<null>;
+type T1 = NonNullable<null>
 // T2的类型为: never
-type T2 = NonNullable<undefined>;
+type T2 = NonNullable<undefined>
 // T3的类型为: "a"
-type T3 = NonNullable<"a" | undefined>;
+type T3 = NonNullable<'a' | undefined>
 // T4的类型为: "a"
-type T4 = NonNullable<"a">;
+type T4 = NonNullable<'a'>
 ```
 
 `NonNullable<T>`的实现如下:
 
 ```ts
-type NonNullable<T> = T extends null | undefined ? never : T;
+type NonNullable<T> = T extends null | undefined ? never : T
 ```
 
 ## `Parameters<T>`
@@ -200,17 +200,17 @@ type NonNullable<T> = T extends null | undefined ? never : T;
 
 ```ts
 // T1的类型为: []
-type T1 = Parameters<() => void>;
+type T1 = Parameters<() => void>
 // T2的类型为: [a: string]
-type T2 = Parameters<(a: string) => void>;
+type T2 = Parameters<(a: string) => void>
 // T3的类型为: [a: string, b: number]
-type T3 = Parameters<(a: string, b: number) => void>;
+type T3 = Parameters<(a: string, b: number) => void>
 
-declare function f1(arg: { a: number; b: string }): void;
+declare function f1(arg: { a: number; b: string }): void
 // T4的类型为: type T4 = [arg: { a: number; b: string;}]
-type T4 = Parameters<typeof f1>;
+type T4 = Parameters<typeof f1>
 // T5的类型为: never
-type T5 = Parameters<never>;
+type T5 = Parameters<never>
 // type T6 = Parameters<Function>; // error
 ```
 
@@ -223,11 +223,7 @@ type T5 = Parameters<never>;
  * 然后使用 infer 关键字推断args的类型并保存到P类型上,如果T不是一个任意函数体
  * 则返回never,否则返回P类型。
  */
-type Parameters<T extends (...args: any) => any> = T extends (
-  ...args: infer P
-) => any
-  ? P
-  : never;
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never
 ```
 
 ## `ConstructorParameters<T>`
@@ -236,13 +232,13 @@ type Parameters<T extends (...args: any) => any> = T extends (
 
 ```ts
 // T1的类型为: [message?: string | undefined, options?: ErrorOptions | undefined]
-type T1 = ConstructorParameters<ErrorConstructor>;
+type T1 = ConstructorParameters<ErrorConstructor>
 // T2的类型为: string[]
-type T2 = ConstructorParameters<FunctionConstructor>;
+type T2 = ConstructorParameters<FunctionConstructor>
 // T3的类型为: [pattern: string | RegExp, flags?: string | undefined]
-type T3 = ConstructorParameters<RegExpConstructor>;
+type T3 = ConstructorParameters<RegExpConstructor>
 // T4的类型为: unknown[]
-type T4 = ConstructorParameters<any>;
+type T4 = ConstructorParameters<any>
 ```
 
 `ConstructorParameters<T>`的实现如下:
@@ -253,8 +249,11 @@ type T4 = ConstructorParameters<any>;
  * 任意参数类型,任意返回值的构造函数主体,即 T extends abstract new (...args: any) => any,
  * 如果满足条件则使用 infer推断构造函数类型比将结果保存至P类型,然后返回P类型,否则返回never。
  */
-type ConstructorParameters<T extends abstract new (...args: any) => any> =
-  T extends abstract new (...args: infer P) => any ? P : never;
+type ConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (
+  ...args: infer P
+) => any
+  ? P
+  : never
 ```
 
 ## `ReturnType<T>`
@@ -263,32 +262,28 @@ type ConstructorParameters<T extends abstract new (...args: any) => any> =
 
 ```ts
 // T1的类型为: void
-type T1 = ReturnType<() => void>;
+type T1 = ReturnType<() => void>
 // T2的类型为: string
-type T2 = ReturnType<() => string>;
+type T2 = ReturnType<() => string>
 // T3的类型为: unknown
-type T3 = ReturnType<<T>() => T>;
+type T3 = ReturnType<<T>() => T>
 // T4的类型为: number[]
-type T4 = ReturnType<<T extends U, U extends number[]>() => T>;
+type T4 = ReturnType<<T extends U, U extends number[]>() => T>
 
-declare function f1(): { a: number; b: string };
+declare function f1(): { a: number; b: string }
 // T5的类型为: { a: number; b: string }
-type T5 = ReturnType<typeof f1>;
+type T5 = ReturnType<typeof f1>
 // T6的类型为: any
-type T6 = ReturnType<any>;
+type T6 = ReturnType<any>
 // T7的类型为: never
-type T7 = ReturnType<never>;
+type T7 = ReturnType<never>
 // type T8 = ReturnType<Function>; // error
 ```
 
 `ReturnType<T>`实现如下:
 
 ```ts
-type RturnType<T extends (...args: any) => any> = T extends (
-  ...args: any
-) => infer R
-  ? R
-  : never;
+type RturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : never
 ```
 
 ## `InstanceType<T>`
@@ -297,11 +292,11 @@ type RturnType<T extends (...args: any) => any> = T extends (
 
 ```ts
 // T1的类型为: C
-type T1 = InstanceType<typeof C>;
+type T1 = InstanceType<typeof C>
 // T2的类型为: any
-type T2 = InstanceType<any>;
+type T2 = InstanceType<any>
 // T3的类型为: never
-type T3 = InstanceType<never>;
+type T3 = InstanceType<never>
 // type T4 = InstanceType<string>; // error
 // type T5 = InstanceType<Function>; // error
 ```
@@ -309,8 +304,11 @@ type T3 = InstanceType<never>;
 `InstanceType<T>`的实现如下:
 
 ```ts
-type InstanceType<T extends abstract new (...args: any) => any> =
-  T extends abstract new (...args: any) => infer R ? R : never;
+type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (
+  ...args: any
+) => infer R
+  ? R
+  : never
 ```
 
 ## `ThisParameterType<T>`
@@ -319,20 +317,18 @@ type InstanceType<T extends abstract new (...args: any) => any> =
 
 ```ts
 function toHex(this: Number) {
-  return this.toString(16);
+  return this.toString(16)
 }
 // n的类型为: Number
 function numberToString(n: ThisParameterType<typeof toHex>) {
-  return toHex.apply(n);
+  return toHex.apply(n)
 }
 ```
 
 `ThisParameterType<T>`实现如下:
 
 ```ts
-type ThisParameterType<T> = T extends (this: infer U, ...args: any[]) => any
-  ? U
-  : unknown;
+type ThisParameterType<T> = T extends (this: infer U, ...args: any[]) => any ? U : unknown
 ```
 
 ## `OmitThisParameter<T>`
@@ -341,10 +337,10 @@ type ThisParameterType<T> = T extends (this: infer U, ...args: any[]) => any
 
 ```ts
 function toHex(this: Number) {
-  return this.toString(16);
+  return this.toString(16)
 }
 // fiveToHex的类型为: () => string;
-const fiveToHex: OmitThisParameter<typeof toHex> = toHex.bind(5);
+const fiveToHex: OmitThisParameter<typeof toHex> = toHex.bind(5)
 ```
 
 `OmitThisParameter<T>`实现如下:
@@ -356,11 +352,12 @@ const fiveToHex: OmitThisParameter<typeof toHex> = toHex.bind(5);
  * 成立,直接返回T类型。否则判断T是否是一个函数,如果是一个函数通过infer推断参数类型并保存至A类型,推断函数返回值
  * 类型并保存至R,然后返回一个函数参数类型为A,返回值类型为R的函数体,否则返回T类型。
  */
-type OmitThisParameter<T> = unknown extends ThisParameterType<T>
-  ? T
-  : T extends (...args: infer A) => infer R
-  ? (...args: A) => R
-  : T;
+type OmitThisParameter<T> =
+  unknown extends ThisParameterType<T>
+    ? T
+    : T extends (...args: infer A) => infer R
+      ? (...args: A) => R
+      : T
 ```
 
 ## `ThisType<T>`
@@ -369,30 +366,30 @@ type OmitThisParameter<T> = unknown extends ThisParameterType<T>
 
 ```ts
 interface Person {
-  name: string;
-  age: number;
+  name: string
+  age: number
 }
 const obj: ThisType<Person> = {
   mimi() {
-    this.name; // string
+    this.name // string
   },
-};
+}
 
 // 没有ThisType情况下
 const dog = {
   wang() {
-    console.log(this.age); // error，在dog中只有wang一个函数，不存在age
+    console.log(this.age) // error，在dog中只有wang一个函数，不存在age
   },
-};
+}
 // 使用ThisType
 const dog: { wang: any } & ThisType<{ age: number }> = {
   wang() {
-    console.log(this.wang); // error，因为没有在ThisType中定义
-    console.log(this.age); // ok
+    console.log(this.wang) // error，因为没有在ThisType中定义
+    console.log(this.age) // ok
   },
-};
-dog.wang; // ok 正常调用
-dog.age; // error，在外面的话，就跟ThisType没有关系了,这里就是没有定义age了
+}
+dog.wang // ok 正常调用
+dog.age // error，在外面的话，就跟ThisType没有关系了,这里就是没有定义age了
 ```
 
 `ThisType<T>`实现如下:
@@ -407,11 +404,11 @@ interface ThisType<T> {}
 
 ```ts
 // T1的类型为 "C"
-type T1 = Uppercase<"c">;
+type T1 = Uppercase<'c'>
 // T2的类型为 "1"
-type T2 = Uppercase<"1">;
+type T2 = Uppercase<'1'>
 // T3的类型为 any
-type T3 = Uppercase<any>;
+type T3 = Uppercase<any>
 ```
 
 `Uppercase<T>`实现如下:
@@ -421,5 +418,5 @@ type T3 = Uppercase<any>;
  * 官方通过 intrinsic 关键字实现Uppercase类型。为了帮助进行字符串操作,TypeScript 包含一组可用于字符串操作的类型。
  * 这些.d.ts类型内置于编译器以提高性能,所以在TypeScript 包含的文件中找不到。
  */
-type Uppercase<T extends string> = intrinsic;
+type Uppercase<T extends string> = intrinsic
 ```

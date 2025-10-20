@@ -1,11 +1,11 @@
 export default {
-  text: '源码剖析',
+  text: '最佳实践',
   collapsible: true,
   collapsed: true,
   items: [
     {
-      text: 'Redux',
-      link: '/sourceCode/redux.md',
+      text: 'Monorepo最佳实践',
+      link: '/goodPractice/monorepo.md',
       items: [],
     },
   ],

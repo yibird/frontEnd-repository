@@ -9,10 +9,12 @@
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
-    "serve": "vitepress serve docs"
+    "serve": "vitepress serve docs",
+    "prettier":"prettier --write \"**/*.{js,ts,vue,html,css,scss,md}\""
   },
   "devDependencies": {
-    "vitepress": "1.0.0-rc.10",
+    "prettier": "^3.6.2",
+    "vitepress": "1.6.4",
     "vue": "^3.3.4"
   }
 }

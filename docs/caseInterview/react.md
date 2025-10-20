@@ -53,15 +53,15 @@ JSX(JavaScript XML)是一种 JavaScript 的语法扩展,它允许在 JavaScript 
 React Render Props 是 React 组件的一种模式,旨在让组件之间共享行为逻辑。这种模式通过将一个或多个函数作为 React 组件的 props 传递,从而让组件能够共享一部分渲染逻辑。这些函数通常会返回 JSX 元素,可以进行自定义渲染,使得组件能够更加灵活地适应不同的需求。使用 Render Props 模式可以使得组件复用性更高,同时也可以提高代码的可读性和可维护性。
 
 ```tsx
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 interface Props {
-  render: (count: number, increment: () => void) => React.ReactNode;
+  render: (count: number, increment: () => void) => React.ReactNode
 }
 const RenderPropsExample: React.FC<Props> = ({ render }) => {
-  const [count, setCount] = useState(0);
-  const increment = () => setCount(count + 1);
-  return <div>{render(count, increment)}</div>;
-};
+  const [count, setCount] = useState(0)
+  const increment = () => setCount(count + 1)
+  return <div>{render(count, increment)}</div>
+}
 const Parent = () => {
   return (
     <div>
@@ -72,12 +72,12 @@ const Parent = () => {
               <p>Count: {count}</p>
               <button onClick={increment}>Click Me</button>
             </div>
-          );
+          )
         }}
       />
     </div>
-  );
-};
+  )
+}
 ```
 
 RenderPropsExample 组件通过 props 接收一个名为 render 的函数,render 可以在组件外部定义组件的渲染逻辑,灵活性更好,而且其他组件可以重用该渲染逻辑。render 函数包括 count 和 increment 两个参数,并返回一个 ReactNode 节点作为渲染内容。Parent 渲染 RenderPropsExample 组件时需要传入 render Props,在该渲染函数中可以自定义任意逻辑。
@@ -102,45 +102,42 @@ React 错误边界组件是一种容错机制,用于在 React 组件树中捕获
 ::: details ErrorBoundary 组件实现
 
 ```tsx
-import React, { PropsWithChildren, ErrorInfo } from 'react';
+import React, { PropsWithChildren, ErrorInfo } from 'react'
 
 interface Props {
-  fallback?: React.ReactNode;
+  fallback?: React.ReactNode
 }
 
 interface State {
-  hasError: boolean;
-  error: Error | null;
-  errorInfo: ErrorInfo | null;
+  hasError: boolean
+  error: Error | null
+  errorInfo: ErrorInfo | null
 }
 
-export default class ErrorBoundary extends React.Component<
-  PropsWithChildren<Props>,
-  State
-> {
+export default class ErrorBoundary extends React.Component<PropsWithChildren<Props>, State> {
   constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    super(props)
+    this.state = { hasError: false, error: null, errorInfo: null }
   }
 
   static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+    return { hasError: true }
   }
 
   // 当组件内部出现错误时调用此钩子函数
   componentDidCatch(error: Error, info: ErrorInfo) {
     // You can also log the error to an error reporting service
-    console.log(error, info);
+    console.log(error, info)
   }
 
   render() {
-    const { fallback, children } = this.props;
-    const { hasError } = this.state;
+    const { fallback, children } = this.props
+    const { hasError } = this.state
     if (hasError) {
-      return fallback || <h1>Something went wrong.</h1>;
+      return fallback || <h1>Something went wrong.</h1>
     }
-    return children;
+    return children
   }
 }
 ```
@@ -150,24 +147,24 @@ export default class ErrorBoundary extends React.Component<
 ::: details 使用 ErrorBoundary 组件
 
 ```tsx
-import React from 'react';
-import ErrorBoundary from './ErrorBoundary';
+import React from 'react'
+import ErrorBoundary from './ErrorBoundary'
 
 function MyComponent(props) {
   // This will throw an error
-  return <h1>{props.text}</h1>;
+  return <h1>{props.text}</h1>
 }
 
 function App() {
   return (
     <div>
       <ErrorBoundary>
-        <MyComponent text='Hello, world!' />
+        <MyComponent text="Hello, world!" />
       </ErrorBoundary>
     </div>
-  );
+  )
 }
-export default App;
+export default App
 ```
 
 :::
@@ -244,9 +241,9 @@ Fiber 架构是 React 16 中引入的新的协调算法和架构设计,通过可
 在 React 16 中,FiberNode 是一个复杂的数据结构,用于描述组件和其相关状态:
 
 ```js
-const NoEffect = /* 0b00000000000000000000 */ 0;
-const NoPriority = /* 0b00000000000000000000 */ 0;
-const NoLane = /* 0b00000000000000000000 */ 0;
+const NoEffect = /* 0b00000000000000000000 */ 0
+const NoPriority = /* 0b00000000000000000000 */ 0
+const NoLane = /* 0b00000000000000000000 */ 0
 
 // FiberNode 的定义
 class FiberNode {
@@ -255,45 +252,45 @@ class FiberNode {
      * 标记节点类型,如 HostComponent(原生 DOM 节点)、ClassComponent(类组件)、
      * FunctionComponent(函数式组件)、HostRoot(根节点)等
      */
-    this.tag = tag;
+    this.tag = tag
     /**
      * 表示当前 FiberNode 所代表的元素类型或组件类型。例如,对于原生 DOM 元素,
      * type 是字符串（如 "div"）；对于函数或类组件,type 是函数或类的引用。
      */
-    this.type = type;
+    this.type = type
     // 当前 props,记录当前渲染的属性
-    this.pendingProps = pendingProps;
+    this.pendingProps = pendingProps
     // 存储上一次渲染时的属性值,用于比较 props 是否发生变化
-    this.memoizedProps = null;
+    this.memoizedProps = null
     // 当前状态,记录当前组件的 state
-    this.stateNode = null;
+    this.stateNode = null
     // 用于列表渲染的唯一标识符
-    this.key = key;
+    this.key = key
 
     /**
      * child、sibling、return分别指向该 FiberNode 的第一个子节点、下一个兄弟节点和父节点。
      * 通过这些指针,React 可以在组件树中进行深度优先的遍历和更新
      */
-    this.child = null;
-    this.sibling = null;
-    this.return = null;
+    this.child = null
+    this.sibling = null
+    this.return = null
 
     // 标记该 FiberNode 需要执行的操作类型,如插入、更新、删除等
-    this.effectTag = NoEffect;
+    this.effectTag = NoEffect
     // 指向上一次渲染的 FiberNode,支持双缓存机制,用于比对新旧 FiberNode 的差异。
-    this.alternate = null;
+    this.alternate = null
     // 存储更新队列
-    this.updateQueue = null;
+    this.updateQueue = null
     // 存储在 render 阶段产生的状态,用于保存上一次渲染的状态
-    this.memoizedState = null;
+    this.memoizedState = null
 
     // 用于调度渲染的优先级,决定更新的优先级
-    this.priority = null;
+    this.priority = null
     // 用于调度的时间戳
-    this.lane = NoLane;
+    this.lane = NoLane
 
     // 指向当前正在工作的 Hook,在 Hooks 链表中使用
-    this.currentHook = null;
+    this.currentHook = null
   }
 
   // 其它必要的属性...
@@ -349,26 +346,26 @@ useState()与 setState()有所区别,Class 组件存储的是状态的引用,而
 
 ```jsx
 const ClassApp = () => {
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState('z乘风');
+  const [count, setCount] = useState(0)
+  const [name, setName] = useState('z乘风')
   const asyncHandle = () => {
-    setCount(count + 1);
-    setName('zchengfeng');
-  };
+    setCount(count + 1)
+    setName('zchengfeng')
+  }
   useEffect(() => {
     /**
      * 第一次打印:{count: 0, name: 'z乘风'}
      * 第二次打印:{count: 1, name: 'zchengfeng'}
      */
-    console.log({ count, name });
-  }, [count, name]);
+    console.log({ count, name })
+  }, [count, name])
 
   return (
     <div>
       <button onClick={asyncHandle}>button01</button>
     </div>
-  );
-};
+  )
+}
 ```
 
 - 通过 useRef()引用 state。
@@ -378,24 +375,24 @@ const ClassApp = () => {
   const [state, setState] = useState({
     count: 0,
     name: 'z乘风',
-  });
-  const stateRef = useRef(state);
+  })
+  const stateRef = useRef(state)
 
   const asyncHandle = () => {
     stateRef.current = {
       count: 1,
       name: 'zchengfeng',
-    };
-    setState(stateRef.current);
-    console.log(stateRef.current); // {count: 1, name: 'zchengfeng'}
-  };
+    }
+    setState(stateRef.current)
+    console.log(stateRef.current) // {count: 1, name: 'zchengfeng'}
+  }
 
   return (
     <div>
       <button onClick={asyncHandle}>button01</button>
     </div>
-  );
-};
+  )
+}
 ```
 
 ## 18.useEffect 与 useLayoutEffect 的区别?

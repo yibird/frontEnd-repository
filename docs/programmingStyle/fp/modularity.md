@@ -17,27 +17,27 @@
 ```tsx
 // 方式1:通过reduce实现管道函数
 function pipe<T>(value: T, ...funcs: Array<(arg: T) => T>): T {
-  return funcs.reduce((result, fn) => fn(result), value);
+  return funcs.reduce((result, fn) => fn(result), value)
 }
 
 // 方式2:通过组合函数实现管道函数
 function compose<T, R>(...funcs: Array<(arg: T) => R>): (arg: T) => R {
   return function (arg: T): R {
-    return funcs.reduceRight((result, fn) => fn(result), arg);
-  };
+    return funcs.reduceRight((result, fn) => fn(result), arg)
+  }
 }
 function pipe<T, R>(value: T, ...funcs: Array<(arg: T) => R>): R {
-  return compose(...funcs)(value);
+  return compose(...funcs)(value)
 }
 
 // --------------测试
 function addOne(num: number): number {
-  return num + 1;
+  return num + 1
 }
 function double(num: number): number {
-  return num * 2;
+  return num * 2
 }
-const result = pipe(3, addOne, double); // 8
+const result = pipe(3, addOne, double) // 8
 ```
 
 #### 管道函数的应用
@@ -57,26 +57,26 @@ const result = pipe(3, addOne, double); // 8
 // 方式1:通过reducerRight()实现组合函数
 function compose<T>(...funcs: Array<(arg: T) => T>): (arg: T) => T {
   return function (arg: T) {
-    return funcs.reduceRight((result, fn) => fn(result), arg);
-  };
+    return funcs.reduceRight((result, fn) => fn(result), arg)
+  }
 }
 
 // 方式2:通过reducer()实现组合函数,从里到外求值,即从右到左求值
 function composes<T>(...funcs: Array<(arg: T) => T>): (arg: T) => T {
   return funcs.reduce((result, fn) => {
-    return (...args) => result(fn(...args));
-  });
+    return (...args) => result(fn(...args))
+  })
 }
 
 // -------------------- 测试
 function addOne(num) {
-  return num + 1;
+  return num + 1
 }
 function double(num) {
-  return num * 2;
+  return num * 2
 }
-const composedFunc = compose(addOne, double);
-console.log(composedFunc(3)); // 7
+const composedFunc = compose(addOne, double)
+console.log(composedFunc(3)) // 7
 // -------------------- 测试
 ```
 

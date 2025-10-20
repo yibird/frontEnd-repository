@@ -27,11 +27,11 @@ Promise 是一个 JavaScript 对象,用于处理异步操作和回调函数。�
 ```ts
 // 获取对象的原始类型
 const rawType = (val: unknown) => {
-  return Object.prototype.toString.call(val).slice(8, -1);
-};
+  return Object.prototype.toString.call(val).slice(8, -1)
+}
 // 判断val是否是Function类型
 function isFunc(val: unknown): val is Function {
-  return typeof val === 'function';
+  return typeof val === 'function'
 }
 // 方式1:通过检查目标对象上是否具有Promise.prototype.then()
 function isPromise<T = any>(val: unknown): val is Promise<T> {
@@ -41,7 +41,7 @@ function isPromise<T = any>(val: unknown): val is Promise<T> {
     typeof val === 'object' &&
     isFunc((val as any).then) &&
     isFunc((val as any).catch)
-  );
+  )
 }
 
 // 方式2:Promise.resolve()函数判断目标对象是否是Promise
@@ -51,7 +51,7 @@ function isPromise<T = any>(val: unknown): val is Promise<T> {
     val !== null &&
     typeof val === 'object' &&
     Promise.resolve(val) === val
-  );
+  )
 }
 ```
 
@@ -64,7 +64,7 @@ const person = {
   name: 'John',
   age: 30,
   city: 'New York',
-};
+}
 ```
 
 判断纯对象的方法如下:
@@ -78,7 +78,7 @@ const person = {
  * 如果该结果等于Object.prototype说明是一个纯对象
  */
 function isPlainObject(obj) {
-  return Object.getPrototypeOf(obj) === Object.prototype;
+  return Object.getPrototypeOf(obj) === Object.prototype
 }
 
 // 方式2:判断对象是否有自己定义的属性,如果没有则认为该对象是纯对象
@@ -86,10 +86,10 @@ function isPlainObject(obj) {
   for (var key in obj) {
     // hasOwnProperty()用于判断对象自身属性中是否具有指定的属性
     if (obj.hasOwnProperty(key)) {
-      return false;
+      return false
     }
   }
-  return true;
+  return true
 }
 ```
 
@@ -98,19 +98,19 @@ function isPlainObject(obj) {
 Number.isNaN()方法和 isNaN()的区别在于,Number.isNaN()不会将传入的非数值类型进行强制转换为数值类型,而是首先判断传入的参数是否为数值类型,只要是非数值类型就直接返回 false。而 isNaN()会对非数值类型进行强制转换为数值类型,然后再进行判断。
 
 ```ts
-console.log(isNaN(NaN)); // true
-console.log(isNaN(true)); // true
-console.log(isNaN('aa')); // true
-console.log(isNaN('')); // false
-console.log(isNaN(null)); // false
-console.log(isNaN(undefined)); // false
+console.log(isNaN(NaN)) // true
+console.log(isNaN(true)) // true
+console.log(isNaN('aa')) // true
+console.log(isNaN('')) // false
+console.log(isNaN(null)) // false
+console.log(isNaN(undefined)) // false
 
-console.log(Number.isNaN(NaN)); // true
-console.log(Number.isNaN(true)); // false
-console.log(Number.isNaN('aa')); // false
-console.log(Number.isNaN('')); // false
-console.log(Number.isNaN(null)); // false
-console.log(Number.isNaN(undefined)); // false
+console.log(Number.isNaN(NaN)) // true
+console.log(Number.isNaN(true)) // false
+console.log(Number.isNaN('aa')) // false
+console.log(Number.isNaN('')) // false
+console.log(Number.isNaN(null)) // false
+console.log(Number.isNaN(undefined)) // false
 ```
 
 ## 7.JS 0.1+0.2 为什么不等于 0.3?
@@ -119,7 +119,7 @@ console.log(Number.isNaN(undefined)); // false
 
 ```js
 // 0.2转二进制其结果是一个无线循环小数,因此JS规范最大可以存储53位有效数字,因此超过53位之后的值都会被截取,从而导致精度丢失
-console.log((0.2).toString(2)); // 0.001100110011001100110011001100110011001100110011001101
+console.log((0.2).toString(2)) // 0.001100110011001100110011001100110011001100110011001101
 ```
 
 - 对阶运算导致精度丢失。由于指数位数不同,运算是需要对阶运算,阶小的尾数要根据阶来右移(0 舍入 1),尾数位移时可能会发生数丢失的情况,从而影响精度。
@@ -136,37 +136,37 @@ console.log((0.2).toString(2)); // 0.0011001100110011001100110011001100110011001
 - **重写对象 valueOf 方法**。valueOf()用于返回对象的原始值,当对象进行弱等于(==)比较时,根据隐式转换类型规则,首先将左右两两边的值转化成相同的原始类型,然后再去比较它们是否相等。每当对象使用弱等于会调用 valueOf()将对比值都转为原始类型,然后再进行比较。该方案在在强等于(===)情况下失效,由于强等于不会进行类型转换,所以并不会调用 valueOf()。
 
 ```js
-const a = { value: 0 };
+const a = { value: 0 }
 // 重写valueOf,每次访问a就会调用a的valueOf(),从而使a的value每次加1
 a.valueOf = function () {
-  return this.value + 1;
-};
+  return this.value + 1
+}
 /**
  * 弱等于情况下会将比较两值转换为同一类型原始类型进行比较,
  * 转换为原始类型时会调用valueOf()。
  */
-console.log(a == 1 && a == 2 && a == 3); // true
+console.log(a == 1 && a == 2 && a == 3) // true
 
 /**
  * 强类型比较不会进行类型转换,从而不会调用valueOf()。
  */
-console.log(a === 1); // false
-console.log(a === 1 && a === 2 && a === 3); // false
+console.log(a === 1) // false
+console.log(a === 1 && a === 2 && a === 3) // false
 ```
 
 - **通过 defineProperty 监听对象属性 getter 操作**。defineProperty 允许侦听对象某个属性的 getter 和 setter,每当访问对象就会执行 get 函数返回其属性的值。
 
 ```js
 // 定义全局变量,即window.value
-var value = 0;
+var value = 0
 // 监听window对象的a属性getter操作,每次访问window.a都会执行get函数
 Object.defineProperty(window, 'a', {
   get: function () {
-    return (this.value += 1);
+    return (this.value += 1)
   },
-});
-console.log(a === 1 && a === 2 && a === 3); // true
-console.log(a == 1 && a == 2 && a == 3); // false
+})
+console.log(a === 1 && a === 2 && a === 3) // true
+console.log(a == 1 && a == 2 && a == 3) // false
 ```
 
 - **通过 Proxy 监听对象属性 getter 操作**。在 JavaScript 提供了 Object.defineProperty()和 Proxy 两种对象拦截机制,Proxy 相较于 Object.defineProperty()具有更好的性能、支持 13 种操作拦截和错误提示。
@@ -180,15 +180,15 @@ let handler = {
    * - target:指向原始的读操作所在的那个对象,一般是Proxy对象。
    */
   get: function (target, key, receiver) {
-    console.log('receiver:', receiver);
+    console.log('receiver:', receiver)
     if (key === 'value') {
-      return ++target.value;
+      return ++target.value
     }
   },
-};
+}
 
-let obj = new Proxy({ value: 0 }, handler);
-console.log(obj.value === 1 && obj.value === 2 && obj.value === 3); // 输出 true
+let obj = new Proxy({ value: 0 }, handler)
+console.log(obj.value === 1 && obj.value === 2 && obj.value === 3) // 输出 true
 ```
 
 ## 10.JS 中作用域提升
@@ -197,20 +197,20 @@ console.log(obj.value === 1 && obj.value === 2 && obj.value === 3); // 输出 tr
 
 ```js
 // 变量提升,在变量声明之前使用变量会产生undefined值
-console.log(a); // undefined
-var a = 'hello';
+console.log(a) // undefined
+var a = 'hello'
 
 // 函数提升
-foo(); // 1
+foo() // 1
 function foo() {
-  console.log(1);
+  console.log(1)
 }
 
 // 函数提升的优先级高于变量提升,因为函数声明的优先级高于变量声明的优先级
-foo(); // "hello"
-var foo = 'world';
+foo() // "hello"
+var foo = 'world'
 function foo() {
-  console.log('hello');
+  console.log('hello')
 }
 ```
 
@@ -346,25 +346,25 @@ for...in 和 for...of 都是循环语句,但有以下区别:
 
 ```js
 // 全局作用域下分别使用var、let、const声明变量
-var a = 1;
-let b = 2;
-const c = 3;
-console.log(window.a); // 1
-console.log(window.b); // undefined
-console.log(window.c); // undefined
+var a = 1
+let b = 2
+const c = 3
+console.log(window.a) // 1
+console.log(window.b) // undefined
+console.log(window.c) // undefined
 /*
  * 解析:从全局作用域下分别使用var、let、const声明变量例子来看,var声明的变量可以
  * 被window访问,但let和const声明的变量无法被window访问,这是因为const和let会生成块级作用域,
  * 而ES5没有块级作用域的概念,只有函数作用域,可以近似理解为如下代码这样,所以外层window必然无法
  * 访问let和const声明的变量。
  */
-let a = 10;
-const b = 20;
+let a = 10
+const b = 20
 // 等同于
-(function () {
-  var a = 10;
-  var b = 20;
-})();
+;(function () {
+  var a = 10
+  var b = 20
+})()
 ```
 
 - const 符合函数式编程。const 用于定义常量,尤其在全局环境下。const 比较符合函数式编程思想,运算不改变值,而是新建值,这样有利用将来的分布式计算。
@@ -397,20 +397,20 @@ Prefetch(预获取)和 Preload(预加载)是两种优化网页加载性能的技
 
 ```js
 // lib.js
-var counter = 3;
+var counter = 3
 function incCounter() {
-  counter++;
+  counter++
 }
 module.exports = {
   counter: counter,
   incCounter: incCounter,
-};
+}
 
 // main.js
-var lib = require('./lib');
-console.log(lib.counter); // 3
-lib.incCounter();
-console.log(lib.counter); // 3
+var lib = require('./lib')
+console.log(lib.counter) // 3
+lib.incCounter()
+console.log(lib.counter) // 3
 
 /*
  * 在main.js中调用incCounter()但counter的值仍是3,这说明lib模块内部对值的
@@ -429,16 +429,16 @@ ESM 的运行机制与 CommonJS 模块不一样。JS 引擎对脚本静态解析
 
 ```js
 // lib.js
-export let counter = 3;
+export let counter = 3
 export function incCounter() {
-  counter++;
+  counter++
 }
 
 // mian.js
-import { counter, incCounter } from './lib';
-console.log(counter); // 3
-incCounter();
-console.log(counter); // 4
+import { counter, incCounter } from './lib'
+console.log(counter) // 3
+incCounter()
+console.log(counter) // 4
 // 从结果来看ESM是属于动态引用的,lib模块counter变化会影响main模块的counter
 ```
 
@@ -458,14 +458,14 @@ console.log(counter); // 4
  * 小于节流间隔,因此,除了函数首次执行外,后续调用都不会被执行。
  */
 function throttle(func, delay) {
-  let lastTime = 0;
+  let lastTime = 0
   return function () {
-    const now = Date.now();
+    const now = Date.now()
     if (now - lastTime >= delay) {
-      func();
-      lastTime = now;
+      func()
+      lastTime = now
     }
-  };
+  }
 }
 
 /**
@@ -475,15 +475,15 @@ function throttle(func, delay) {
  * 都会忽略执行,从而只保证函数调用多次仅执行首次。
  */
 function throttle(func, delay) {
-  let timeoutId;
+  let timeoutId
   return function () {
     if (!timeoutId) {
       timeoutId = setTimeout(() => {
-        func();
-        timeoutId = null;
-      }, delay);
+        func()
+        timeoutId = null
+      }, delay)
     }
-  };
+  }
 }
 ```
 
@@ -495,13 +495,13 @@ function throttle(func, delay) {
  * 由于每次执行前都会清理定时器,因此只会执行最后一次。
  */
 function debounce(func, delay) {
-  let timeoutId;
+  let timeoutId
   return function (...args) {
-    clearTimeout(timeoutId);
+    clearTimeout(timeoutId)
     timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
+      func.apply(this, args)
+    }, delay)
+  }
 }
 ```
 
@@ -521,17 +521,17 @@ function debounce(func, delay) {
 function currySquare() {
   return function (x) {
     return function () {
-      return x * x;
-    };
-  };
+      return x * x
+    }
+  }
 }
 // 创建柯里化的平方计算函数
-const delayedSquare = currySquare();
+const delayedSquare = currySquare()
 // 调用延迟计算函数,传递参数
-const squareOf2 = delayedSquare(2);
+const squareOf2 = delayedSquare(2)
 // 在需要时执行计算
-const result = squareOf2(); // 此时才计算 2 * 2 的结果
-console.log(result); // 输出：4
+const result = squareOf2() // 此时才计算 2 * 2 的结果
+console.log(result) // 输出：4
 ```
 
 - 配置。柯里化可以用于配置函数,允许您在应用程序的不同部分使用相同的配置参数,而无需在每次调用时都传递它们。
@@ -541,35 +541,35 @@ console.log(result); // 输出：4
 // 柯里化的验证规则
 function createValidator(rule) {
   return function (value) {
-    return rule(value);
-  };
+    return rule(value)
+  }
 }
 
 // 基本的验证规则
 function isRequired(value) {
-  return value !== undefined && value !== null && value !== '';
+  return value !== undefined && value !== null && value !== ''
 }
 
 function isEmail(value) {
   // 此处简化验证逻辑,实际应用中应该使用更复杂的邮箱验证规则
-  return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(value);
+  return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(value)
 }
 
 function isNumeric(value) {
-  return !isNaN(value) && isFinite(value);
+  return !isNaN(value) && isFinite(value)
 }
 
 // 创建柯里化的验证函数
-const validateRequired = createValidator(isRequired);
-const validateEmail = createValidator(isEmail);
-const validateNumeric = createValidator(isNumeric);
+const validateRequired = createValidator(isRequired)
+const validateEmail = createValidator(isEmail)
+const validateNumeric = createValidator(isNumeric)
 
 // 使用验证函数
-const userInput = '';
+const userInput = ''
 
-console.log(validateRequired(userInput)); // false
-console.log(validateEmail('example.com')); // false
-console.log(validateNumeric('123abc')); // false
+console.log(validateRequired(userInput)) // false
+console.log(validateEmail('example.com')) // false
+console.log(validateNumeric('123abc')) // false
 ```
 
 ## 26.FileReader 的作用?
@@ -654,31 +654,23 @@ Web Worker 的应用场景包括:
   // 设置在捕获阶段执行的事件处理函数
   document
     .getElementById('grandparent')
-    .addEventListener(
-      'click',
-      () => console.log('Grandparent capturing'),
-      true
-    );
+    .addEventListener('click', () => console.log('Grandparent capturing'), true)
   document
     .getElementById('parent')
-    .addEventListener('click', () => console.log('Parent capturing'), true);
+    .addEventListener('click', () => console.log('Parent capturing'), true)
   document
     .getElementById('child')
-    .addEventListener('click', () => console.log('Child capturing'), true);
+    .addEventListener('click', () => console.log('Child capturing'), true)
   // 设置在冒泡阶段执行的事件处理函数
   document
     .getElementById('grandparent')
-    .addEventListener(
-      'click',
-      () => console.log('Grandparent bubbling'),
-      false
-    );
+    .addEventListener('click', () => console.log('Grandparent bubbling'), false)
   document
     .getElementById('parent')
-    .addEventListener('click', () => console.log('Parent bubbling'), false);
+    .addEventListener('click', () => console.log('Parent bubbling'), false)
   document
     .getElementById('child')
-    .addEventListener('click', () => console.log('Child bubbling'), false);
+    .addEventListener('click', () => console.log('Child bubbling'), false)
   /**
    * 点击 button 元素时,事件捕获阶段的控制台输出:
    * Grandparent capturing

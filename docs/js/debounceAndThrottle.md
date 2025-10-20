@@ -16,25 +16,25 @@
  */
 function debounce(fn, wait = 50) {
   // 声明一个定时器,闭包缓存timer
-  let timer = null;
+  let timer = null
   // 返回一个新的函数
   return (...args) => {
     // 如果timer存在就清理定时器
     if (timer) {
-      clearTimeout(timer);
+      clearTimeout(timer)
     }
     timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, wait);
-  };
+      fn.apply(this, args)
+    }, wait)
+  }
 }
 // 测试:监听滚动事件
 document.addEventListener(
   'scroll',
   debounce(() => {
-    console.log(111);
-  }, 1000)
-);
+    console.log(111)
+  }, 1000),
+)
 ```
 
 ### 1.2 防抖函数增强版
@@ -54,28 +54,28 @@ document.addEventListener(
 
 function debounce(fn, wait = 50, immediate = true) {
   //声明一个定时器,闭包缓存timer
-  let timer = null;
+  let timer = null
 
   //返回一个新的函数
   return (...args) => {
     //如果timer存在就清理定时器
     if (timer) {
-      clearTimeout(timer);
+      clearTimeout(timer)
     }
     if (immediate && !timer) {
-      fn.apply(this, args);
+      fn.apply(this, args)
     }
     timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, wait);
-  };
+      fn.apply(this, args)
+    }, wait)
+  }
 }
 document.addEventListener(
   'scroll',
   debounce(() => {
-    console.log(111);
-  }, 1000)
-);
+    console.log(111)
+  }, 1000),
+)
 ```
 
 对比简单版增加了 immediate 参数,当 immediate 为 true 时且定时器为空时就执行目标函数,定时器为空说明第一次触发回调函数。
@@ -98,24 +98,24 @@ document.addEventListener(
  */
 function throttle(fn, wait = 50) {
   // 声明变量存储上次函数执行时间
-  let preTime = 0;
+  let preTime = 0
   return (...args) => {
     // 获取当前时间
-    let now = +new Date();
+    let now = +new Date()
     // 如果当前时间 - 上次函数执行时间 > 间隔时间 执行目标函数,并将目标函数的执行时间赋值给preTime
     if (now - preTime > wait) {
-      preTime = now;
-      fn.apply(this, args);
+      preTime = now
+      fn.apply(this, args)
     }
-  };
+  }
 }
 
 // 测试
 const throttleFn = throttle(() => {
-  console.log('throttleFn');
-}, 1000);
+  console.log('throttleFn')
+}, 1000)
 // 每隔10ms执行一次throttleFn,只有本次执行时间-上次执行时间大于1000ms才会执行fn函数
-setInterval(throttleFn, 10);
+setInterval(throttleFn, 10)
 ```
 
 - 定时器方式:首先设置一个定时器,当定时器不为空时说明函数执行时间处于指定执行事件间隔内,因此需要通过 clearInterval 清理定时器。如果不为空则通过 setInterval 创建一个定时器并赋值,该定时器将间隔 wait 时间执行目标函数,这意味着多次触发目标执行函数,如果执行时机在 wait 内只会执行第一次。
@@ -128,23 +128,23 @@ setInterval(throttleFn, 10);
  */
 function throttle(fn, wait = 50) {
   // 设置一个定时器
-  let timer = null;
+  let timer = null
   return (...args) => {
     // 如果定时器存在就清理定时器
     if (timer) {
-      clearInterval(timer);
+      clearInterval(timer)
     }
     // 只有外部触发时间的间隔的大于wait才会执行目标函数
     timer = setInterval(() => {
-      fn.apply(this, args);
-    }, wait);
-  };
+      fn.apply(this, args)
+    }, wait)
+  }
 }
 const throttleFn = throttle(() => {
-  console.log('throttleFn');
-}, 1000);
+  console.log('throttleFn')
+}, 1000)
 // 每隔800ms执行一次throttleFn,只有本次执行时间-上次执行时间大于1000ms才会执行fn函数
-setInterval(throttleFn, 800);
+setInterval(throttleFn, 800)
 ```
 
 ### 2.2 增强版版节流
@@ -164,35 +164,35 @@ function throttle(fn, wait = 50) {
    * 声明一个变量保存上次函数执行的时间,声明一个定时器
    */
   let preTime = 0,
-    timer = null;
+    timer = null
 
   return (...args) => {
     // 获取当前时间
-    const now = +new Date();
+    const now = +new Date()
     // 如果本次执行时间-上次执行时间>fn函数执行的时间间隔说明fn可以执行了
     if (now - preTime > wait) {
       //更新上次执行时间
-      preTime = now;
-      fn.apply(this, args);
+      preTime = now
+      fn.apply(this, args)
     } else {
       /*
        * 本次执行时间 - 上次执行时间 < fn() 执行的时间间隔,
        * 则为本次触发操作设立一个新的定时器,定时器时间结束后执行fn()
        */
-      if (timer) clearTimeout(timer);
+      if (timer) clearTimeout(timer)
       timer = setTimeout(() => {
-        preTime = now;
-        fn.apply(this, args);
-      }, wait);
+        preTime = now
+        fn.apply(this, args)
+      }, wait)
     }
-  };
+  }
 }
 
 // 测试
 const throttleFn = throttle(() => {
-  console.log('throttleFn');
-}, 1000);
-document.addEventListener('scroll', throttleFn);
+  console.log('throttleFn')
+}, 1000)
+document.addEventListener('scroll', throttleFn)
 ```
 
 假设 fn 的执行时间间隔为 1000ms(wait 为 1000ms),当 scroll 事件触发的间隔小于 1000ms 时,会执行防抖逻辑(else 部分),意思说无论在这 1000ms 触发了多少次 scroll 事件都会执行一次 fn 函数。当 scroll 事件触发的间隔大于 1000ms 时,会执行节流逻辑,从而安装 wait 间隔性的执行 fn 函数。

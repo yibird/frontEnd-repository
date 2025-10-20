@@ -20,4 +20,4 @@ export default {
       link: '/microFrontEnd/wujie.md',
     },
   ],
-};
+}

@@ -13,20 +13,20 @@
  */
 function drawVideo(video: HTMLVideoElement) {
   return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
     // 设置canvas的宽高为video元素的宽高
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
     // 绘制内容
-    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height)
     canvas.toBlob((blob) => {
       resolve({
         blob,
         url: URL.createObjectURL(blob!),
-      });
-    });
-  });
+      })
+    })
+  })
 }
 
 /**
@@ -37,18 +37,18 @@ function drawVideo(video: HTMLVideoElement) {
  */
 function captureFrame(videoFile: File, time: number = 0) {
   return new Promise((resolve) => {
-    const video = document.createElement('video');
+    const video = document.createElement('video')
     // 定格时间
-    video.currentTime = time;
+    video.currentTime = time
     // 开启自动播放
-    video.autoplay = true;
+    video.autoplay = true
     // 监听video播放事件,根据video通过canvas绘制为image
     video.oncanplay = async () => {
-      const frame = await drawVideo(video);
-      resolve(frame);
-    };
+      const frame = await drawVideo(video)
+      resolve(frame)
+    }
     // URL.createObjectURL()可以将文件或媒体数据(如图片、视频等)转换为一个临时的 URL,通常用于实时预览上传的图片或视频
-    video.src = URL.createObjectURL(videoFile);
-  });
+    video.src = URL.createObjectURL(videoFile)
+  })
 }
 ```

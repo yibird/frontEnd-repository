@@ -18,27 +18,27 @@
 ::: details 封装上传逻辑
 
 ```ts
-import axios from "axios";
-import { nextTick, ref, Ref } from "vue";
+import axios from 'axios'
+import { nextTick, ref, Ref } from 'vue'
 
 export type Option = {
   // 上传文件元素
-  el: Ref<HTMLInputElement | HTMLDivElement | undefined>;
+  el: Ref<HTMLInputElement | HTMLDivElement | undefined>
   // 上传文件接口url
-  url: string;
+  url: string
   // 上传文件参数文件名字段,默认是files
-  fieldName?: string;
+  fieldName?: string
   // 上传文件参数文件path字段
-  fieldPath?: string | ((relativePath: string) => string);
+  fieldPath?: string | ((relativePath: string) => string)
   // 上传成功回调
-  onSuccess?: (res: any) => void;
+  onSuccess?: (res: any) => void
   // 上传进度完成(进度100%)回调
-  onCompleted?: () => void;
+  onCompleted?: () => void
   // 上传进度回调,percent一个数字用于表示当前文件上传进度
-  onProgress?: (percent: number) => void;
+  onProgress?: (percent: number) => void
   // 上传错误回调
-  onError?: (e: Error) => void;
-};
+  onError?: (e: Error) => void
+}
 
 /**
  * 上传文件hook,支持单文件和多文件上传
@@ -48,72 +48,69 @@ export const useUploadFile = (option: Option) => {
   const {
     el,
     url,
-    fieldName = "files",
+    fieldName = 'files',
     fieldPath,
     onSuccess,
     onCompleted,
     onProgress,
     onError,
-  } = option;
+  } = option
   // 用于存储已选择文件
-  let files = ref<File[]>([]);
+  let files = ref<File[]>([])
 
   const onChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     // 获取已选中文件列表
-    files.value = Array.from(target.files!);
-  };
+    files.value = Array.from(target.files!)
+  }
 
   nextTick(() => {
-    if (!el.value) return;
+    if (!el.value) return
     // 获取元素标签名,单文件上传和多文件上传el元素必须是input元素
-    const tagName = el.value.tagName;
-    if (tagName === "INPUT") {
+    const tagName = el.value.tagName
+    if (tagName === 'INPUT') {
       // 监听change事件,获取已选中文件列表
-      el.value.addEventListener("change", onChange);
+      el.value.addEventListener('change', onChange)
     }
-  });
+  })
 
   const upload = () => {
-    if (!el.value || files.value.length === 0) return;
-    const formData = new FormData();
+    if (!el.value || files.value.length === 0) return
+    const formData = new FormData()
 
     // 设置formdata参数
     files.value.forEach((file) => {
-      const path =
-        typeof fieldPath === "function"
-          ? fieldPath(file.webkitRelativePath)
-          : fieldPath;
-      formData.append(fieldName!, file, path);
-    });
+      const path = typeof fieldPath === 'function' ? fieldPath(file.webkitRelativePath) : fieldPath
+      formData.append(fieldName!, file, path)
+    })
 
     axios
       .post(url, formData, {
         // 监听上传进度事件
         onUploadProgress(e: ProgressEvent) {
-          const percentCompleted = Math.round((e.loaded * 100) / e.total);
-          onProgress && onProgress(percentCompleted);
+          const percentCompleted = Math.round((e.loaded * 100) / e.total)
+          onProgress && onProgress(percentCompleted)
           if (percentCompleted === 100) {
-            onCompleted && onCompleted();
+            onCompleted && onCompleted()
           }
         },
       })
       .then((res) => {
-        const { code, message } = res.data;
+        const { code, message } = res.data
         if (code === 0) {
-          onError && onError(new Error(message));
+          onError && onError(new Error(message))
         }
-        onSuccess && onSuccess(res);
+        onSuccess && onSuccess(res)
       })
-      .catch((e) => onError && onError(e));
-  };
+      .catch((e) => onError && onError(e))
+  }
 
   // 返回上传函数与已选中文件列表
   return {
     upload,
     files,
-  };
-};
+  }
+}
 ```
 
 :::
@@ -134,31 +131,31 @@ export const useUploadFile = (option: Option) => {
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useUploadFile";
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useUploadFile'
 
-const url = "http://localhost:8000/upload/single";
-const uploadRef = ref<HTMLInputElement>();
+  const url = 'http://localhost:8000/upload/single'
+  const uploadRef = ref<HTMLInputElement>()
 
-/**
- * 获取单个File对象,File对象包含了如下几个属性:
- * lastModified:最后修改日期,是一个时间戳。
- * lastModifiedDate:最后修改日期,是一个Date对象。
- * name:文件名称。
- * size:文件大小,单位Byte。
- * type:文件类型。例如image/gif、image/png等等。
- * webkitRelativePath:规定了文件的路径,相对于input元素而言
- */
-const { upload, files } = useUploadFile({
-  el: uploadRef,
-  url,
-  onCompleted() {
-    files.value = [];
-  },
-  onSuccess() {
-    console.log("单文件上传成功");
-  },
-});
+  /**
+   * 获取单个File对象,File对象包含了如下几个属性:
+   * lastModified:最后修改日期,是一个时间戳。
+   * lastModifiedDate:最后修改日期,是一个Date对象。
+   * name:文件名称。
+   * size:文件大小,单位Byte。
+   * type:文件类型。例如image/gif、image/png等等。
+   * webkitRelativePath:规定了文件的路径,相对于input元素而言
+   */
+  const { upload, files } = useUploadFile({
+    el: uploadRef,
+    url,
+    onCompleted() {
+      files.value = []
+    },
+    onSuccess() {
+      console.log('单文件上传成功')
+    },
+  })
 </script>
 ```
 
@@ -185,62 +182,58 @@ npm i koa koa-static @koa/cors @koa/multer @koa/router
 ::: details 服务端文件上传处理逻辑
 
 ```js
-const path = require("path");
-const Koa = require("koa");
-const Router = require("@koa/router");
-const Serve = require("koa-static");
-const Cors = require("@koa/cors");
-const Multer = require("@koa/multer");
+const path = require('path')
+const Koa = require('koa')
+const Router = require('@koa/router')
+const Serve = require('koa-static')
+const Cors = require('@koa/cors')
+const Multer = require('@koa/multer')
 
-const app = new Koa();
-const router = new Router();
-const PORT = 8000;
+const app = new Koa()
+const router = new Router()
+const PORT = 8000
 // 上传后资源地址
-const RESOURCE_URL = `http://localhost:${PORT}`;
+const RESOURCE_URL = `http://localhost:${PORT}`
 // 存储上传文件的目录
-const UPLOAD_DIR = path.join(__dirname, "/public/upload");
+const UPLOAD_DIR = path.join(__dirname, '/public/upload')
 
 // 文件上传配置
 const storage = Multer.diskStorage({
   destination: async function (req, file, cb) {
     // 设置文件的存储目录
-    cb(null, "public/upload");
+    cb(null, 'public/upload')
   },
   filename: function (req, file, cb) {
     // 设置文件名
-    cb(null, file.originalname);
+    cb(null, file.originalname)
   },
-});
+})
 // 加载配置
-const multerUpload = Multer({ storage });
+const multerUpload = Multer({ storage })
 
-router.post(
-  "/upload/single",
-  multerUpload.single("files"),
-  async (ctx, next) => {
-    try {
-      await next();
-      ctx.body = {
-        code: 1,
-        msg: "文件上传成功",
-        url: `${RESOURCE_URL}/${ctx.file.originalname}`,
-      };
-    } catch (e) {
-      ctx.body = {
-        code: 0,
-        msg: "文件上传失败",
-      };
+router.post('/upload/single', multerUpload.single('files'), async (ctx, next) => {
+  try {
+    await next()
+    ctx.body = {
+      code: 1,
+      msg: '文件上传成功',
+      url: `${RESOURCE_URL}/${ctx.file.originalname}`,
+    }
+  } catch (e) {
+    ctx.body = {
+      code: 0,
+      msg: '文件上传失败',
     }
   }
-);
+})
 
 // 注册中间件
-app.use(Cors());
-app.use(Serve(UPLOAD_DIR));
-app.use(router.routes()).use(router.allowedMethods());
+app.use(Cors())
+app.use(Serve(UPLOAD_DIR))
+app.use(router.routes()).use(router.allowedMethods())
 app.listen(PORT, () => {
-  console.log(`app starting at port ${PORT}`);
-});
+  console.log(`app starting at port ${PORT}`)
+})
 ```
 
 :::
@@ -369,13 +362,7 @@ public class UploadController {
     <form class="upload-container">
       <!-- 在vue3环境下 label标签for连接上传元素无法使用进行多选 -->
       <label for="multiple" multiple>多文件上传 </label>
-      <input
-        ref="uploadRef"
-        id="multiple"
-        type="file"
-        accept="images/*"
-        multiple
-      />
+      <input ref="uploadRef" id="multiple" type="file" accept="images/*" multiple />
     </form>
     <div class="tag">已选{{ files.length }}个文件</div>
     <button @click="upload" class="btn">多文件上传</button>
@@ -383,23 +370,23 @@ public class UploadController {
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useUploadFile";
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useUploadFile'
 
-const url = "http://localhost:8000/upload/multiple";
-const uploadRef = ref<HTMLInputElement>();
+  const url = 'http://localhost:8000/upload/multiple'
+  const uploadRef = ref<HTMLInputElement>()
 
-const { upload, files } = useUploadFile({
-  el: uploadRef,
-  url,
-  fieldName: "file",
-  onCompleted() {
-    files.value = [];
-  },
-  onSuccess() {
-    console.log("多文件上传成功");
-  },
-});
+  const { upload, files } = useUploadFile({
+    el: uploadRef,
+    url,
+    fieldName: 'file',
+    onCompleted() {
+      files.value = []
+    },
+    onSuccess() {
+      console.log('多文件上传成功')
+    },
+  })
 </script>
 ```
 
@@ -412,29 +399,29 @@ const { upload, files } = useUploadFile({
 ```js
 const multerUploadFields = multerUpload.fields([
   {
-    name: "file", // 与FormData对象配置的key相对应
+    name: 'file', // 与FormData对象配置的key相对应
   },
-]);
+])
 /**
  * 对于多文件上传新增了一个/upload/multiple路由方法,通过multerUpload.fields()
  * 根据字段名获取客户端传递的FormData对象内容,上传成功会将文件地址返回至客户端。
  */
-router.post("/upload/multiple", multerUploadFields, async (ctx, next) => {
+router.post('/upload/multiple', multerUploadFields, async (ctx, next) => {
   try {
-    await next();
-    urls = ctx.files.file.map((file) => `${RESOURCE_URL}/${file.originalname}`);
+    await next()
+    urls = ctx.files.file.map((file) => `${RESOURCE_URL}/${file.originalname}`)
     ctx.body = {
       code: 1,
-      msg: "文件上传成功",
+      msg: '文件上传成功',
       urls,
-    };
+    }
   } catch (e) {
     ctx.body = {
       code: 0,
-      msg: "文件上传失败",
-    };
+      msg: '文件上传失败',
+    }
   }
-});
+})
 ```
 
 :::
@@ -478,13 +465,7 @@ public Result uploadMultipleFile(@RequestParam("files") MultipartFile[] multipar
   <div class="upload">
     <div class="upload-container">
       <label for="directory" id="label">目录上传</label>
-      <input
-        ref="uploadRef"
-        id="directory"
-        type="file"
-        accept="images/*"
-        webkitdirectory
-      />
+      <input ref="uploadRef" id="directory" type="file" accept="images/*" webkitdirectory />
     </div>
     <div class="tag">已选{{ files.length }}个文件</div>
     <button @click="upload" class="btn">目录上传</button>
@@ -492,24 +473,24 @@ public Result uploadMultipleFile(@RequestParam("files") MultipartFile[] multipar
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useUploadFile";
-// 目录上传本质是就是多文件上传
-const url = "http://localhost:8000/upload/multiple";
-const uploadRef = ref<HTMLInputElement>();
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useUploadFile'
+  // 目录上传本质是就是多文件上传
+  const url = 'http://localhost:8000/upload/multiple'
+  const uploadRef = ref<HTMLInputElement>()
 
-const { upload, files } = useUploadFile({
-  el: uploadRef,
-  url,
-  // filePath替换
-  fieldPath: (relativePath) => relativePath.replace(/\//g, "@"),
-  onCompleted() {
-    files.value = [];
-  },
-  onSuccess() {
-    console.log("目录上传成功");
-  },
-});
+  const { upload, files } = useUploadFile({
+    el: uploadRef,
+    url,
+    // filePath替换
+    fieldPath: (relativePath) => relativePath.replace(/\//g, '@'),
+    onCompleted() {
+      files.value = []
+    },
+    onSuccess() {
+      console.log('目录上传成功')
+    },
+  })
 </script>
 ```
 
@@ -522,34 +503,34 @@ const { upload, files } = useUploadFile({
 ::: details 封装上传逻辑
 
 ```ts
-import axios from "axios";
-import { nextTick, ref, Ref } from "vue";
-import JSZip, { JSZipGeneratorOptions } from "jszip";
+import axios from 'axios'
+import { nextTick, ref, Ref } from 'vue'
+import JSZip, { JSZipGeneratorOptions } from 'jszip'
 
 type ZipOption = {
-  fileName?: string | ((relativePath: string) => string);
-};
+  fileName?: string | ((relativePath: string) => string)
+}
 
 export type Option = {
   // 上传文件元素
-  el: Ref<HTMLInputElement | HTMLDivElement | undefined>;
+  el: Ref<HTMLInputElement | HTMLDivElement | undefined>
   // 上传文件接口url
-  url: string;
+  url: string
   // 上传文件参数文件名字段,默认是files
-  fieldName?: string;
+  fieldName?: string
   // 上传文件参数文件path字段
-  fieldPath?: string | ((relativePath: string) => string);
+  fieldPath?: string | ((relativePath: string) => string)
   // 上传成功回调
-  onSuccess?: (res: any) => void;
+  onSuccess?: (res: any) => void
   // 上传进度完成(进度100%)回调
-  onCompleted?: () => void;
+  onCompleted?: () => void
   // 上传进度回调,percent一个数字用于表示当前文件上传进度
-  onProgress?: (percent: number) => void;
+  onProgress?: (percent: number) => void
   // 上传错误回调
-  onError?: (e: Error) => void;
+  onError?: (e: Error) => void
   // 文件zip压缩配置,不为空则开启文件压缩
-  zipOption?: ZipOption;
-};
+  zipOption?: ZipOption
+}
 
 /**
  * 根据文件对象生成zip压缩文件
@@ -560,25 +541,25 @@ export type Option = {
 function generateZipFile(
   files: File[],
   zipName?: string,
-  options: JSZipGeneratorOptions = { type: "blob", compression: "DEFLATE" }
+  options: JSZipGeneratorOptions = { type: 'blob', compression: 'DEFLATE' },
 ): Promise<File> {
   return new Promise((resolve, reject) => {
-    const zip = new JSZip();
+    const zip = new JSZip()
     for (let i = 0, len = files.length; i < len; i++) {
-      zip.file(files[i].webkitRelativePath, files[i]);
+      zip.file(files[i].webkitRelativePath, files[i])
     }
-    const defaultZipName = files[0].webkitRelativePath.split("/")[0] + ".zip";
+    const defaultZipName = files[0].webkitRelativePath.split('/')[0] + '.zip'
     zip
       .generateAsync(options)
       .then((blob) => {
-        zipName = zipName || defaultZipName || Date.now() + ".zip";
-        const zipFile = new File([blob], zipName, { type: "application/zip" });
-        resolve(zipFile);
+        zipName = zipName || defaultZipName || Date.now() + '.zip'
+        const zipFile = new File([blob], zipName, { type: 'application/zip' })
+        resolve(zipFile)
       })
       .catch((e) => {
-        reject(e);
-      });
-  });
+        reject(e)
+      })
+  })
 }
 
 /**
@@ -589,79 +570,76 @@ export const useUploadFile = (option: Option) => {
   const {
     el,
     url,
-    fieldName = "files",
+    fieldName = 'files',
     fieldPath,
     onSuccess,
     onCompleted,
     onProgress,
     onError,
     zipOption,
-  } = option;
+  } = option
   // 用于存储已选择文件
-  let files = ref<File[]>([]);
+  let files = ref<File[]>([])
 
   const onChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     // 获取已选中文件列表
-    files.value = Array.from(target.files!);
-  };
+    files.value = Array.from(target.files!)
+  }
 
   nextTick(() => {
-    if (!el.value) return;
+    if (!el.value) return
     // 获取元素标签名,单文件上传和多文件上传el元素必须是input元素
-    const tagName = el.value.tagName;
-    if (tagName === "INPUT") {
+    const tagName = el.value.tagName
+    if (tagName === 'INPUT') {
       // 监听change事件,获取已选中文件列表
-      el.value.addEventListener("change", onChange);
+      el.value.addEventListener('change', onChange)
     }
-  });
+  })
 
   const upload = async () => {
-    if (!el.value || files.value.length === 0) return;
-    const formData = new FormData();
+    if (!el.value || files.value.length === 0) return
+    const formData = new FormData()
 
     // 处理zip压缩
     if (zipOption) {
-      const file = await generateZipFile(files.value);
-      files.value = [file];
+      const file = await generateZipFile(files.value)
+      files.value = [file]
     }
 
     // 设置formdata参数
     files.value.forEach((file) => {
-      const path =
-        typeof fieldPath === "function"
-          ? fieldPath(file.webkitRelativePath)
-          : fieldPath;
-      formData.append(fieldName!, file, path);
-    });
+      const path = typeof fieldPath === 'function' ? fieldPath(file.webkitRelativePath) : fieldPath
+      formData.append(fieldName!, file, path)
+    })
 
     axios
       .post(url, formData, {
         // 监听上传进度事件
         onUploadProgress(e: ProgressEvent) {
-          const percentCompleted = Math.round((e.loaded * 100) / e.total);
-          onProgress && onProgress(percentCompleted);
+          const percentCompleted = Math.round((e.loaded * 100) / e.total)
+          onProgress && onProgress(percentCompleted)
           if (percentCompleted === 100) {
-            onCompleted && onCompleted();
+            onCompleted && onCompleted()
           }
         },
       })
       .then((res) => {
-        const { code, message } = res.data;
+        const { code, message } = res.data
         if (code === 0) {
-          onError && onError(new Error(message));
+          onError && onError(new Error(message))
         }
-        onSuccess && onSuccess(res);
+        onSuccess && onSuccess(res)
       })
-      .catch((e) => onError && onError(e));
-  };
+      .catch((e) => onError && onError(e))
+  }
 
   // 返回上传函数与已选中文件列表
   return {
     upload,
     files,
-  };
-};
+  }
+}
 ```
 
 :::
@@ -673,13 +651,7 @@ export const useUploadFile = (option: Option) => {
   <div class="upload">
     <div class="upload-container">
       <label for="zipDirectory" id="label">zip压缩目录上传</label>
-      <input
-        ref="uploadRef"
-        id="zipDirectory"
-        type="file"
-        accept="images/*"
-        webkitdirectory
-      />
+      <input ref="uploadRef" id="zipDirectory" type="file" accept="images/*" webkitdirectory />
     </div>
     <div class="tag">已选{{ files.length }}个文件</div>
     <button @click="upload" class="btn">zip压缩目录上传</button>
@@ -687,22 +659,22 @@ export const useUploadFile = (option: Option) => {
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useUploadFile";
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useUploadFile'
 
-const url = "http://localhost:8000/upload/single";
-const uploadRef = ref<HTMLInputElement>();
-const { upload, files } = useUploadFile({
-  el: uploadRef,
-  url,
-  zipOption: {},
-  onCompleted() {
-    files.value = [];
-  },
-  onSuccess() {
-    console.log("压缩目录上传成功");
-  },
-});
+  const url = 'http://localhost:8000/upload/single'
+  const uploadRef = ref<HTMLInputElement>()
+  const { upload, files } = useUploadFile({
+    el: uploadRef,
+    url,
+    zipOption: {},
+    onCompleted() {
+      files.value = []
+    },
+    onSuccess() {
+      console.log('压缩目录上传成功')
+    },
+  })
 </script>
 ```
 
@@ -714,66 +686,61 @@ const { upload, files } = useUploadFile({
 ::: details 封装上传逻辑
 
 ```ts
-import axios from "axios";
-import { nextTick, ref, Ref, onMounted } from "vue";
-import JSZip, { JSZipGeneratorOptions } from "jszip";
+import axios from 'axios'
+import { nextTick, ref, Ref, onMounted } from 'vue'
+import JSZip, { JSZipGeneratorOptions } from 'jszip'
 
 type ZipOption = {
-  fileName?: string | ((relativePath: string) => string);
-};
+  fileName?: string | ((relativePath: string) => string)
+}
 type DragOption = {
-  activeClass?: string;
+  activeClass?: string
   // 开始拖拽事件
-  onDragstart?: (e: DragEvent) => void;
+  onDragstart?: (e: DragEvent) => void
   // 拖拽结束事件
-  onDragend?: (e: DragEvent) => void;
+  onDragend?: (e: DragEvent) => void
   // 拖拽进入目标区域事件
-  onDragenter?: (e: DragEvent) => void;
+  onDragenter?: (e: DragEvent) => void
   // 拖拽到目录区域事件
-  onDragover?: (e: DragEvent) => void;
+  onDragover?: (e: DragEvent) => void
   // 拖拽离开目标区域事件
-  onDragleave?: (e: DragEvent) => void;
+  onDragleave?: (e: DragEvent) => void
   // 拖拽元素松开事件
-  onDrop?: (e: DragEvent) => void;
-};
+  onDrop?: (e: DragEvent) => void
+}
 
 export type Option = {
   // 上传文件元素
-  el: Ref<HTMLInputElement | HTMLDivElement | undefined>;
+  el: Ref<HTMLInputElement | HTMLDivElement | undefined>
   // 上传文件接口url
-  url: string;
+  url: string
   // 上传文件参数文件名字段,默认是files
-  fieldName?: string;
+  fieldName?: string
   // 上传文件参数文件path字段
-  fieldPath?: string | ((relativePath: string) => string);
+  fieldPath?: string | ((relativePath: string) => string)
   // 上传成功回调
-  onSuccess?: (res: any) => void;
+  onSuccess?: (res: any) => void
   // 上传进度完成(进度100%)回调
-  onCompleted?: () => void;
+  onCompleted?: () => void
   // 上传进度回调,percent一个数字用于表示当前文件上传进度
-  onProgress?: (percent: number) => void;
+  onProgress?: (percent: number) => void
   // 上传错误回调
-  onError?: (e: Error) => void;
+  onError?: (e: Error) => void
   // 文件zip压缩配置,不为空则开启文件压缩
-  zipOption?: ZipOption;
+  zipOption?: ZipOption
   // 拖拽上传配置,不为空则开启拖拽文件上传
-  dragOption?: DragOption;
-};
+  dragOption?: DragOption
+}
 
 // 拖拽事件列表
-const drapEvents = [
-  "onDragenter",
-  "onDragover",
-  "onDragleave",
-  "onDrop",
-] as const;
-type DrapEvents = (typeof drapEvents)[number];
+const drapEvents = ['onDragenter', 'onDragover', 'onDragleave', 'onDrop'] as const
+type DrapEvents = (typeof drapEvents)[number]
 
 // 阻止浏览器默认行为
 const preventDefaults = (e: Event) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
+  e.preventDefault()
+  e.stopPropagation()
+}
 
 /**
  * 根据文件对象生成zip压缩文件
@@ -784,25 +751,25 @@ const preventDefaults = (e: Event) => {
 function generateZipFile(
   files: File[],
   zipName?: string,
-  options: JSZipGeneratorOptions = { type: "blob", compression: "DEFLATE" }
+  options: JSZipGeneratorOptions = { type: 'blob', compression: 'DEFLATE' },
 ): Promise<File> {
   return new Promise((resolve, reject) => {
-    const zip = new JSZip();
+    const zip = new JSZip()
     for (let i = 0, len = files.length; i < len; i++) {
-      zip.file(files[i].webkitRelativePath, files[i]);
+      zip.file(files[i].webkitRelativePath, files[i])
     }
-    const defaultZipName = files[0].webkitRelativePath.split("/")[0] + ".zip";
+    const defaultZipName = files[0].webkitRelativePath.split('/')[0] + '.zip'
     zip
       .generateAsync(options)
       .then((blob) => {
-        zipName = zipName || defaultZipName || Date.now() + ".zip";
-        const zipFile = new File([blob], zipName, { type: "application/zip" });
-        resolve(zipFile);
+        zipName = zipName || defaultZipName || Date.now() + '.zip'
+        const zipFile = new File([blob], zipName, { type: 'application/zip' })
+        resolve(zipFile)
       })
       .catch((e) => {
-        reject(e);
-      });
-  });
+        reject(e)
+      })
+  })
 }
 
 /**
@@ -810,7 +777,7 @@ function generateZipFile(
  * @param str 字符串
  */
 function firstUpperCase(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 /**
@@ -821,7 +788,7 @@ export const useUploadFile = (option: Option) => {
   const {
     el,
     url,
-    fieldName = "files",
+    fieldName = 'files',
     fieldPath,
     onSuccess,
     onCompleted,
@@ -829,114 +796,111 @@ export const useUploadFile = (option: Option) => {
     onError,
     zipOption,
     dragOption,
-  } = option;
+  } = option
   // 用于存储已选择文件
-  let files = ref<File[]>([]);
+  let files = ref<File[]>([])
 
   const onChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     // 获取已选中文件列表
-    files.value = Array.from(target.files!);
-  };
+    files.value = Array.from(target.files!)
+  }
 
   const dragHandle = (e: Event) => {
-    preventDefaults(e);
-    const { activeClass = "" } = dragOption || {};
-    const eventType = `on${firstUpperCase(e.type)}` as DrapEvents;
+    preventDefaults(e)
+    const { activeClass = '' } = dragOption || {}
+    const eventType = `on${firstUpperCase(e.type)}` as DrapEvents
     // 拖拽目标元素区域时则添加class,否则则删除class
     if (activeClass) {
       drapEvents.slice(0, 2).includes(eventType)
         ? el.value?.classList.add(activeClass)
-        : el.value?.classList.remove(activeClass);
+        : el.value?.classList.remove(activeClass)
     }
     // 如果事件是drop,则通过e.dataTransfer.files获取拖拽文件列表
-    if (e.type === "drop") {
-      const dt = (e as DragEvent).dataTransfer;
-      files.value = Array.from(dt!.files);
+    if (e.type === 'drop') {
+      const dt = (e as DragEvent).dataTransfer
+      files.value = Array.from(dt!.files)
     }
-    if (!dragOption![eventType]) return;
+    if (!dragOption![eventType]) return
     // 执行拖拽相关回调函数
-    dragOption![eventType]!(e as DragEvent);
-  };
+    dragOption![eventType]!(e as DragEvent)
+  }
   // 根元素与目标区域元素注册拖拽相关事件
   const registerDragHandle = (el: HTMLDivElement) => {
     drapEvents.forEach((drapEventName) => {
-      const eventName = drapEventName.substring(2).toLowerCase();
+      const eventName = drapEventName.substring(2).toLowerCase()
       // 监听根元素与目标元素拖拽事件
-      document.body.addEventListener(eventName, preventDefaults, false);
-      el.addEventListener(eventName, dragHandle, false);
-    });
-  };
+      document.body.addEventListener(eventName, preventDefaults, false)
+      el.addEventListener(eventName, dragHandle, false)
+    })
+  }
 
   nextTick(() => {
-    if (!el.value) return;
+    if (!el.value) return
     // 获取元素标签名,单文件上传和多文件上传el元素必须是input元素
-    const tagName = el.value.tagName;
-    if (tagName === "INPUT") {
+    const tagName = el.value.tagName
+    if (tagName === 'INPUT') {
       // 监听change事件,获取已选中文件列表
-      el.value.addEventListener("change", onChange);
+      el.value.addEventListener('change', onChange)
     }
     // 处理拖拽文件上传
-    dragOption && registerDragHandle(el.value);
-  });
+    dragOption && registerDragHandle(el.value)
+  })
 
   onMounted(() => {
     // 解绑拖拽事件
     if (dragOption) {
       drapEvents.forEach((eventType) => {
-        const eType = eventType.substring(2).toLowerCase();
-        document.body.removeEventListener(eType, preventDefaults);
-        el.value?.removeEventListener(eType, dragHandle);
-      });
+        const eType = eventType.substring(2).toLowerCase()
+        document.body.removeEventListener(eType, preventDefaults)
+        el.value?.removeEventListener(eType, dragHandle)
+      })
     }
-  });
+  })
 
   const upload = async () => {
-    if (!el.value || files.value.length === 0) return;
-    const formData = new FormData();
+    if (!el.value || files.value.length === 0) return
+    const formData = new FormData()
 
     // 处理zip压缩
     if (zipOption) {
-      const file = await generateZipFile(files.value);
-      files.value = [file];
+      const file = await generateZipFile(files.value)
+      files.value = [file]
     }
 
     // 设置formdata参数
     files.value.forEach((file) => {
-      const path =
-        typeof fieldPath === "function"
-          ? fieldPath(file.webkitRelativePath)
-          : fieldPath;
-      formData.append(fieldName!, file, path);
-    });
+      const path = typeof fieldPath === 'function' ? fieldPath(file.webkitRelativePath) : fieldPath
+      formData.append(fieldName!, file, path)
+    })
 
     axios
       .post(url, formData, {
         // 监听上传进度事件
         onUploadProgress(e: ProgressEvent) {
-          const percentCompleted = Math.round((e.loaded * 100) / e.total);
-          onProgress && onProgress(percentCompleted);
+          const percentCompleted = Math.round((e.loaded * 100) / e.total)
+          onProgress && onProgress(percentCompleted)
           if (percentCompleted === 100) {
-            onCompleted && onCompleted();
+            onCompleted && onCompleted()
           }
         },
       })
       .then((res) => {
-        const { code, message } = res.data;
+        const { code, message } = res.data
         if (code === 0) {
-          onError && onError(new Error(message));
+          onError && onError(new Error(message))
         }
-        onSuccess && onSuccess(res);
+        onSuccess && onSuccess(res)
       })
-      .catch((e) => onError && onError(e));
-  };
+      .catch((e) => onError && onError(e))
+  }
 
   // 返回上传函数与已选中文件列表
   return {
     upload,
     files,
-  };
-};
+  }
+}
 ```
 
 :::
@@ -954,86 +918,86 @@ export const useUploadFile = (option: Option) => {
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useUploadFile";
-const url = "http://localhost:8000/upload/multiple";
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useUploadFile'
+  const url = 'http://localhost:8000/upload/multiple'
 
-// 区域元素与预览元素
-const dropAreaRef = ref<HTMLDivElement>(),
-  previewRef = ref<HTMLDivElement>();
+  // 区域元素与预览元素
+  const dropAreaRef = ref<HTMLDivElement>(),
+    previewRef = ref<HTMLDivElement>()
 
-const { upload, files } = useUploadFile({
-  el: dropAreaRef,
-  url,
-  fieldName: "file",
-  dragOption: {
-    activeClass: "highlighted",
-    onDrop() {
-      files.value.forEach((file) => previewImage(file, previewRef.value!));
-      upload();
+  const { upload, files } = useUploadFile({
+    el: dropAreaRef,
+    url,
+    fieldName: 'file',
+    dragOption: {
+      activeClass: 'highlighted',
+      onDrop() {
+        files.value.forEach((file) => previewImage(file, previewRef.value!))
+        upload()
+      },
     },
-  },
-  onCompleted() {
-    files.value = [];
-  },
-  onSuccess(res) {
-    console.log("拖拽文件上传成功");
-  },
-});
+    onCompleted() {
+      files.value = []
+    },
+    onSuccess(res) {
+      console.log('拖拽文件上传成功')
+    },
+  })
 
-// 根据File对象转为图片文件进行预览
-const previewImage = (file: File, container: Element) => {
-  container.innerHTML = "";
-  // 图片格式常用正则
-  const IMAGE_MIME_REGEX = /^image\/(jpe?g|gif|png)$/i;
-  if (IMAGE_MIME_REGEX.test(file.type)) {
-    // 创建FileReader对象,它可以读取 File 或 Blob 对象到内存中。
-    const reader = new FileReader();
-    // 监听reader读取事件
-    reader.onload = (e: Event) => {
-      const img = document.createElement("img");
-      img.src = (e.target! as any).result;
-      img.classList.add("img");
-      const li = document.createElement("li");
-      li.append(img);
-      container.append(li);
-    };
-    /**
-     * readAsDataURL用于读取指定的Blob或File对象,读取操作完毕后readyState会变成已完成DONE,
-     * 并触发onLoad事件,同时目标对象的result属性将包含一个data:URL格式的字符串（base64编码）
-     * 以表示所读取文件的内容。
-     */
-    reader.readAsDataURL(file);
+  // 根据File对象转为图片文件进行预览
+  const previewImage = (file: File, container: Element) => {
+    container.innerHTML = ''
+    // 图片格式常用正则
+    const IMAGE_MIME_REGEX = /^image\/(jpe?g|gif|png)$/i
+    if (IMAGE_MIME_REGEX.test(file.type)) {
+      // 创建FileReader对象,它可以读取 File 或 Blob 对象到内存中。
+      const reader = new FileReader()
+      // 监听reader读取事件
+      reader.onload = (e: Event) => {
+        const img = document.createElement('img')
+        img.src = (e.target! as any).result
+        img.classList.add('img')
+        const li = document.createElement('li')
+        li.append(img)
+        container.append(li)
+      }
+      /**
+       * readAsDataURL用于读取指定的Blob或File对象,读取操作完毕后readyState会变成已完成DONE,
+       * 并触发onLoad事件,同时目标对象的result属性将包含一个data:URL格式的字符串（base64编码）
+       * 以表示所读取文件的内容。
+       */
+      reader.readAsDataURL(file)
+    }
   }
-};
 </script>
 <style>
-.preview {
-  list-style: none;
-  width: 180px;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-.preview li {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.img {
-  display: inline-block !important;
-  width: 100%;
-  height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 2px;
-}
-.highlighted {
-  border-color: #18a058;
-  background-color: #18a058;
-  color: #fff;
-}
+  .preview {
+    list-style: none;
+    width: 180px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+  .preview li {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .img {
+    display: inline-block !important;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+  }
+  .highlighted {
+    border-color: #18a058;
+    background-color: #18a058;
+    color: #fff;
+  }
 </style>
 ```
 
@@ -1050,71 +1014,66 @@ const previewImage = (file: File, container: Element) => {
 ::: details 封装上传逻辑
 
 ```ts
-import axios from "axios";
-import { nextTick, ref, Ref, onMounted } from "vue";
-import JSZip, { JSZipGeneratorOptions } from "jszip";
+import axios from 'axios'
+import { nextTick, ref, Ref, onMounted } from 'vue'
+import JSZip, { JSZipGeneratorOptions } from 'jszip'
 
 type ZipOption = {
-  fileName?: string | ((relativePath: string) => string);
-};
+  fileName?: string | ((relativePath: string) => string)
+}
 type DragOption = {
-  activeClass?: string;
+  activeClass?: string
   // 开始拖拽事件
-  onDragstart?: (e: DragEvent) => void;
+  onDragstart?: (e: DragEvent) => void
   // 拖拽结束事件
-  onDragend?: (e: DragEvent) => void;
+  onDragend?: (e: DragEvent) => void
   // 拖拽进入目标区域事件
-  onDragenter?: (e: DragEvent) => void;
+  onDragenter?: (e: DragEvent) => void
   // 拖拽到目录区域事件
-  onDragover?: (e: DragEvent) => void;
+  onDragover?: (e: DragEvent) => void
   // 拖拽离开目标区域事件
-  onDragleave?: (e: DragEvent) => void;
+  onDragleave?: (e: DragEvent) => void
   // 拖拽元素松开事件
-  onDrop?: (e: DragEvent) => void;
-};
+  onDrop?: (e: DragEvent) => void
+}
 
 export type Option = {
   // 上传文件元素
-  el: Ref<HTMLInputElement | HTMLDivElement | undefined>;
+  el: Ref<HTMLInputElement | HTMLDivElement | undefined>
   // 上传文件接口url
-  url: string;
+  url: string
   // 上传文件参数文件名字段,默认是files
-  fieldName?: string;
+  fieldName?: string
   // 上传文件参数文件path字段
-  fieldPath?: string | ((relativePath: string) => string);
+  fieldPath?: string | ((relativePath: string) => string)
   // 上传成功回调
-  onSuccess?: (res: any) => void;
+  onSuccess?: (res: any) => void
   // 上传进度完成(进度100%)回调
-  onCompleted?: () => void;
+  onCompleted?: () => void
   // 上传进度回调,percent一个数字用于表示当前文件上传进度
-  onProgress?: (percent: number) => void;
+  onProgress?: (percent: number) => void
   // 上传错误回调
-  onError?: (e: Error) => void;
+  onError?: (e: Error) => void
   // 文件zip压缩配置,不为空则开启文件压缩
-  zipOption?: ZipOption;
+  zipOption?: ZipOption
   // 拖拽上传配置,不为空则开启拖拽文件上传
-  dragOption?: DragOption;
+  dragOption?: DragOption
   // 粘贴上传配置,不为空这开启剪切板文件上传
-  clipboard?: { onPaste: (e: ClipboardEvent) => void };
-};
+  clipboard?: { onPaste: (e: ClipboardEvent) => void }
+}
 
 // 拖拽事件列表
-const drapEvents = [
-  "onDragenter",
-  "onDragover",
-  "onDragleave",
-  "onDrop",
-] as const;
-type DrapEvents = (typeof drapEvents)[number];
+const drapEvents = ['onDragenter', 'onDragover', 'onDragleave', 'onDrop'] as const
+type DrapEvents = (typeof drapEvents)[number]
 
 // 文本mime类型
-const textMimeTypes = ["text/plain", "text/html", "text/css"];
+const textMimeTypes = ['text/plain', 'text/html', 'text/css']
 
 // 阻止浏览器默认行为
 const preventDefaults = (e: Event) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
+  e.preventDefault()
+  e.stopPropagation()
+}
 
 /**
  * 根据文件对象生成zip压缩文件
@@ -1125,25 +1084,25 @@ const preventDefaults = (e: Event) => {
 function generateZipFile(
   files: File[],
   zipName?: string,
-  options: JSZipGeneratorOptions = { type: "blob", compression: "DEFLATE" }
+  options: JSZipGeneratorOptions = { type: 'blob', compression: 'DEFLATE' },
 ): Promise<File> {
   return new Promise((resolve, reject) => {
-    const zip = new JSZip();
+    const zip = new JSZip()
     for (let i = 0, len = files.length; i < len; i++) {
-      zip.file(files[i].webkitRelativePath, files[i]);
+      zip.file(files[i].webkitRelativePath, files[i])
     }
-    const defaultZipName = files[0].webkitRelativePath.split("/")[0] + ".zip";
+    const defaultZipName = files[0].webkitRelativePath.split('/')[0] + '.zip'
     zip
       .generateAsync(options)
       .then((blob) => {
-        zipName = zipName || defaultZipName || Date.now() + ".zip";
-        const zipFile = new File([blob], zipName, { type: "application/zip" });
-        resolve(zipFile);
+        zipName = zipName || defaultZipName || Date.now() + '.zip'
+        const zipFile = new File([blob], zipName, { type: 'application/zip' })
+        resolve(zipFile)
       })
       .catch((e) => {
-        reject(e);
-      });
-  });
+        reject(e)
+      })
+  })
 }
 
 /**
@@ -1151,7 +1110,7 @@ function generateZipFile(
  * @param str 字符串
  */
 function firstUpperCase(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 /**
@@ -1162,7 +1121,7 @@ export const useUploadFile = (option: Option) => {
   const {
     el,
     url,
-    fieldName = "files",
+    fieldName = 'files',
     fieldPath,
     onSuccess,
     onCompleted,
@@ -1171,151 +1130,148 @@ export const useUploadFile = (option: Option) => {
     zipOption,
     dragOption,
     clipboard,
-  } = option;
+  } = option
   // 用于存储已选择文件
-  let files = ref<File[]>([]);
+  let files = ref<File[]>([])
 
   const onChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     // 获取已选中文件列表
-    files.value = Array.from(target.files!);
-  };
+    files.value = Array.from(target.files!)
+  }
 
   const dragHandle = (e: Event) => {
-    preventDefaults(e);
-    const { activeClass = "" } = dragOption || {};
-    const eventType = `on${firstUpperCase(e.type)}` as DrapEvents;
+    preventDefaults(e)
+    const { activeClass = '' } = dragOption || {}
+    const eventType = `on${firstUpperCase(e.type)}` as DrapEvents
     // 拖拽目标元素区域时则添加class,否则则删除class
     if (activeClass) {
       drapEvents.slice(0, 2).includes(eventType)
         ? el.value?.classList.add(activeClass)
-        : el.value?.classList.remove(activeClass);
+        : el.value?.classList.remove(activeClass)
     }
     // 如果事件是drop,则通过e.dataTransfer.files获取拖拽文件列表
-    if (e.type === "drop") {
-      const dt = (e as DragEvent).dataTransfer;
-      files.value = Array.from(dt!.files);
+    if (e.type === 'drop') {
+      const dt = (e as DragEvent).dataTransfer
+      files.value = Array.from(dt!.files)
     }
-    if (!dragOption![eventType]) return;
+    if (!dragOption![eventType]) return
     // 执行拖拽相关回调函数
-    dragOption![eventType]!(e as DragEvent);
-  };
+    dragOption![eventType]!(e as DragEvent)
+  }
   // 根元素与目标区域元素注册拖拽相关事件
   const registerDragHandle = (el: HTMLDivElement) => {
     drapEvents.forEach((drapEventName) => {
-      const eventName = drapEventName.substring(2).toLowerCase();
+      const eventName = drapEventName.substring(2).toLowerCase()
       // 监听根元素与目标元素拖拽事件
-      document.body.addEventListener(eventName, preventDefaults, false);
-      el.addEventListener(eventName, dragHandle, false);
-    });
-  };
+      document.body.addEventListener(eventName, preventDefaults, false)
+      el.addEventListener(eventName, dragHandle, false)
+    })
+  }
 
   // 目标区域元素粘贴事件处理
   const pasteHandle = async (e: Event) => {
-    e.preventDefault();
+    e.preventDefault()
     if (navigator.clipboard) {
       // 读取剪切板上的数据,返回一个ClipboardItem数组
-      const clipboardItems = await navigator.clipboard.read();
+      const clipboardItems = await navigator.clipboard.read()
       for (const clipboardItem of clipboardItems) {
         for (const type of clipboardItem.types) {
           // 过滤文本
-          if (!["text/html"].includes(type)) {
-            const blob = await clipboardItem.getType(type);
+          if (!['text/html'].includes(type)) {
+            const blob = await clipboardItem.getType(type)
             const file = new File([blob], Date.now().toString(), {
               type: blob.type,
-            });
-            files.value.push(file);
+            })
+            files.value.push(file)
           }
         }
       }
     } else {
       // 兼容性处理
-      const items = (e as ClipboardEvent).clipboardData!.items;
+      const items = (e as ClipboardEvent).clipboardData!.items
       for (let i = 0, len = items.length; i < len; i++) {
         if (!textMimeTypes.includes(items[i].type)) {
-          const file = items[i].getAsFile()!;
-          files.value.push(file);
+          const file = items[i].getAsFile()!
+          files.value.push(file)
         }
       }
     }
-    clipboard?.onPaste && clipboard.onPaste(e as ClipboardEvent);
-  };
+    clipboard?.onPaste && clipboard.onPaste(e as ClipboardEvent)
+  }
 
   nextTick(() => {
-    if (!el.value) return;
+    if (!el.value) return
     // 获取元素标签名,单文件上传和多文件上传el元素必须是input元素
-    const tagName = el.value.tagName;
-    if (tagName === "INPUT") {
+    const tagName = el.value.tagName
+    if (tagName === 'INPUT') {
       // 监听change事件,获取已选中文件列表
-      el.value.addEventListener("change", onChange);
+      el.value.addEventListener('change', onChange)
     }
     // 处理拖拽文件上传
-    dragOption && registerDragHandle(el.value);
+    dragOption && registerDragHandle(el.value)
     // 处理粘贴板上传
-    clipboard && el.value.addEventListener("paste", pasteHandle, false);
-  });
+    clipboard && el.value.addEventListener('paste', pasteHandle, false)
+  })
 
   onMounted(() => {
     // 解绑拖拽事件
     if (dragOption) {
       drapEvents.forEach((eventType) => {
-        const eType = eventType.substring(2).toLowerCase();
-        document.body.removeEventListener(eType, preventDefaults);
-        el.value?.removeEventListener(eType, dragHandle);
-      });
+        const eType = eventType.substring(2).toLowerCase()
+        document.body.removeEventListener(eType, preventDefaults)
+        el.value?.removeEventListener(eType, dragHandle)
+      })
     }
     // 解绑paste事件
     if (clipboard) {
-      el.value?.removeEventListener("paste", pasteHandle);
+      el.value?.removeEventListener('paste', pasteHandle)
     }
-  });
+  })
 
   const upload = async () => {
-    if (!el.value || files.value.length === 0) return;
-    const formData = new FormData();
+    if (!el.value || files.value.length === 0) return
+    const formData = new FormData()
 
     // 处理zip压缩
     if (zipOption) {
-      const file = await generateZipFile(files.value);
-      files.value = [file];
+      const file = await generateZipFile(files.value)
+      files.value = [file]
     }
 
     // 设置formdata参数
     files.value.forEach((file) => {
-      const path =
-        typeof fieldPath === "function"
-          ? fieldPath(file.webkitRelativePath)
-          : fieldPath;
-      formData.append(fieldName!, file, path);
-    });
+      const path = typeof fieldPath === 'function' ? fieldPath(file.webkitRelativePath) : fieldPath
+      formData.append(fieldName!, file, path)
+    })
 
     axios
       .post(url, formData, {
         // 监听上传进度事件
         onUploadProgress(e: ProgressEvent) {
-          const percentCompleted = Math.round((e.loaded * 100) / e.total);
-          onProgress && onProgress(percentCompleted);
+          const percentCompleted = Math.round((e.loaded * 100) / e.total)
+          onProgress && onProgress(percentCompleted)
           if (percentCompleted === 100) {
-            onCompleted && onCompleted();
+            onCompleted && onCompleted()
           }
         },
       })
       .then((res) => {
-        const { code, message } = res.data;
+        const { code, message } = res.data
         if (code === 0) {
-          onError && onError(new Error(message));
+          onError && onError(new Error(message))
         }
-        onSuccess && onSuccess(res);
+        onSuccess && onSuccess(res)
       })
-      .catch((e) => onError && onError(e));
-  };
+      .catch((e) => onError && onError(e))
+  }
 
   // 返回上传函数与已选中文件列表
   return {
     upload,
     files,
-  };
-};
+  }
+}
 ```
 
 :::
@@ -1325,9 +1281,7 @@ export const useUploadFile = (option: Option) => {
 <!-- 剪切板上传组件 -->
 <template>
   <div class="img-container">
-    <img
-      src="https://img0.baidu.com/it/u=954496120,1621506021&fm=26&fmt=auto"
-    />
+    <img src="https://img0.baidu.com/it/u=954496120,1621506021&fm=26&fmt=auto" />
     <img
       src="https://img0.baidu.com/it/u=1275427091,3087742030&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750"
     />
@@ -1339,88 +1293,88 @@ export const useUploadFile = (option: Option) => {
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useUploadFile";
-const url = "http://localhost:8000/upload/single";
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useUploadFile'
+  const url = 'http://localhost:8000/upload/single'
 
-// 区域元素与预览元素
-const uploadAreaRef = ref<HTMLDivElement>(),
-  previewRef = ref<HTMLDivElement>();
+  // 区域元素与预览元素
+  const uploadAreaRef = ref<HTMLDivElement>(),
+    previewRef = ref<HTMLDivElement>()
 
-const { upload, files } = useUploadFile({
-  el: uploadAreaRef,
-  url,
-  clipboard: {
-    onPaste(e) {
-      upload();
+  const { upload, files } = useUploadFile({
+    el: uploadAreaRef,
+    url,
+    clipboard: {
+      onPaste(e) {
+        upload()
+      },
     },
-  },
-  onCompleted() {
-    files.value.forEach((file) => previewImage(file, previewRef.value!));
-    files.value = [];
-  },
-  onSuccess(res) {
-    console.log("剪切板文件上传成功");
-  },
-});
+    onCompleted() {
+      files.value.forEach((file) => previewImage(file, previewRef.value!))
+      files.value = []
+    },
+    onSuccess(res) {
+      console.log('剪切板文件上传成功')
+    },
+  })
 
-// 粘贴事件触发图片文件进行预览
-const previewImage = (file: File, container: Element) => {
-  container.innerHTML = "";
-  // 图片格式常用正则
-  const IMAGE_MIME_REGEX = /^image\/(jpe?g|gif|png)$/i;
-  if (IMAGE_MIME_REGEX.test(file.type)) {
-    // 创建FileReader对象,它可以读取 File 或 Blob 对象到内存中。
-    const reader = new FileReader();
-    reader.onload = (e: Event) => {
-      const img = document.createElement("img");
-      img.src = (e.target! as any).result;
-      img.classList.add("img");
-      const li = document.createElement("li");
-      li.append(img);
-      container.append(li);
-    };
-    reader.readAsDataURL(file);
+  // 粘贴事件触发图片文件进行预览
+  const previewImage = (file: File, container: Element) => {
+    container.innerHTML = ''
+    // 图片格式常用正则
+    const IMAGE_MIME_REGEX = /^image\/(jpe?g|gif|png)$/i
+    if (IMAGE_MIME_REGEX.test(file.type)) {
+      // 创建FileReader对象,它可以读取 File 或 Blob 对象到内存中。
+      const reader = new FileReader()
+      reader.onload = (e: Event) => {
+        const img = document.createElement('img')
+        img.src = (e.target! as any).result
+        img.classList.add('img')
+        const li = document.createElement('li')
+        li.append(img)
+        container.append(li)
+      }
+      reader.readAsDataURL(file)
+    }
   }
-};
 </script>
 <style scoped>
-.img-container {
-  margin: auto;
-  padding-top: 20px;
-  width: 180px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-.img-container img {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
-  overflow: hidden;
-}
+  .img-container {
+    margin: auto;
+    padding-top: 20px;
+    width: 180px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+  .img-container img {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
-.preview {
-  list-style: none;
-  width: 180px;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-.preview li {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.img {
-  display: inline-block !important;
-  width: 100%;
-  height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 2px;
-}
+  .preview {
+    list-style: none;
+    width: 180px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+  .preview li {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .img {
+    display: inline-block !important;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+  }
 </style>
 ```
 
@@ -1440,18 +1394,18 @@ const previewImage = (file: File, container: Element) => {
 ::: details 封装大文件分片上传逻辑
 
 ```ts
-import SparkMD5 from "spark-md5";
-import { nextTick, ref, Ref } from "vue";
-import axios from "axios";
+import SparkMD5 from 'spark-md5'
+import { nextTick, ref, Ref } from 'vue'
+import axios from 'axios'
 
 const request = axios.create({
-  baseURL: "http://localhost:8000/",
+  baseURL: 'http://localhost:8000/',
   timeout: 5000,
-});
+})
 
 request.interceptors.response.use((res) => {
-  return res.data;
-});
+  return res.data
+})
 
 /**
  * 用于计算文件对象内容的md5加密值,此步骤比较耗时可通过WebWorker处理
@@ -1467,32 +1421,32 @@ const calcFileMD5 = (file: File, chunkSize: number) => {
       // spark实例
       spark = new SparkMD5.ArrayBuffer(),
       // fileReader用于读取file对象
-      fileReader = new FileReader();
+      fileReader = new FileReader()
 
     // fileReader读取文件
     fileReader.onload = (e) => {
-      spark.append(e.target!.result as ArrayBuffer);
-      currentChunk++;
+      spark.append(e.target!.result as ArrayBuffer)
+      currentChunk++
       if (currentChunk < chunks) {
-        loadNext();
+        loadNext()
       } else {
-        resolve(spark.end());
+        resolve(spark.end())
       }
-    };
+    }
     // fileReader分块读取文件错误则终止读取
     fileReader.onerror = (e) => {
-      reject(fileReader.error);
-      fileReader.abort();
-    };
+      reject(fileReader.error)
+      fileReader.abort()
+    }
     // 使用file.slice()分块文件,fileReader中用于加载文件,并读取到ArrayBuffer中
     const loadNext = () => {
       const start = currentChunk * chunkSize,
-        end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-      fileReader.readAsArrayBuffer(file.slice(start, end));
-    };
-    loadNext();
-  });
-};
+        end = start + chunkSize >= file.size ? file.size : start + chunkSize
+      fileReader.readAsArrayBuffer(file.slice(start, end))
+    }
+    loadNext()
+  })
+}
 
 /**
  * asyncPool用于实现异步任务并发控制
@@ -1503,32 +1457,32 @@ const calcFileMD5 = (file: File, chunkSize: number) => {
 const asyncPool = async (
   poolLimit: number,
   tasks: Array<any>,
-  iteratorFn: (index: number, tasks: Array<any>) => Promise<unknown>
+  iteratorFn: (index: number, tasks: Array<any>) => Promise<unknown>,
 ) => {
   // 存储所有异步任务
   const ret = [],
     // 存储正在执行的异步任务
-    executing: Array<Promise<any>> = [];
+    executing: Array<Promise<any>> = []
   for (const item of tasks) {
-    const p = Promise.resolve().then(() => iteratorFn(item, tasks));
+    const p = Promise.resolve().then(() => iteratorFn(item, tasks))
     // 保存新的异步任务
-    ret.push(p);
+    ret.push(p)
 
     // 当poolLimit值小于或等于总任务个数时,进行并发控制
     if (poolLimit <= tasks.length) {
       const e = p.then(() =>
         // 当任务完成后,从正在执行的任务数组中移除已完成的任务
-        executing.splice(executing.indexOf(e), 1)
-      ) as Promise<any>;
+        executing.splice(executing.indexOf(e), 1),
+      ) as Promise<any>
       // 保存正在执行的异步任务
-      executing.push(e);
+      executing.push(e)
       if (executing.length >= poolLimit) {
-        await Promise.race(executing);
+        await Promise.race(executing)
       }
     }
   }
-  return Promise.all(ret);
-};
+  return Promise.all(ret)
+}
 
 /**
  * 根据文件name和md5值检查文件是否已上传,若已上传则秒传,否则返回已上传的分块ID列表
@@ -1542,32 +1496,26 @@ const checkFileExist = (url: string, fileName: string, fileMD5: string) => {
       fileName,
       fileMD5,
     },
-  });
-};
+  })
+}
 
 type UploadOption = {
-  url: string;
-  file: File;
-  fileMD5: string;
-  chunkSize: number;
-  poolLimit?: number;
-};
-const upload = async ({
-  url,
-  file,
-  fileMD5,
-  chunkSize,
-  poolLimit = 1,
-}: UploadOption) => {
+  url: string
+  file: File
+  fileMD5: string
+  chunkSize: number
+  poolLimit?: number
+}
+const upload = async ({ url, file, fileMD5, chunkSize, poolLimit = 1 }: UploadOption) => {
   // 获取分块数量
-  const chunks = Math.ceil(file.size / chunkSize) || 1;
+  const chunks = Math.ceil(file.size / chunkSize) || 1
 
   return asyncPool(poolLimit, [...new Array(chunks).keys()], (i) => {
     // 获取文件切割开始和结束下标
     let start = i * chunkSize,
-      end = i + 1 == chunks ? file.size : (i + 1) * chunkSize;
+      end = i + 1 == chunks ? file.size : (i + 1) * chunkSize
     // 对文件进行切割,返回一个Blob对象
-    const chunk = file.slice(start, end);
+    const chunk = file.slice(start, end)
     // 上传chunk
     return uploadChunk({
       url,
@@ -1576,18 +1524,18 @@ const upload = async ({
       totalChunk: chunks,
       fileMD5,
       fileName: file.name,
-    });
-  });
-};
+    })
+  })
+}
 
 type UploadChunkOption = {
-  url: string;
-  chunk: Blob;
-  chunkIndex: number;
-  totalChunk: number;
-  fileMD5: string;
-  fileName: string;
-};
+  url: string
+  chunk: Blob
+  chunkIndex: number
+  totalChunk: number
+  fileMD5: string
+  fileName: string
+}
 const uploadChunk = ({
   url,
   chunk,
@@ -1596,64 +1544,64 @@ const uploadChunk = ({
   fileMD5,
   fileName,
 }: UploadChunkOption) => {
-  let formData = new FormData();
-  formData.set("file", chunk, fileMD5 + "-" + chunkIndex);
-  formData.set("fileName", fileName);
+  let formData = new FormData()
+  formData.set('file', chunk, fileMD5 + '-' + chunkIndex)
+  formData.set('fileName', fileName)
   // 文件MD5值
-  formData.set("fileMD5", fileMD5);
-  formData.set("timestamp", Date.now().toString());
+  formData.set('fileMD5', fileMD5)
+  formData.set('timestamp', Date.now().toString())
   // chunk的总数量,用于服务端判断所有chunk是否都上传完毕
-  formData.set("chunkTotal", String(totalChunk));
+  formData.set('chunkTotal', String(totalChunk))
 
-  return request.post(url, formData);
-};
+  return request.post(url, formData)
+}
 
 interface Option {
-  el: Ref<HTMLInputElement | HTMLDivElement | undefined>;
-  url: string;
+  el: Ref<HTMLInputElement | HTMLDivElement | undefined>
+  url: string
   slice?: {
-    chunkSize?: number;
-  };
+    chunkSize?: number
+  }
 }
 
 export const useUploadFile = (option: Option) => {
-  const { el, slice } = option;
+  const { el, slice } = option
   // 分块大小
-  const chunkSize = slice?.chunkSize || 2 * 1024 * 1024;
-  let files = ref<File[]>([]);
+  const chunkSize = slice?.chunkSize || 2 * 1024 * 1024
+  let files = ref<File[]>([])
 
   const onChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    files.value = Array.from(target.files!);
-  };
+    const target = e.target as HTMLInputElement
+    files.value = Array.from(target.files!)
+  }
 
   nextTick(async () => {
-    if (!el.value) return;
-    const tagName = el.value.tagName;
-    if (tagName === "INPUT") {
-      el.value.addEventListener("change", onChange);
+    if (!el.value) return
+    const tagName = el.value.tagName
+    if (tagName === 'INPUT') {
+      el.value.addEventListener('change', onChange)
     }
-  });
+  })
 
   const uploadFile = async (url: string) => {
-    if (files.value.length === 0) return;
-    const file = files.value[0];
+    if (files.value.length === 0) return
+    const file = files.value[0]
     // 获取文件md5值
-    const fileMD5 = await calcFileMD5(file, chunkSize);
+    const fileMD5 = await calcFileMD5(file, chunkSize)
     const fileStatus = await checkFileExist(
       // 判断文件是否已存在
-      "upload/exists",
+      'upload/exists',
       file.name,
-      fileMD5
-    );
+      fileMD5,
+    )
 
     if (fileStatus.data && fileStatus.data.isExists) {
-      alert("文件已上传[秒传]");
-      return;
+      alert('文件已上传[秒传]')
+      return
     }
 
-    upload({ url, file, fileMD5, chunkSize });
-  };
+    upload({ url, file, fileMD5, chunkSize })
+  }
 
   function concatFile(url: string, fileName: string, fileMD5: string) {
     return request.get(url, {
@@ -1661,17 +1609,17 @@ export const useUploadFile = (option: Option) => {
         fileName,
         fileMD5,
       },
-    });
+    })
   }
   const mergerFile = async (url: string) => {
-    if (files.value.length === 0) return;
-    const file = files.value[0];
+    if (files.value.length === 0) return
+    const file = files.value[0]
     // 获取文件md5值
-    const fileMD5 = await calcFileMD5(file, chunkSize);
-    concatFile(url, file.name, fileMD5);
-  };
-  return { uploadFile, mergerFile };
-};
+    const fileMD5 = await calcFileMD5(file, chunkSize)
+    concatFile(url, file.name, fileMD5)
+  }
+  return { uploadFile, mergerFile }
+}
 ```
 
 :::
@@ -1685,27 +1633,23 @@ export const useUploadFile = (option: Option) => {
       <label for="slice" id="label"> 分片文件上传 </label>
       <input ref="uploadRef" id="slice" type="file" accept="images/*" />
     </div>
-    <button @click="uploadFile('upload/fileChunk')" class="btn">
-      分片文件上传
-    </button>
-    <button @click="mergerFile('upload/concatFileChunks')" class="btn">
-      合并文件
-    </button>
+    <button @click="uploadFile('upload/fileChunk')" class="btn">分片文件上传</button>
+    <button @click="mergerFile('upload/concatFileChunks')" class="btn">合并文件</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useUploadFile } from "../hooks/useSliceUploadFile";
+  import { ref } from 'vue'
+  import { useUploadFile } from '../hooks/useSliceUploadFile'
 
-const uploadRef = ref<HTMLInputElement>();
-const { uploadFile, mergerFile } = useUploadFile({
-  el: uploadRef,
-  url: "",
-  slice: {
-    chunkSize: 2 * 1024 * 1024,
-  },
-});
+  const uploadRef = ref<HTMLInputElement>()
+  const { uploadFile, mergerFile } = useUploadFile({
+    el: uploadRef,
+    url: '',
+    slice: {
+      chunkSize: 2 * 1024 * 1024,
+    },
+  })
 </script>
 ```
 
@@ -1714,63 +1658,63 @@ const { uploadFile, mergerFile } = useUploadFile({
 ### 7.1 Node 实现大文件分片上传
 
 ```js
-const fs = require("fs");
-const path = require("path");
-const util = require("util");
-const Koa = require("koa");
-const cors = require("@koa/cors");
-const multer = require("@koa/multer");
-const Router = require("@koa/router");
-const serve = require("koa-static");
-const fse = require("fs-extra");
-const readdir = util.promisify(fs.readdir);
-const unlink = util.promisify(fs.unlink);
-const PORT = 8000;
+const fs = require('fs')
+const path = require('path')
+const util = require('util')
+const Koa = require('koa')
+const cors = require('@koa/cors')
+const multer = require('@koa/multer')
+const Router = require('@koa/router')
+const serve = require('koa-static')
+const fse = require('fs-extra')
+const readdir = util.promisify(fs.readdir)
+const unlink = util.promisify(fs.unlink)
+const PORT = 8000
 
 const app = new Koa(),
   router = new Router(),
   // 临时目录
-  TMP_DIR = path.join(__dirname, "tmp"),
+  TMP_DIR = path.join(__dirname, 'tmp'),
   // 上传文件存放目录
-  UPLOAD_DIR = path.join(__dirname, "../public/upload"),
+  UPLOAD_DIR = path.join(__dirname, '../public/upload'),
   // 忽略的文件列表
-  IGNORES = [".DS_Store"],
+  IGNORES = ['.DS_Store'],
   /**
    * 定义一个map容器用于存储文件所上传成功块的数量,key为文件的MD5值,
    * value为上传成功块的数量
    */
-  fileMap = new Map();
+  fileMap = new Map()
 
 // 定义文件的存储方式和存储路径
 const storage = multer.diskStorage({
   // 用于定义文件存储的目标目录
   destination: async function (req, file, cb) {
-    let fileMd5 = file.originalname.split("-")[0];
-    const fileDir = path.join(TMP_DIR, fileMd5);
-    await fse.ensureDir(fileDir);
-    cb(null, fileDir);
+    let fileMd5 = file.originalname.split('-')[0]
+    const fileDir = path.join(TMP_DIR, fileMd5)
+    await fse.ensureDir(fileDir)
+    cb(null, fileDir)
   },
   // 用于定义文件在存储目录中的名称
   filename: function (req, file, cb) {
-    let chunkIndex = file.originalname.split("-")[1];
-    cb(null, `${chunkIndex}`);
+    let chunkIndex = file.originalname.split('-')[1]
+    cb(null, `${chunkIndex}`)
   },
-});
+})
 
-const multerUpload = multer({ storage });
+const multerUpload = multer({ storage })
 
-const resOK = (ctx, message = "") => {
+const resOK = (ctx, message = '') => {
   ctx.body = {
-    status: "success",
+    status: 'success',
     message,
-  };
-};
-const resError = (ctx, message = "") => {
+  }
+}
+const resError = (ctx, message = '') => {
   ctx.body = {
-    status: "error",
+    status: 'error',
     message,
-  };
-};
+  }
+}
 
 /**
  * 合并多个文件块
@@ -1783,29 +1727,27 @@ async function concatFiles(sourceDir, targetPath) {
     new Promise((resolve, reject) => {
       // 创建只读流
       fs.createReadStream(file)
-        .on("data", (data) => ws.write(data))
-        .on("end", resolve)
-        .on("error", reject);
-    });
+        .on('data', (data) => ws.write(data))
+        .on('end', resolve)
+        .on('error', reject)
+    })
   // 读取指定目录下的所有文件,返回一个文件列表
-  const files = await readdir(sourceDir);
+  const files = await readdir(sourceDir)
 
   // 对文件进行排序
-  const sortedFiles = files
-    .filter((file) => IGNORES.indexOf(file) === -1)
-    .sort((a, b) => a - b);
+  const sortedFiles = files.filter((file) => IGNORES.indexOf(file) === -1).sort((a, b) => a - b)
   // 创建只写流
-  const writeStream = fs.createWriteStream(targetPath);
+  const writeStream = fs.createWriteStream(targetPath)
   // 遍历文件列表
   for (const file of sortedFiles) {
-    let filePath = path.join(sourceDir, file);
+    let filePath = path.join(sourceDir, file)
     // 读取文件
-    await readFile(filePath, writeStream);
+    await readFile(filePath, writeStream)
     // 删除已合并的分块
-    await unlink(filePath);
+    await unlink(filePath)
   }
   // 关闭只写流
-  writeStream.end();
+  writeStream.end()
 }
 
 /**
@@ -1813,73 +1755,66 @@ async function concatFiles(sourceDir, targetPath) {
  * 否则检查该文件的chunk是否存在,若存在chunk则返回
  * chunk列表
  */
-router.get("/upload/exists", async (ctx) => {
-  const { fileName, fileMD5 } = ctx.query;
+router.get('/upload/exists', async (ctx) => {
+  const { fileName, fileMD5 } = ctx.query
   // 获取所有文件块合并为文件的存储路径
-  const filePath = path.join(UPLOAD_DIR, fileName);
+  const filePath = path.join(UPLOAD_DIR, fileName)
   // 如果存在该路径则说明该文件已上传,无需上传(秒传)
-  const isExists = await fse.pathExists(filePath);
+  const isExists = await fse.pathExists(filePath)
   if (isExists) {
     ctx.body = {
-      status: "success",
+      status: 'success',
       data: {
         isExists: true,
         url: `http://localhost:3000/${fileName}`,
       },
-    };
-    return;
+    }
+    return
   }
 
-  let chunkIds = [];
+  let chunkIds = []
   // 获取chunk存放路径
-  const chunksPath = path.join(TMP_DIR, fileMD5);
+  const chunksPath = path.join(TMP_DIR, fileMD5)
   // 判断chunk存放路径是否存在
-  const hasChunksPath = await fse.pathExists(chunksPath);
+  const hasChunksPath = await fse.pathExists(chunksPath)
   if (hasChunksPath) {
     // 根据chunks的路径读取目录下所有文件,返回一个文件列表
-    let files = await readdir(chunksPath);
-    chunkIds = files.filter((file) => IGNORES.indexOf(file) === -1);
+    let files = await readdir(chunksPath)
+    chunkIds = files.filter((file) => IGNORES.indexOf(file) === -1)
   }
   ctx.body = {
-    status: "success",
+    status: 'success',
     data: {
       isExists: false,
       chunkIds,
     },
-  };
-});
+  }
+})
 
 /**
  * 上传文件块
  */
-router.post(
-  "/upload/fileChunk",
-  multerUpload.single("file"),
-  async (ctx, next) => {
-    // 获取文件名称、时间戳、chunk总数量、文件MD5值
-    const { fileName, timestamp, chunkTotal, fileMD5 } = ctx.request.body;
-    const total = Number(chunkTotal);
-    if (!Number.isInteger(total)) {
-      resError(ctx, "chunkTotal参数非法");
-      return;
-    }
-    // 根据文件MD5值获取文件的chunk上传数量
-    const chunkSuccessNumber = fileMap.get(fileMD5) || 1;
-    // 如果与上传chunk数量与分块的总数量相等则进行文件合并
-    if (chunkSuccessNumber === total) {
-      fileMap.delete(fileMD5);
-      await concatFiles(
-        path.join(TMP_DIR, fileMD5),
-        path.join(UPLOAD_DIR, fileName)
-      );
-      resOK(ctx, "文件合并成功");
-      return;
-    }
-    // 上传成功后chunk上传成功数量+1
-    fileMap.set(fileMD5, chunkSuccessNumber + 1);
-    resOK(ctx, "文件chunk上传成功");
+router.post('/upload/fileChunk', multerUpload.single('file'), async (ctx, next) => {
+  // 获取文件名称、时间戳、chunk总数量、文件MD5值
+  const { fileName, timestamp, chunkTotal, fileMD5 } = ctx.request.body
+  const total = Number(chunkTotal)
+  if (!Number.isInteger(total)) {
+    resError(ctx, 'chunkTotal参数非法')
+    return
   }
-);
+  // 根据文件MD5值获取文件的chunk上传数量
+  const chunkSuccessNumber = fileMap.get(fileMD5) || 1
+  // 如果与上传chunk数量与分块的总数量相等则进行文件合并
+  if (chunkSuccessNumber === total) {
+    fileMap.delete(fileMD5)
+    await concatFiles(path.join(TMP_DIR, fileMD5), path.join(UPLOAD_DIR, fileName))
+    resOK(ctx, '文件合并成功')
+    return
+  }
+  // 上传成功后chunk上传成功数量+1
+  fileMap.set(fileMD5, chunkSuccessNumber + 1)
+  resOK(ctx, '文件chunk上传成功')
+})
 
 /**
  * 创建上传目录,用于存放上传文件
@@ -1889,34 +1824,31 @@ function createUploadMkdir(dirPath) {
   fs.exists(dirPath, (e) => {
     fs.mkdir(dirPath, { recursive: true }, (err) => {
       if (err) {
-        console.error(err);
+        console.error(err)
       }
-    });
-  });
+    })
+  })
 }
 
 /**
  * 合并多个文件块(File chunk)为一个文件
  */
-router.get("/upload/concatFileChunks", async (ctx) => {
-  const { fileName, fileMD5 } = ctx.query;
-  await concatFiles(
-    path.join(TMP_DIR, fileMD5),
-    path.join(UPLOAD_DIR, fileName)
-  );
-  resOK(ctx, `http://localhost:3000/${fileMD5}`);
-});
+router.get('/upload/concatFileChunks', async (ctx) => {
+  const { fileName, fileMD5 } = ctx.query
+  await concatFiles(path.join(TMP_DIR, fileMD5), path.join(UPLOAD_DIR, fileName))
+  resOK(ctx, `http://localhost:3000/${fileMD5}`)
+})
 
 // 注册中间件
-app.use(cors());
-app.use(serve(UPLOAD_DIR));
-app.use(router.routes()).use(router.allowedMethods());
+app.use(cors())
+app.use(serve(UPLOAD_DIR))
+app.use(router.routes()).use(router.allowedMethods())
 
 app.listen(PORT, () => {
   // 项目启动时创建上传目录
-  createUploadMkdir(UPLOAD_DIR);
-  console.log(`app starting at port ${PORT}`);
-});
+  createUploadMkdir(UPLOAD_DIR)
+  console.log(`app starting at port ${PORT}`)
+})
 ```
 
 ### 7.2 Java 实现大文件分片上传
@@ -1930,22 +1862,19 @@ app.listen(PORT, () => {
 ::: details 单文件上传
 
 ```js
-const fs = require("fs");
-const path = require("path");
-const FormData = require("form-data");
+const fs = require('fs')
+const path = require('path')
+const FormData = require('form-data')
 
-const form = new FormData();
-form.append(
-  "file",
-  fs.createReadStream(path.join(__dirname, "images/image-1.jpeg"))
-);
-form.submit("http://localhost:3000/upload/single", (error, response) => {
+const form = new FormData()
+form.append('file', fs.createReadStream(path.join(__dirname, 'images/image-1.jpeg')))
+form.submit('http://localhost:3000/upload/single', (error, response) => {
   if (error) {
-    console.log("单图上传失败");
-    return;
+    console.log('单图上传失败')
+    return
   }
-  console.log("单图上传成功");
-});
+  console.log('单图上传成功')
+})
 ```
 
 :::
@@ -1953,25 +1882,19 @@ form.submit("http://localhost:3000/upload/single", (error, response) => {
 ::: details 多文件上传
 
 ```js
-const fs = require("fs");
-const path = require("path");
-const FormData = require("form-data");
-const form = new FormData();
-form.append(
-  "file",
-  fs.createReadStream(path.join(__dirname, "images/image-2.jpeg"))
-);
-form.append(
-  "file",
-  fs.createReadStream(path.join(__dirname, "images/image-3.jpeg"))
-);
-form.submit("http://localhost:3000/upload/multiple", (error, response) => {
+const fs = require('fs')
+const path = require('path')
+const FormData = require('form-data')
+const form = new FormData()
+form.append('file', fs.createReadStream(path.join(__dirname, 'images/image-2.jpeg')))
+form.append('file', fs.createReadStream(path.join(__dirname, 'images/image-3.jpeg')))
+form.submit('http://localhost:3000/upload/multiple', (error, response) => {
   if (error) {
-    console.log("多图上传失败");
-    return;
+    console.log('多图上传失败')
+    return
   }
-  console.log("多图上传成功");
-});
+  console.log('多图上传成功')
+})
 ```
 
 :::

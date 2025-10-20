@@ -8,7 +8,7 @@
 // 手写instanceof。L是判断的变量,R是对比的对象实例
 function instanceof_of(L, R) {
   // 获取原型,它指向父对象实例的prototype
-  L = L.__proto__;
+  L = L.__proto__
   // 使用循环不停向上查找
   while (true) {
     /*
@@ -16,24 +16,24 @@ function instanceof_of(L, R) {
      * 此时说明L不是R的实例,终止查找
      */
     if (L === null) {
-      return false;
+      return false
     }
     /*
      * 如果L === R.prototype,对象的原型指向父对象的显示原型,
      * 说明L属于R的实例,则终止查找
      */
     if (L === R.prototype) {
-      return true;
+      return true
     }
     // 没有匹配到就一直向上查找,直到匹配到为止
-    L = L.__proto__;
+    L = L.__proto__
   }
 }
 // 测试
-console.log(instanceof_of({}, Object)); // true
-console.log(instanceof_of([], Object)); // true
-console.log(instanceof_of([], Array)); // true
-console.log(instanceof_of(1, String)); // false
+console.log(instanceof_of({}, Object)) // true
+console.log(instanceof_of([], Object)) // true
+console.log(instanceof_of([], Array)) // true
+console.log(instanceof_of(1, String)) // false
 ```
 
 虽然 instanceof 操作符可以用来检查一个对象是否是某个构造函数或其原型链的实例,但它也有一些缺点,包括以下几点：
@@ -44,8 +44,8 @@ console.log(instanceof_of(1, String)); // false
 - instanceof 操作符无法直接检查一个对象是否是字面量创建的。在 JavaScript 中,当创建一个字面量对象时,实际上是通过其构造函数 Object() 隐式创建的。
 
 ```js
-const obj = { foo: "bar" };
-console.log(obj instanceof Object); // true
+const obj = { foo: 'bar' }
+console.log(obj instanceof Object) // true
 ```
 
 使用 instanceof 来检查 obj 是否是 Object 类型的实例,它将返回 true,因此,instanceof 操作符只能检查一个对象是否是通过其构造函数创建的实例,而不能直接检查一个对象是否是字面量创建的。
@@ -62,29 +62,29 @@ new 的作用是实例化对象,使用 new 时其工作流程如下:
 ```js
 function _new() {
   // 获取_new()第一个参数,即实例化对象
-  const constructor = [].shift.call(arguments);
+  const constructor = [].shift.call(arguments)
   /*
    * (1).创建一个空对象。Object.create(null)与{}的区别在于:Object.crete(null)
    * 会返回一个纯净的对象,不会继承内置Object的toString、valueof等函数
    */
-  const obj = Object.create(null);
+  const obj = Object.create(null)
   // (2).连接原型。将空对象的隐式原型连接到实例化对象的 prototype
-  obj.__proto__ = constructor.prototype;
+  obj.__proto__ = constructor.prototype
   // (3).绑定this。执行实例化函数并绑定 this 至空对象
-  const result = constructor.apply(obj, arguments);
+  const result = constructor.apply(obj, arguments)
   // (4).返回新对象
-  return typeof result === "object" ? result : obj;
+  return typeof result === 'object' ? result : obj
 }
 
 // 测试
 function Person(name, age) {
-  this.name = name;
-  this.age = age;
-  console.log("我叫" + this.name + ",今年" + this.age + "岁");
+  this.name = name
+  this.age = age
+  console.log('我叫' + this.name + ',今年' + this.age + '岁')
 }
-const person = _new(Person, "z乘风", 20); // 我叫z乘风,今年20岁
-console.log(person.name); // 'z乘风'
-console.log(person.age); // 20
+const person = _new(Person, 'z乘风', 20) // 我叫z乘风,今年20岁
+console.log(person.name) // 'z乘风'
+console.log(person.age) // 20
 ```
 
 ## 3.手写 let 和 const
@@ -97,18 +97,18 @@ const 实现原理:const 用于声明一个只读的常量,一旦声明,常量�
 
 ```ts
 // 模拟let
-(function () {
-  var name = "xxx";
-  console.log(name); // "xxx"
-})();
-console.log(name); // undefined
+;(function () {
+  var name = 'xxx'
+  console.log(name) // "xxx"
+})()
+console.log(name) // undefined
 ```
 
 ```ts
 // 模拟const
 function _const(key, value) {
   // 将变量名挂载到一个对象上
-  this.data = value;
+  this.data = value
   // 劫持变量名set
   Object.defineProperty(this.data, key, {
     // 是否能通过for in 循环返回属性
@@ -117,24 +117,24 @@ function _const(key, value) {
     configurable: false,
     // 获取属性值函数
     get() {
-      return value;
+      return value
     },
     // 设置属性值函数
     set(newVal) {
       if (value !== newVal) {
-        throw new TypeError("Assignment to constant variable.");
+        throw new TypeError('Assignment to constant variable.')
       }
-      return value;
+      return value
     },
-  });
+  })
 }
 
-(function () {
-  const obj = {};
-  var name = _const.call(obj, "name", "zchengfeng");
-  console.log(name); // "zchengfeng"
-})();
-console.log(name); // undefined
+;(function () {
+  const obj = {}
+  var name = _const.call(obj, 'name', 'zchengfeng')
+  console.log(name) // "zchengfeng"
+})()
+console.log(name) // undefined
 ```
 
 ## 4.手写 extends
@@ -155,40 +155,38 @@ function _inherits(supers, sub) {
       writable: true,
       configurable: true,
     },
-  });
+  })
   // 链接,将父类链接到子类的原型上(即__proto__)
   if (supers) {
-    Object.setPrototypeOf
-      ? Object.setPrototypeOf(sub, supers)
-      : (sub.__proto__ = supers);
+    Object.setPrototypeOf ? Object.setPrototypeOf(sub, supers) : (sub.__proto__ = supers)
   }
 }
 
 function Super(name) {
-  this.name = name;
-  this.languages = ["Java", "JavaScript", "Go"];
+  this.name = name
+  this.languages = ['Java', 'JavaScript', 'Go']
 }
 Super.prototype.getName = function () {
-  return this.name;
-};
+  return this.name
+}
 function Sub(name) {
-  Super.call(this, name);
+  Super.call(this, name)
 }
 
 // 将父类原型指向子类
-_inherits(Super, Sub);
+_inherits(Super, Sub)
 
 // 新增子类原型属性
 Sub.prototype.getName = function () {
-  return this.age;
-};
+  return this.age
+}
 
-var instance1 = new Sub("haha", 20);
-var instance2 = new Sub("hehe", 22);
+var instance1 = new Sub('haha', 20)
+var instance2 = new Sub('hehe', 22)
 
-instance1.languages.push("Rust");
-console.log(instance1.languages); // ['Java', 'JavaScript', 'Go', 'Rust']
+instance1.languages.push('Rust')
+console.log(instance1.languages) // ['Java', 'JavaScript', 'Go', 'Rust']
 
-instance2.languages.push("TypeScript");
-console.log(instance2.languages); // ['Java', 'JavaScript', 'Go', 'TypeScript']
+instance2.languages.push('TypeScript')
+console.log(instance2.languages) // ['Java', 'JavaScript', 'Go', 'TypeScript']
 ```

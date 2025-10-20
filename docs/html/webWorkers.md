@@ -60,30 +60,30 @@ Web Worker 线程规范中定义了三种主要的 Web Worker 线程:专用工�
  *  postMessage(){ //... },
  * }
  */
-console.log(self);
+console.log(self)
 
 // 通过importScripts()加载多个脚本文件,importScripts()只能用于Web Worker环境中
-importScripts("./script01.js", "./script02.js"); // "script01 task" "script02 task"
+importScripts('./script01.js', './script02.js') // "script01 task" "script02 task"
 
 // 监听主线程使用Worker实例通过postMessage()发送数据,e是一个MessageEvent对象
 self.onmessage = (e) => {
-  console.log(JSON.parse(e.data)); // {message: 'worker i love you!'}
-};
+  console.log(JSON.parse(e.data)) // {message: 'worker i love you!'}
+}
 
 // 监听Worker线程收到无法反序列化的消息时触发
 self.onmessageerror = (e) => {
-  console.log(e);
-};
+  console.log(e)
+}
 
 const sendMessage = () => {
   const data = {
-    type: "worker",
-    message: "hello web worker",
-  };
+    type: 'worker',
+    message: 'hello web worker',
+  }
   // 发送引用类型需要进行序列化,另一端需要反序列化
-  postMessage(JSON.stringify(data));
-};
-sendMessage();
+  postMessage(JSON.stringify(data))
+}
+sendMessage()
 ```
 
 </CodeGroupItem>
@@ -103,23 +103,23 @@ sendMessage();
    * name:在 DedicatedWorkerGlobalScope 的情况下,用来表示 worker 的 scope
    * 的一个 DOMString 值,主要用于调试目的。
    */
-  const worker = new Worker("./worker.js", { name: "worker01" });
+  const worker = new Worker('./worker.js', { name: 'worker01' })
   // 监听脚本文件通过postMessage()发送的数据,e是一个MessageEvent对象
   worker.onmessage = (e) => {
     // {type: 'worker', message: 'hello web worker'}
-    console.log(JSON.parse(e.data));
+    console.log(JSON.parse(e.data))
     // 主线程向Worker线程发送数据
-    worker.postMessage(JSON.stringify({ message: "worker i love you!" }));
-  };
+    worker.postMessage(JSON.stringify({ message: 'worker i love you!' }))
+  }
   // 监听运行脚本时产生的错误,e是一个ErrorEvent对象
   worker.onerror = (e) => {
-    console.log(e);
-  };
+    console.log(e)
+  }
 
   setTimeout(() => {
     // 在主线程中终止Worker线程,也可以在Worker线程调用close()关闭Worker线程
-    worker.terminate();
-  }, 3000);
+    worker.terminate()
+  }, 3000)
 </script>
 ```
 
@@ -128,7 +128,7 @@ sendMessage();
 <CodeGroupItem title="script01.js">
 
 ```js
-console.log("script01 task");
+console.log('script01 task')
 ```
 
 </CodeGroupItem>
@@ -136,7 +136,7 @@ console.log("script01 task");
 <CodeGroupItem title="script02.js">
 
 ```js
-console.log("script02 task");
+console.log('script02 task')
 ```
 
 </CodeGroupItem>

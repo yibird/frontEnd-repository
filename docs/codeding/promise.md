@@ -12,23 +12,23 @@ Promise 是 ES6 提供的异步解决方案,Promise 通过链式调用可以解�
 // 注释版Promise
 class MyPromise {
   // 通过静态属性定义Promise三种状态,静态属性只能通过类获取,无法通过类实例获取。
-  static PENDING = "pending";
-  static FULFILLED = "fulfilled";
-  static REJECTED = "rejected";
+  static PENDING = 'pending'
+  static FULFILLED = 'fulfilled'
+  static REJECTED = 'rejected'
 
   constructor(callback) {
     // 初始化Promise的状态
-    this.promiseStatus = MyPromise.PENDING;
+    this.promiseStatus = MyPromise.PENDING
     // 初始化Promise的结果,用于存储resolve()和reject()的入参
-    this.promiseResult = null;
+    this.promiseResult = null
     /*
      * 初始化成功和拒绝回调函数数组,用于存储成功和拒绝回调函数,当resolve()和reject()
      * 被异步执行时,执行then()无法正确获得Promise状态(此时then函数中Promise状态仍是pending),
      * 所以定义两个回调函数数组用于存储成功和拒绝回调函数,当then()中的Promise状态为pending时,
      * 就向回调函数数组添加回调函数,在执行resolve()或reject()时,则遍历回调函数数组执行每个回调函数
      */
-    this.onFulfilltedCallbacks = []; // 用于存储成功回调函数
-    this.onRejectedCallbacks = []; // 用于存储失败回调函数
+    this.onFulfilltedCallbacks = [] // 用于存储成功回调函数
+    this.onRejectedCallbacks = [] // 用于存储失败回调函数
 
     // Promise构造函数产生的错误通过try/catch进行捕获,产生错误时调用reject
     try {
@@ -37,9 +37,9 @@ class MyPromise {
        * 由于在resolve()和reject()需要用到当前MyPromise实例,
        * 故通过bind将resolve()和reject()的this指向当前MyPromise实例
        */
-      callback(this.resolve.bind(this), this.reject.bind(this));
+      callback(this.resolve.bind(this), this.reject.bind(this))
     } catch (err) {
-      this.reject(err);
+      this.reject(err)
     }
   }
 
@@ -50,13 +50,13 @@ class MyPromise {
    * (3).遍历成功回调函数数组,执行数组中每个成功回调函数。
    */
   resolve(result) {
-    const { PENDING, FULFILLED } = MyPromise;
+    const { PENDING, FULFILLED } = MyPromise
     if (this.promiseStatus === PENDING) {
       setTimeout(() => {
-        this.promiseStatus = FULFILLED;
-        this.promiseResult = result;
-        this.onFulfilltedCallbacks.forEach((callback) => callback(result));
-      });
+        this.promiseStatus = FULFILLED
+        this.promiseResult = result
+        this.onFulfilltedCallbacks.forEach((callback) => callback(result))
+      })
     }
   }
 
@@ -67,46 +67,44 @@ class MyPromise {
    * (3).遍历失败回调函数数组,执行数组中每个失败回调函数。
    */
   reject(reason) {
-    const { PENDING, REJECTED } = MyPromise;
+    const { PENDING, REJECTED } = MyPromise
     if (this.promiseStatus === PENDING) {
       setTimeout(() => {
-        this.promiseStatus = REJECTED;
-        this.promiseResult = reason;
-        this.onRejectedCallbacks.forEach((callback) => callback(reason));
-      });
+        this.promiseStatus = REJECTED
+        this.promiseResult = reason
+        this.onRejectedCallbacks.forEach((callback) => callback(reason))
+      })
     }
   }
 
   then(onFulfilled, onRejected) {
     // 如果onFulfilled()或onRejected()是函数则直接返回,否则通过函数包装,传入什么就返回什么
-    onFulfilled =
-      typeof onFulfilled === "function" ? onFulfilled : (value) => value;
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : (value) => value
     onRejected =
-      typeof onRejected === "function"
+      typeof onRejected === 'function'
         ? onRejected
         : (reason) => {
-            throw reason;
-          };
+            throw reason
+          }
     // 执行then()会返回一个新的Promise实例
     const promise = new MyPromise((resolve, reject) => {
-      const { PENDING, FULFILLED } = MyPromise;
-      const { promiseStatus, onFulfilltedCallbacks, onRejectedCallbacks } =
-        this;
+      const { PENDING, FULFILLED } = MyPromise
+      const { promiseStatus, onFulfilltedCallbacks, onRejectedCallbacks } = this
       // 对onFulfillted和onRejected的返回值进行处理
       const handle = (fn) => {
         try {
-          resolvePromise(promise, fn(this.promiseResult), resolve, reject);
+          resolvePromise(promise, fn(this.promiseResult), resolve, reject)
         } catch (err) {
-          reject(err);
+          reject(err)
         }
-      };
+      }
       /*
        * 如果执行then()时Promise仍为pending则说明resolve()被异步执行了,则向
        * 回调函数数组添加回调函数。
        */
       if (promiseStatus === PENDING) {
-        onFulfilltedCallbacks.push(() => handle(onFulfilled));
-        onRejectedCallbacks.push(() => handle(onRejected));
+        onFulfilltedCallbacks.push(() => handle(onFulfilled))
+        onRejectedCallbacks.push(() => handle(onRejected))
       } else {
         /**
          * Promise A+规范要求onFulfilled()和onRejected()异步执行,
@@ -115,11 +113,11 @@ class MyPromise {
          * 宏任务有setTimeout、setImmediate,微任务有MutationObserver、process.nextTick。
          * 这里通过setTimeout进行包装。
          */
-        const fn = promiseStatus === FULFILLED ? onFulfilled : onRejected;
-        setTimeout(() => handle(fn));
+        const fn = promiseStatus === FULFILLED ? onFulfilled : onRejected
+        setTimeout(() => handle(fn))
       }
-    });
-    return promise;
+    })
+    return promise
   }
 }
 
@@ -133,7 +131,7 @@ class MyPromise {
 function resolvePromise(promise, result, resolve, reject) {
   // 解决循环引用,避免then()回调的返回值是then()返回的新Promise实例,这样会造成循环引用问题
   if (result === promise) {
-    return reject(new TypeError("Chaining cycle detected for promise"));
+    return reject(new TypeError('Chaining cycle detected for promise'))
   }
   /* then()回调返回值策略:
    *
@@ -156,30 +154,27 @@ function resolvePromise(promise, result, resolve, reject) {
    * 即输入什么则返回什么。
    */
   if (result instanceof MyPromise) {
-    const { PENDING, FULFILLED, REJECTED } = MyPromise;
+    const { PENDING, FULFILLED, REJECTED } = MyPromise
     const map = {
       [PENDING]: () => {
-        result.then((y) => resolvePromise(promise, y, resolve, reject), reject);
+        result.then((y) => resolvePromise(promise, y, resolve, reject), reject)
       },
       [FULFILLED]: () => resolve(result.promiseResult),
       [REJECTED]: () => reject(result.promiseResult),
-    };
-    map[result.promiseStatus]();
-  } else if (
-    result !== null &&
-    ["object", "function"].includes(typeof result)
-  ) {
-    try {
-      var then = result.then;
-    } catch (e) {
-      return reject(e);
     }
-    if (typeof then === "function") {
+    map[result.promiseStatus]()
+  } else if (result !== null && ['object', 'function'].includes(typeof result)) {
+    try {
+      var then = result.then
+    } catch (e) {
+      return reject(e)
+    }
+    if (typeof then === 'function') {
       /*
        * 用于标记then()的onFulfillted()和onRejected()是否执行,
        * 只能执行onFulfillted()和onRejected()其中一个回调
        */
-      let called = false;
+      let called = false
       try {
         /*
          * 将then()中this的指向result,并包装一个onFulfillted()和onRejected(),
@@ -188,27 +183,27 @@ function resolvePromise(promise, result, resolve, reject) {
         then.call(
           result,
           (y) => {
-            if (called) return;
-            called = true;
-            resolvePromise(promise, y, resolve, reject);
+            if (called) return
+            called = true
+            resolvePromise(promise, y, resolve, reject)
           },
           (r) => {
-            if (called) return;
-            called = true;
-            reject(r);
-          }
-        );
+            if (called) return
+            called = true
+            reject(r)
+          },
+        )
       } catch (e) {
-        if (called) return;
-        called = true;
-        reject(e);
+        if (called) return
+        called = true
+        reject(e)
       }
     } else {
-      resolve(result);
+      resolve(result)
     }
   } else {
     // 对于非Promise实例、非对象或函数,则直接resolve(),传入什么就返回什么
-    resolve(result);
+    resolve(result)
   }
 }
 ```
@@ -219,123 +214,118 @@ function resolvePromise(promise, result, resolve, reject) {
 
 ```js
 class MyPromise {
-  static PENDING = "pending";
-  static FULFILLED = "fulfilled";
-  static REJECTED = "rejected";
+  static PENDING = 'pending'
+  static FULFILLED = 'fulfilled'
+  static REJECTED = 'rejected'
 
   constructor(callback) {
-    this.promiseStatus = MyPromise.PENDING;
-    this.promiseResult = null;
-    this.onFulfilltedCallbacks = [];
-    this.onRejectedCallbacks = [];
+    this.promiseStatus = MyPromise.PENDING
+    this.promiseResult = null
+    this.onFulfilltedCallbacks = []
+    this.onRejectedCallbacks = []
 
     try {
-      callback(this.resolve.bind(this), this.reject.bind(this));
+      callback(this.resolve.bind(this), this.reject.bind(this))
     } catch (err) {
-      this.reject(err);
+      this.reject(err)
     }
   }
   resolve(result) {
-    const { PENDING, FULFILLED } = MyPromise;
+    const { PENDING, FULFILLED } = MyPromise
     if (this.promiseStatus === PENDING) {
       setTimeout(() => {
-        this.promiseStatus = FULFILLED;
-        this.promiseResult = result;
-        this.onFulfilltedCallbacks.forEach((callback) => callback(result));
-      });
+        this.promiseStatus = FULFILLED
+        this.promiseResult = result
+        this.onFulfilltedCallbacks.forEach((callback) => callback(result))
+      })
     }
   }
   reject(reason) {
-    const { PENDING, REJECTED } = MyPromise;
+    const { PENDING, REJECTED } = MyPromise
     if (this.promiseStatus === PENDING) {
       setTimeout(() => {
-        this.promiseStatus = REJECTED;
-        this.promiseResult = reason;
-        this.onRejectedCallbacks.forEach((callback) => callback(reason));
-      });
+        this.promiseStatus = REJECTED
+        this.promiseResult = reason
+        this.onRejectedCallbacks.forEach((callback) => callback(reason))
+      })
     }
   }
 
   then(onFulfilled, onRejected) {
-    onFulfilled =
-      typeof onFulfilled === "function" ? onFulfilled : (value) => value;
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : (value) => value
     onRejected =
-      typeof onRejected === "function"
+      typeof onRejected === 'function'
         ? onRejected
         : (reason) => {
-            throw reason;
-          };
+            throw reason
+          }
     const promise = new MyPromise((resolve, reject) => {
-      const { PENDING, FULFILLED } = MyPromise;
-      const { promiseStatus, onFulfilltedCallbacks, onRejectedCallbacks } =
-        this;
+      const { PENDING, FULFILLED } = MyPromise
+      const { promiseStatus, onFulfilltedCallbacks, onRejectedCallbacks } = this
       const handle = (fn) => {
         try {
-          resolvePromise(promise, fn(this.promiseResult), resolve, reject);
+          resolvePromise(promise, fn(this.promiseResult), resolve, reject)
         } catch (err) {
-          reject(err);
+          reject(err)
         }
-      };
-      if (promiseStatus === PENDING) {
-        onFulfilltedCallbacks.push(() => handle(onFulfilled));
-        onRejectedCallbacks.push(() => handle(onRejected));
-      } else {
-        const fn = promiseStatus === FULFILLED ? onFulfilled : onRejected;
-        setTimeout(() => handle(fn));
       }
-    });
-    return promise;
+      if (promiseStatus === PENDING) {
+        onFulfilltedCallbacks.push(() => handle(onFulfilled))
+        onRejectedCallbacks.push(() => handle(onRejected))
+      } else {
+        const fn = promiseStatus === FULFILLED ? onFulfilled : onRejected
+        setTimeout(() => handle(fn))
+      }
+    })
+    return promise
   }
 }
 function resolvePromise(promise, result, resolve, reject) {
   if (result === promise) {
-    return reject(new TypeError("Chaining cycle detected for promise"));
+    return reject(new TypeError('Chaining cycle detected for promise'))
   }
   if (result instanceof MyPromise) {
-    const { PENDING, FULFILLED, REJECTED } = MyPromise;
+    const { PENDING, FULFILLED, REJECTED } = MyPromise
     const map = {
       [PENDING]: () => {
-        result.then((y) => resolvePromise(promise, y, resolve, reject), reject);
+        result.then((y) => resolvePromise(promise, y, resolve, reject), reject)
       },
       [FULFILLED]: () => resolve(result.promiseResult),
       [REJECTED]: () => reject(result.promiseResult),
-    };
-    map[result.promiseStatus]();
-  } else if (
-    result !== null &&
-    ["object", "function"].includes(typeof result)
-  ) {
-    try {
-      var then = result.then;
-    } catch (e) {
-      return reject(e);
     }
-    if (typeof then === "function") {
-      let called = false;
+    map[result.promiseStatus]()
+  } else if (result !== null && ['object', 'function'].includes(typeof result)) {
+    try {
+      var then = result.then
+    } catch (e) {
+      return reject(e)
+    }
+    if (typeof then === 'function') {
+      let called = false
       try {
         then.call(
           result,
           (y) => {
-            if (called) return;
-            called = true;
-            resolvePromise(promise, y, resolve, reject);
+            if (called) return
+            called = true
+            resolvePromise(promise, y, resolve, reject)
           },
           (r) => {
-            if (called) return;
-            called = true;
-            reject(r);
-          }
-        );
+            if (called) return
+            called = true
+            reject(r)
+          },
+        )
       } catch (e) {
-        if (called) return;
-        called = true;
-        reject(e);
+        if (called) return
+        called = true
+        reject(e)
       }
     } else {
-      resolve(result);
+      resolve(result)
     }
   } else {
-    resolve(result);
+    resolve(result)
   }
 }
 ```
@@ -344,23 +334,23 @@ function resolvePromise(promise, result, resolve, reject) {
 
 ```js
 // 测试
-console.log(1);
+console.log(1)
 const p = new MyPromise((resolve, reject) => {
-  console.log(2);
-  resolve("xxx");
-});
+  console.log(2)
+  resolve('xxx')
+})
 setTimeout(() => {
-  console.log(3);
-});
+  console.log(3)
+})
 
 p.then(() => {
-  console.log(4);
+  console.log(4)
   return new MyPromise((resolve, reject) => {
-    resolve(5);
-  });
+    resolve(5)
+  })
 }).then((result) => {
-  console.log(result);
-});
+  console.log(result)
+})
 
 // 输出结果:1 2 3 4 5
 ```
@@ -382,14 +372,14 @@ npm install promises-aplus-tests -D
 // ... 省略MyPromise代码
 // 在Promise上定义deferred,返回一个包含resolve()和reject()的对象
 MyPromise.deferred = () => {
-  const result = {};
+  const result = {}
   result.promise = new MyPromise((resolve, reject) => {
-    Object.assign(result, { resolve, reject });
-  });
-  return result;
-};
+    Object.assign(result, { resolve, reject })
+  })
+  return result
+}
 // 导出Promise类
-module.exports = MyPromise;
+module.exports = MyPromise
 ```
 
 - (3).配置 package.json 添加 test 命令进行测试(测试结果通过 872 个测试用例)。
@@ -443,35 +433,35 @@ function asyncTo<E = Error, T = any>(promise: Promise<any>, fn?: () => void) {
 ```js
 const limitRequest = (urls = [], limit = 0) => {
   return new Promise((resolve, reject) => {
-    const len = urls.length;
-    let count = 0;
+    const len = urls.length
+    let count = 0
     const start = async () => {
-      const url = urls.shift();
+      const url = urls.shift()
       if (url) {
         try {
           // 请求
-          await axios.post(url);
+          await axios.post(url)
           if (count === len - 1) {
             // 如果是最后一个任务
-            resolve();
+            resolve()
           } else {
-            count++;
+            count++
             // 当前任务执行成功启动下一个任务
-            start();
+            start()
           }
         } catch (err) {
-          count++;
+          count++
           // 当前任务执行成功启动下一个任务
-          start();
+          start()
         }
       }
-    };
-    while (limit > 0) {
-      start();
-      limit -= 1;
     }
-  });
-};
+    while (limit > 0) {
+      start()
+      limit -= 1
+    }
+  })
+}
 ```
 
 ## Promise 错误重试函数
@@ -487,28 +477,28 @@ function retry<T>(fn: (...args: any) => Promise<T>, count: number) {
   return new Promise(async (resolve, reject) => {
     while (count--) {
       try {
-        const res = await fn();
-        resolve(res);
-        return;
+        const res = await fn()
+        resolve(res)
+        return
       } catch (e) {
-        console.log("任务执行错误...", e);
+        console.log('任务执行错误...', e)
       }
     }
     // 如果循环结束后说明重试count次数后仍执行失败,直接reject()
-    reject();
-  });
+    reject()
+  })
 }
 
 // 测试
 const fn = () => {
   return new Promise((resolve, reject) => {
-    const val = Math.random();
-    val > 0.7 ? resolve(val) : reject(val);
-  });
-};
+    const val = Math.random()
+    val > 0.7 ? resolve(val) : reject(val)
+  })
+}
 retry(fn, 3).catch(() => {
-  console.log("任务重试执行多次后仍处理失败");
-});
+  console.log('任务重试执行多次后仍处理失败')
+})
 ```
 
 ## 实现带有延迟的 Promise

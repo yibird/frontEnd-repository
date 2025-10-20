@@ -50,19 +50,13 @@
 
 ```js
 /* HTML内容 */
-<div>
+;<div>
   <span>我是zchengfeng</span>
-</div>;
+</div>
 /* 解析后的Tokens,以数组模拟 */
-const tokens = [
-  startTag.div,
-  startTag.span,
-  我是zchengfeng,
-  endTag.span,
-  endTag.div,
-];
+const tokens = [startTag.div, startTag.span, 我是zchengfeng, endTag.span, endTag.div]
 // token栈
-const tokenStack = [];
+const tokenStack = []
 // 第一次解析,由于div是一个开始标签,则会被推入栈中,tokenStack的值为[startTag.div]
 // 第二次解析,由于span是一个开始标签,则会被推入栈中,tokenStack的值为[startTag.div,startTag.span]
 // 第三次解析,由于是一个文本节点,则将该节点直接添加到 DOM 树中。

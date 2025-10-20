@@ -16,15 +16,15 @@ WebSocket(url [,protocols])构造函数返回一个新的 WebSocket 对象。url
 
 ```js
 // webSocket连接URL以ws为前缀表示是webSocket协议
-var awebsocket = new WebSocket("ws://example.com:80/some/path");
+var awebsocket = new WebSocket('ws://example.com:80/some/path')
 /*
  * binaryType:用于获取WebSocket 连接接收的二进制数据的类型,类型可分Blob(默认值)
  * 和Arraybuffer两种
  */
-var binaryType = awebsocket.binaryType; // 'blob'
+var binaryType = awebsocket.binaryType // 'blob'
 
 // url:用于返回的WebSocket绝对URL,由构造函数提供
-var url = aWebSocket.url; // 'ws://example.com/some/path'
+var url = aWebSocket.url // 'ws://example.com/some/path'
 
 /*
  * readyState:用于返回当前webSocket的连接状态,返回值是一个数字:
@@ -33,7 +33,7 @@ var url = aWebSocket.url; // 'ws://example.com/some/path'
  * 2(CLOSING):表示连接正在关闭过程中。
  * 3(CLOSED):表示连接已关闭或无法打开。
  */
-var readyState = aWebSocket.readyState; // 3
+var readyState = aWebSocket.readyState // 3
 
 /*
  * WebSocket.onopen用于监听WebSocket打开连接事件,当WebSocket连接readyState更改为1时调用,
@@ -41,46 +41,46 @@ var readyState = aWebSocket.readyState; // 3
  * 返回一个EventListener(也是一个函数)
  */
 aWebSocket.onopen = function (event) {
-  console.log(event);
-  console.log("WebSocket is open now.");
-};
+  console.log(event)
+  console.log('WebSocket is open now.')
+}
 
 /*
  * WebSocket.onmessage用于监听接收到服务器发送消息的事件,该函数接收一个MessageEvent对象作为参数,
  * WebSocket:send():允许客户端向服务器发送数据
  */
 aWebSocket.onmessage = function (messageEvent) {
-  const { data, origin, source, ports } = messageEvent;
-  console.log("接收数据:", data);
-  console.log("表示消息发射器的来源:", origin);
+  const { data, origin, source, ports } = messageEvent
+  console.log('接收数据:', data)
+  console.log('表示消息发射器的来源:', origin)
   // MessageEventSource(其可以是一个WindowProxy,MessagePort或ServiceWorker对象)表示消息发射器。
-  console.log("消息发射器:", source);
+  console.log('消息发射器:', source)
   // 一组MessagePort对象,表示与发送消息的通道相关联的端口
-  console.log("消息发射器:", ports);
-  console.debug("WebSocket message received:", messageEvent);
+  console.log('消息发射器:', ports)
+  console.debug('WebSocket message received:', messageEvent)
 
-  aWebSocket.send("客户端向服务器发送数据" + data);
-};
+  aWebSocket.send('客户端向服务器发送数据' + data)
+}
 
 /*
  * WebSocket.onclose用于监听WebSocket关闭连接事件,当WebSocket 连接readyState更改为CLOSED时调用,
  * 接收一个CloseEvent对象作为参数,返回一个EventListener(也是一个函数)
  */
 aWebSocket.onclose = function (event) {
-  const { code, reason, wasClean } = event;
+  const { code, reason, wasClean } = event
   // 返回一个数组,表示服务器发送的关闭代码
-  console.log(code);
+  console.log(code)
   // 返回服务器关闭连接原因
-  console.log(reason);
+  console.log(reason)
   // 返回一个布尔值,表示连接是否完全关闭。
-  console.log(wasClean);
-  console.log("WebSocket is closed now.");
-};
+  console.log(wasClean)
+  console.log('WebSocket is closed now.')
+}
 
 /*
  * WebSocket.onerror:当WebSocket发生错误时触发的事件
  */
 aWebSocket.onerror = function (event) {
-  console.error("WebSocket error observed:", event);
-};
+  console.error('WebSocket error observed:', event)
+}
 ```

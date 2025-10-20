@@ -21,29 +21,29 @@ Cookie 是一段不超过 4KB 的小型文本数据,通常用于记录身份授�
 #### js 操作 Cookie
 
 ```ts
-type SameSiteValue = "None" | "Lax" | "Strict";
+type SameSiteValue = 'None' | 'Lax' | 'Strict'
 interface CookieOption {
   // cookie名称
-  name: string;
+  name: string
   // cookie值
-  value: string;
+  value: string
   // 最长有效期
-  expires?: Date;
+  expires?: Date
   // 有效期秒数
-  maxAge?: number;
+  maxAge?: number
   // 指定需要发送cookie的请求path
-  path?: string;
+  path?: string
   // cookie安全策略,只有使用 SSL 和 HTTPS 协议才会发送cookie
-  secure?: boolean;
+  secure?: boolean
   // cookie安全策略,配置HttpOnly将不会向服务器发送cookie
-  httpOnly?: boolean;
+  httpOnly?: boolean
   // cookie安全策略
-  sameSite?: SameSiteValue;
+  sameSite?: SameSiteValue
 }
 
 class CookiePlus {
   constructor(option?: CookieOption) {
-    this.option = option || {};
+    this.option = option || {}
   }
   static set() {}
   static del(name: string) {}
@@ -68,41 +68,41 @@ CookieStore API 提供了以异步方式获取和设置 cookie 的方法,但兼�
 /* cookieStore.set() */
 // 方式1:接收name和value
 cookieStore
-  .set("cookie01", "haha")
+  .set('cookie01', 'haha')
   .then((data) => {
-    console.log(data); // undefined
+    console.log(data) // undefined
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err))
 
 // 方式2:接收一个配置对象
 cookieStore.set({
   // cookie 名称
-  name: "cookie02",
+  name: 'cookie02',
   // cookie 名称对应值
-  value: "hehe",
+  value: 'hehe',
   // 过期时间(可选,单位为毫秒)
   expires: Date.now() + 24 * 60 * 60 * 1000,
   // 包含 cookie 的域
-  domain: "example.com",
+  domain: 'example.com',
   // 包含 cookie 的路径
-  path: "/",
-});
+  path: '/',
+})
 
 /* cookieStore.get()  */
 // 方式1:根据name获取cookie
 cookieStore
-  .get("cookie01")
+  .get('cookie01')
   .then((cookie) => {
-    const { domain, expires, name, path, sameSite, secure, value } = cookie;
-    console.log("cookie value:", value); // cookie value:haha
+    const { domain, expires, name, path, sameSite, secure, value } = cookie
+    console.log('cookie value:', value) // cookie value:haha
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err))
 
 // 方式2:根据配置对象获取cookie,配置对象包含cookie name和url两个属性
-cookieStore.get({ name: "123", url: "/" }).then((cookie) => {
-  const { domain, expires, name, path, sameSite, secure, value } = cookie;
-  console.log("cookie value:", value); // cookie value:hehe
-});
+cookieStore.get({ name: '123', url: '/' }).then((cookie) => {
+  const { domain, expires, name, path, sameSite, secure, value } = cookie
+  console.log('cookie value:', value) // cookie value:hehe
+})
 
 /* cookieStore.getAll() */
 ```
@@ -127,22 +127,22 @@ Web Storage 包括 SeesionStorage 与 LocalStorage,它们具有一样的 API,除
 // SessionStorage和LocalStorage具有一样的API
 
 // 存储数据
-localStorage.setItem("name", "z乘风");
-const user = { name: "z乘风", age: 20 };
+localStorage.setItem('name', 'z乘风')
+const user = { name: 'z乘风', age: 20 }
 // SessionStorage和LocalStorage只能存储文本类型的数据,存储引用类型的数据需要使用JSON.stringify()转为字符串
-localStorage.setItem("user", JSON.stringify(user));
+localStorage.setItem('user', JSON.stringify(user))
 
 // 获取数据,使用JSON.parse()将引用数据转为JSON对象
-JSON.parse(localStorage.getItem("name")); // { name: "z乘风", age: 20 }
+JSON.parse(localStorage.getItem('name')) // { name: "z乘风", age: 20 }
 
 // 删除数据
-localStorage.removeItem("name");
+localStorage.removeItem('name')
 
 // 获取localStorage存储数据的数量
-console.log(localStorage.length); // 1
+console.log(localStorage.length) // 1
 
 // 清除所有数据
-localStorage.clear();
+localStorage.clear()
 ```
 
 #### Cookie、SeesionStorage、LocalStorage 的区别
@@ -159,62 +159,59 @@ Cookie、SeesionStorage、LocalStorage 三者均可以存储客户端数据,其�
 
 ```ts
 // 封装LocalStorage
-import CryptoJS from "crypto-js";
+import CryptoJS from 'crypto-js'
 function useStorage(mode?: string) {
-  const storage = mode === "session" ? sessionStorage : localStorage;
+  const storage = mode === 'session' ? sessionStorage : localStorage
 
   return {
     set(name: string, value: string, expire?: number) {
       // 以存储name为秘钥使用AES加密得到密文
-      const ciphertext = CryptoJS.AES.encrypt(
-        JSON.stringify(value),
-        name
-      ).toString();
+      const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(value), name).toString()
       // 默认过期时间为1天
-      expire = expire || Date.now() + 1000 * 60 * 60 * 24;
-      storage.setItem(name, JSON.stringify({ ciphertext, expire }));
-      return ciphertext;
+      expire = expire || Date.now() + 1000 * 60 * 60 * 24
+      storage.setItem(name, JSON.stringify({ ciphertext, expire }))
+      return ciphertext
     },
     get(name: string) {
-      const data = JSON.parse(storage.getItem(name)!);
-      if (!data) return;
-      const { expire, ciphertext } = data;
+      const data = JSON.parse(storage.getItem(name)!)
+      if (!data) return
+      const { expire, ciphertext } = data
 
       if (expire && Date.now() > expire) {
         // 判断是否过期,如果过期则删除
-        storage.removeItem(name);
-        return;
+        storage.removeItem(name)
+        return
       }
       // 根据密文和秘钥解密
-      const bytes = CryptoJS.AES.decrypt(ciphertext, name);
-      return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      const bytes = CryptoJS.AES.decrypt(ciphertext, name)
+      return JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
     },
     has(name: string) {
-      return Boolean(storage.getItem(name));
+      return Boolean(storage.getItem(name))
     },
     del(name: string) {
-      storage.removeItem(name);
+      storage.removeItem(name)
     },
     clear() {
-      storage.clear();
+      storage.clear()
     },
     len() {
-      return storage.length;
+      return storage.length
     },
-  };
+  }
 }
 
-const { set, get, has, del, clear, len } = useStorage();
-console.log(set("name", "z乘风")); // U2FsdGVkX19znT2zCvOdG86EWSPmNQtEeP7qBm4S9NM=
-set("user", JSON.stringify({ name: "z乘风", age: 20 }));
-set("age", "20", 1);
-console.log(get("name")); // "z乘风"
-console.log("user:", get("user"));
-console.log(len()); // 3
-console.log(get("age")); // undefined
-del("name");
-console.log(len()); // 1
-console.log(has("user")); // true
-clear();
-console.log(len()); // 0
+const { set, get, has, del, clear, len } = useStorage()
+console.log(set('name', 'z乘风')) // U2FsdGVkX19znT2zCvOdG86EWSPmNQtEeP7qBm4S9NM=
+set('user', JSON.stringify({ name: 'z乘风', age: 20 }))
+set('age', '20', 1)
+console.log(get('name')) // "z乘风"
+console.log('user:', get('user'))
+console.log(len()) // 3
+console.log(get('age')) // undefined
+del('name')
+console.log(len()) // 1
+console.log(has('user')) // true
+clear()
+console.log(len()) // 0
 ```

@@ -155,7 +155,7 @@ C    代码:  add(2, subtract(4, 2))
 - 词法分析:词法分析是使用 tokenizer(分词器)或者 lexer(词法分析器),将源码拆分成 tokens,tokens 是一个放置对象的数组,其中的每一个对象都可以看做是一个单元(数字,标签,标点,操作符...)的描述信息。例如对"你是猪"进行词法分析就可以得到主谓宾词语,对`(add 2 (subtract 4 2))`进行词法分析后得到:
 
 ```js
-[
+;[
   { type: 'paren', value: '(' },
   { type: 'name', value: 'add' },
   { type: 'number', value: '2' },
@@ -165,7 +165,7 @@ C    代码:  add(2, subtract(4, 2))
   { type: 'number', value: '2' },
   { type: 'paren', value: ')' },
   { type: 'paren', value: ')' },
-];
+]
 ```
 
 - 语法解析:将词法分析的结果转化为抽象语法树(AST),并检查其语法是否正确。语法分析会将 tokens 重新整理成语法相互关联的表达形式,这种表达形式一般被称为中间层或者 AST(抽象语法树)。对`(add 2 (subtract 4 2))`进行语法解析后得到的 AST:
@@ -253,13 +253,13 @@ Loader 和 Plugin 是 Webpack 的核心概念,两者区别如下:
 // source表示上一个Loader处理后的文件源内容
 module.exports = function (source) {
   // 对源代码进行处理
-  const result = transform(source);
-  return result;
-};
+  const result = transform(source)
+  return result
+}
 function transform(source) {
   // 实际的转换逻辑
   // 可以使用正则表达式、字符串替换、AST解析等方式进行处理
-  return source.toUpperCase();
+  return source.toUpperCase()
 }
 ```
 
@@ -279,7 +279,7 @@ module.exports = {
     ],
   },
   // ...
-};
+}
 ```
 
 ### 8.2 如何实现一个 Plugin?
@@ -293,7 +293,7 @@ module.exports = {
 class CustomPlugin {
   // options表示插件的配置参数,可选
   constructor(options) {
-    this.options = options || {};
+    this.options = options || {}
   }
 
   // Plugin需要提供一个apply(),该方法在 Webpack 构建过程中被调用
@@ -302,11 +302,11 @@ class CustomPlugin {
     compiler.hooks.emit.tapAsync('CustomPlugin', (compilation, callback) => {
       // 执行自定义处理逻辑...
       // 调用回调函数通知Webpack继续构建
-      callback();
-    });
+      callback()
+    })
   }
 }
-module.exports = CustomPlugin;
+module.exports = CustomPlugin
 ```
 
 注册 Plugin:
@@ -315,7 +315,7 @@ module.exports = CustomPlugin;
 // webpack.config.js
 
 // 导入自定义插件
-const CustomPlugin = require('./path/to/CustomPlugin');
+const CustomPlugin = require('./path/to/CustomPlugin')
 module.exports = {
   // ...
   plugins: [
@@ -323,7 +323,7 @@ module.exports = {
       /* 插件配置参数 */
     }),
   ],
-};
+}
 ```
 
 ## 9.Webpack 热更新(HMR)是什么?
@@ -368,7 +368,7 @@ Webpack Module Federation(模块联邦) 是 Webpack 5 引入的一项强大功�
 
 ```js
 // Remote应用webpack.config.js,向外部暴露了Button组件
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 module.exports = {
   // ...其他配置
   plugins: [
@@ -386,10 +386,10 @@ module.exports = {
       },
     }),
   ],
-};
+}
 
 // Host应用webpack.config.js,通过remotes配置引用了Remote应用
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 module.exports = {
   // ...其他配置
   plugins: [
@@ -400,18 +400,18 @@ module.exports = {
       },
     }),
   ],
-};
+}
 
 // 在Host应用使用Remote应用暴露的Button组件
-import React from 'react';
-import ReactDOM from 'react-dom';
-const Button = React.lazy(() => import('app1/Button'));
+import React from 'react'
+import ReactDOM from 'react-dom'
+const Button = React.lazy(() => import('app1/Button'))
 const App = () => (
-  <React.Suspense fallback='Loading...'>
+  <React.Suspense fallback="Loading...">
     <Button />
   </React.Suspense>
-);
-ReactDOM.render(<App />, document.getElementById('root'));
+)
+ReactDOM.render(<App />, document.getElementById('root'))
 ```
 
 Webpack 提供的 ModuleFederationPlugin 插件是实现模块联邦的核心。它负责在编译阶段生成模块清单、配置暴露和引用的模块,并在运行时动态加载模块:
@@ -475,7 +475,7 @@ Vite 的核心原理是利用 ES6 的 import,当在客户端(浏览器)解析到
 Vite plugin 本质上是一个返回 plugin 对象(包含插件名称和 plugin 钩子函数等属性)的函数,自定义 plugin 如下:
 
 ```ts
-import { type Plugin, createFilter, defineConfig } from 'vite';
+import { type Plugin, createFilter, defineConfig } from 'vite'
 
 /**
  * 删除console.log语句 plugin,其核心使用正则匹配替换console.log,当源码内容体积很大时,
@@ -484,7 +484,7 @@ import { type Plugin, createFilter, defineConfig } from 'vite';
  */
 export function removeConsoleLog() {
   // 过滤器,用于筛选要处理的文件
-  const filter = createFilter(/\.(ts|vue)$/);
+  const filter = createFilter(/\.(ts|vue)$/)
   return {
     // 插件name,vite推荐以 vite-plugin-作为前缀
     name: 'vite-plugin-remove-consoleLog',
@@ -498,25 +498,25 @@ export function removeConsoleLog() {
     transform(code, id) {
       // 仅处理符合过滤器的文件
       if (!filter(id)) {
-        return;
+        return
       }
       // 使用正则表达式移除 console.log 语句
-      const cleanedCode = code.replace(/console\.log\([^)]*\);?/g, '');
+      const cleanedCode = code.replace(/console\.log\([^)]*\);?/g, '')
       return {
         // 返回处理后的模块源码
         code: cleanedCode,
         // sourceMap(源码映射,通常用于调试)
         map: null,
-      };
+      }
     },
-  } as Plugin;
+  } as Plugin
 }
 
 // 使用 removeConsoleLog plugin
 export default defineConfig({
   // ...省略其他配置
   plugins: [removeConsoleLog()],
-});
+})
 ```
 
 ## 17.Vite 的优化策略有哪些?
@@ -531,7 +531,7 @@ pnpm i rollup-plugin-visualizer -D
 - **分包策略**。分包是一种将不常更新的文件进行单独打包的优化策略。vite 在打包时,会在 bundle 添加一个 hash 值,该 hash 与文件内容相关,当文件内容发生变化,hash 值也会发生变化,这样做能保证文件发生变化时浏览器能够请求到最新资源。对于不常变化的文件,可以借助分包机制将不常变化的文件进行单独打包,这种方式可以充分利用浏览器缓存提升加载效率(请求相同资源会命中浏览器缓存),例如将第三方包进行独立打包。在 vite 中分包依赖于 rollup 的 output.manualChunks,当该选项值为函数形式时,每个被解析的模块都会经过该函数处理。如果函数返回字符串,那么该模块及其所有依赖将被添加到以返回字符串命名的自定义 chunk 中。
 
 ```js
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 export default defineConfig({
   build: {
     minify: false,
@@ -540,12 +540,12 @@ export default defineConfig({
       manualChunks: (id) => {
         if (id.includes('node_modules')) {
           // 打包后生成一个vendor.xxxxx.js
-          return 'vendor';
+          return 'vendor'
         }
       },
     },
   },
-});
+})
 ```
 
 经过分包策略后,可能会导致打包后的体积过大,此时可以使用`vite-plugin-compression2`插件进行打包压缩。

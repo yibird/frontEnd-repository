@@ -9,19 +9,17 @@ Object.create(proto,propertiesObject?)用于创建一个新对象,允许接收�
 ```js
 // 实现Object.create(),暂不考虑第二个参数
 function create(proto) {
-  const isObject = typeof proto === 'object' || typeof proto === 'function';
+  const isObject = typeof proto === 'object' || typeof proto === 'function'
   // (1).参数检查。create() 仅支持传入对象或函数类型的参数
   if (typeof proto === undefined || !isObject) {
-    throw new TypeError(
-      `Object prototype may only be an Object or null: ${proto}`
-    );
+    throw new TypeError(`Object prototype may only be an Object or null: ${proto}`)
   }
   // (2).创建一个函数
   function F() {}
   /*
    * (3).将参数连接到新创建的函数原型上,函数的原型继承了proto上的属性和函数。
    */
-  F.prototype = proto;
+  F.prototype = proto
 
   /*
    * 注意:MDN上create() polyfill 并未对传入的参数为null做处理,这是因为es5版本的限制,
@@ -29,20 +27,20 @@ function create(proto) {
    * 手写的create(null)创建出来的对象不是一个纯净的对象
    */
   // (4).返回函数实例化的对象
-  return new F();
+  return new F()
 }
 
 // 测试
 function Base() {
-  this.name = 'z乘风';
+  this.name = 'z乘风'
 }
-Base.age = 18;
+Base.age = 18
 Base.prototype.say = function () {
-  return 'hello';
-};
+  return 'hello'
+}
 
-const obj = create(Base);
-console.log(obj.__proto__ === Base); // true
+const obj = create(Base)
+console.log(obj.__proto__ === Base) // true
 ```
 
 ## 2.Object.freeze()
@@ -55,7 +53,7 @@ function freeze(obj) {
   // 判断是否是对象
   if (obj instanceof Object) {
     // 使用seal()密封一个对象不可添加属性、不能删除属性
-    obj = Object.seal(obj);
+    obj = Object.seal(obj)
     // 遍历对象,key为遍历对象的key
     for (let key in obj) {
       // hasOwnProperty()返回一个布尔值,判断对象自身属性中是否具有指定的属性
@@ -63,36 +61,36 @@ function freeze(obj) {
         // 利用defineProperty对对象的属性进行配置
         Object.defineProperty(obj, key, {
           writable: false, // 设置属性不可写
-        });
+        })
         // 如果对象嵌套对象,那么使用递归实现更深层次的冻结
         if (obj[key] instanceof Object) {
-          freeze(obj[key]);
+          freeze(obj[key])
         }
       }
     }
-    return obj;
+    return obj
   } else {
-    throw new TypeError('obj not an object');
+    throw new TypeError('obj not an object')
   }
 }
 
 // Object.freeze()例子
-const obj = { name: 'z乘风', age: 18, city: '鸡城' };
-const newObj = Object.freeze(obj);
-newObj.name = 'zxp';
-console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"} 无法修改属性值
-delete newObj.city; // false 无法删除属性
-newObj['like'] = '美女';
-console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"} 无法添加属性值
+const obj = { name: 'z乘风', age: 18, city: '鸡城' }
+const newObj = Object.freeze(obj)
+newObj.name = 'zxp'
+console.log(newObj) // {name: "z乘风", age: 18, city: "鸡城"} 无法修改属性值
+delete newObj.city // false 无法删除属性
+newObj['like'] = '美女'
+console.log(newObj) // {name: "z乘风", age: 18, city: "鸡城"} 无法添加属性值
 
 // 手写freeze()例子
-const obj = { name: 'z乘风', age: 18, city: '鸡城' };
-const newObj = freeze(obj);
-newObj.name = 'zxp';
-console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"}
-delete newObj.city; // false
-newObj['like'] = '美女';
-console.log(newObj); // {name: "z乘风", age: 18, city: "鸡城"}
+const obj = { name: 'z乘风', age: 18, city: '鸡城' }
+const newObj = freeze(obj)
+newObj.name = 'zxp'
+console.log(newObj) // {name: "z乘风", age: 18, city: "鸡城"}
+delete newObj.city // false
+newObj['like'] = '美女'
+console.log(newObj) // {name: "z乘风", age: 18, city: "鸡城"}
 ```
 
 ## 3.Object.assign()
@@ -106,8 +104,7 @@ Object.assign()原理是通过遍历需要合并对象数组,挨个遍历合并�
 // 不支持 symbol 属性,由于 ES5 中本来就不存在 symbols
 Object.myAssign = function (target, sources) {
   // 为null抛出异常
-  if (target === null)
-    throw new TypeError('Cannot convert undefined or null to object');
+  if (target === null) throw new TypeError('Cannot convert undefined or null to object')
   /**
    * 通过Object构造函数将target包装成一个新对象,Object()包装对象特点:
    * (1).如果包装值是null或undefined会返回一个空对象,否则它将返回一个包装值相对应的类型的对象。
@@ -116,10 +113,10 @@ Object.myAssign = function (target, sources) {
    * Object()包装target的优点是无论target为任何类型Object()都会将其包装成一个
    * 新对象,避免target类型的验证。
    */
-  var to = Object(target);
+  var to = Object(target)
 
   for (let i = 1, len = arguments.length; i < len; i++) {
-    const nextSource = arguments[i];
+    const nextSource = arguments[i]
     // 如果未定义或为空,则跳过合并
     if (nextSource != null) {
       /**
@@ -131,17 +128,17 @@ Object.myAssign = function (target, sources) {
       for (let nextKey in nextSource) {
         // 判断nextSource是否存在nextKey,若存在则赋值
         if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-          to[nextKey] = nextSource[nextKey];
+          to[nextKey] = nextSource[nextKey]
         }
       }
     }
   }
-  return to;
-};
-const a = { name: '哈哈', user: { age: 10, obj: { name: '小白' } } };
-const b = { name: '呵呵', user: { obj: { name: '小黑' } } };
-const mergeObj = Object.myAssign(a, b);
-console.log(mergeObj); // { name: '呵呵', user: { obj: { name: '小黑' } } }
+  return to
+}
+const a = { name: '哈哈', user: { age: 10, obj: { name: '小白' } } }
+const b = { name: '呵呵', user: { obj: { name: '小黑' } } }
+const mergeObj = Object.myAssign(a, b)
+console.log(mergeObj) // { name: '呵呵', user: { obj: { name: '小黑' } } }
 ```
 
 ## 4.deepAssign()
@@ -154,14 +151,14 @@ Object.deepmerge = function (target, source) {
     target[key] =
       target[key] && typeof target[key].toString() === '[object Object]'
         ? Object.deepmerge(target[key], source[key])
-        : (target[key] = source[key]);
+        : (target[key] = source[key])
   }
-  return target;
-};
-const a = { name: '哈哈', user: { age: 10, obj: { name: '小白' } } };
-const b = { name: '呵呵', user: { obj: { name: '小黑' } } };
-const mergeObj = Object.deepmerge(a, b);
-console.log(mergeObj);
+  return target
+}
+const a = { name: '哈哈', user: { age: 10, obj: { name: '小白' } } }
+const b = { name: '呵呵', user: { obj: { name: '小黑' } } }
+const mergeObj = Object.deepmerge(a, b)
+console.log(mergeObj)
 ```
 
 ## 5.判断纯对象
@@ -172,19 +169,19 @@ console.log(mergeObj);
 function isPlainObject(obj) {
   // 不是对象或是 null,则不是纯对象
   if (typeof obj !== 'object' || obj === null) {
-    return false;
+    return false
   }
 
   // 通过迭代获取对象的原型链,并将最终的原型
-  let proto = obj;
+  let proto = obj
   while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
+    proto = Object.getPrototypeOf(proto)
   }
 
   /*
    * 将最终的原型(Object.prototype)与对象的原型比较,如果它们相等,
    * 那么对象的原型链上没有其他自定义原型,因此它是一个纯对象
    */
-  return Object.getPrototypeOf(obj) === proto;
+  return Object.getPrototypeOf(obj) === proto
 }
 ```

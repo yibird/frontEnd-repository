@@ -11,12 +11,12 @@ JS 采用单线程也意味着无法充分利用 CPU 多核资源,其处理效�
 **所谓异步是指当前代码执行并不影响后续代码执行,中间无阻塞过程。当程序执行到异步代码时,会将该异步代码作为任务添加到任务队列,而非像同步代码直接推入主线程(一般以 main 来表示)的执行栈执行,等主线程执行栈执行为空时,再去任务队列中执行对应的异步任务**。在 JS 中异步处理的发展历史可分为回调函数、Promise、Generator、async/await 语法糖等几个阶段,由于回调函数嵌套过深时会产生回调地狱,所以目前最主流的异步处理方式是 Promise。
 
 ```js
-console.log(1);
+console.log(1)
 // setTimeout()是一个异步API
 setTimeout(() => {
-  console.log(3);
-}, 0);
-console.log(2);
+  console.log(3)
+}, 0)
+console.log(2)
 ```
 
 上面例子打印`1 2 3`,可以通过[loupe](http://latentflip.com/loupe/?code=Y29uc29sZS5sb2coMSk7CnNldFRpbWVvdXQoZnVuY3Rpb24oKXsKICAgIGNvbnNvbGUsbG9nKDMpOwp9LDApOwpjb25zb2xlLmxvZygyKTs%3D!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D)查看执行流程,解析如下:
@@ -68,28 +68,28 @@ Event Loop 执行过程中存在一些特殊的情况,最典型的问题就是�
 
 ```js
 const syncFunc = (startTime) => {
-  const time = new Date().getTime();
+  const time = new Date().getTime()
   while (true) {
     if (new Date().getTime() - time > 5000) {
-      break;
+      break
     }
   }
-  const offset = new Date().getTime() - startTime;
-  console.log(`syncFunc run, time offset: ${offset}`);
-};
+  const offset = new Date().getTime() - startTime
+  console.log(`syncFunc run, time offset: ${offset}`)
+}
 
 const asyncFunc = (startTime) => {
   setTimeout(() => {
-    const offset = new Date().getTime() - startTime;
-    console.log(`asyncFunc run, time offset: ${offset}`);
-  }, 2000);
-};
+    const offset = new Date().getTime() - startTime
+    console.log(`asyncFunc run, time offset: ${offset}`)
+  }, 2000)
+}
 
-const startTime = new Date().getTime();
+const startTime = new Date().getTime()
 
-asyncFunc(startTime);
+asyncFunc(startTime)
 
-syncFunc(startTime);
+syncFunc(startTime)
 
 /*
  * 5s后打印 syncFunc run, time offset: ${offset}
@@ -143,19 +143,19 @@ syncFunc(startTime);
 ```
 
 ```js
-console.log("1");
+console.log('1')
 setTimeout(() => {
-  console.log("2");
-}, 0);
+  console.log('2')
+}, 0)
 Promise.resolve().then(() => {
-  console.log("5");
-});
+  console.log('5')
+})
 new Promise((resolve) => {
-  console.log("3");
-  resolve();
+  console.log('3')
+  resolve()
 }).then(() => {
-  console.log("4");
-});
+  console.log('4')
+})
 // 执行结果为:1 3 5 4 2
 ```
 
@@ -232,25 +232,25 @@ Promise.nextTick()、setTimeout()、setImmedia()的区别:
 
 ```js
 async function async1() {
-  console.log("async1 start");
-  await async2();
-  console.log("async1 end");
+  console.log('async1 start')
+  await async2()
+  console.log('async1 end')
 }
 async function async2() {
-  console.log("async2");
+  console.log('async2')
 }
-console.log("script start");
+console.log('script start')
 setTimeout(function () {
-  console.log("setTimeout");
-}, 0);
-async1();
+  console.log('setTimeout')
+}, 0)
+async1()
 new Promise(function (resolve) {
-  console.log("promise1");
-  resolve();
+  console.log('promise1')
+  resolve()
 }).then(function () {
-  console.log("promise2");
-});
-console.log("script end");
+  console.log('promise2')
+})
+console.log('script end')
 
 /*
  * 执行结果如下:
@@ -275,26 +275,26 @@ console.log("script end");
 - 由于 JS 执行栈中代码已全部执行完毕(执行栈为空),所以将向事件队列中获取队列执行,现在微任务队列中包含`console.log("async1 end")`和`console.log("promise2")`两个任务,宏任务仅包含`console.log("setTimeout");`一个任务,同一次事件循环中微任务的执行优先级高于宏任务,所以先打印"async1 end",然后打印"promise2",最后打印"setTimeout"。
 
 ```js
-console.log("start");
+console.log('start')
 setTimeout(() => {
-  console.log("children2");
+  console.log('children2')
   Promise.resolve().then(() => {
-    console.log("children3");
-  });
-}, 0);
+    console.log('children3')
+  })
+}, 0)
 
 new Promise(function (resolve, reject) {
-  console.log("children4");
+  console.log('children4')
   setTimeout(function () {
-    console.log("children5");
-    resolve("children6");
-  }, 0);
+    console.log('children5')
+    resolve('children6')
+  }, 0)
 }).then((res) => {
-  console.log("children7");
+  console.log('children7')
   setTimeout(() => {
-    console.log(res);
-  }, 0);
-});
+    console.log(res)
+  }, 0)
+})
 
 /*
  * 执行结果如下:
@@ -317,21 +317,21 @@ const p = function () {
   return new Promise((resolve, reject) => {
     const p1 = new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(1);
-      }, 0);
-      resolve(2);
-    });
+        resolve(1)
+      }, 0)
+      resolve(2)
+    })
     p1.then((res) => {
-      console.log(res);
-    });
-    console.log(3);
-    resolve(4);
-  });
-};
+      console.log(res)
+    })
+    console.log(3)
+    resolve(4)
+  })
+}
 p().then((res) => {
-  console.log(res);
-});
-console.log("end");
+  console.log(res)
+})
+console.log('end')
 
 /*
  * 执行结果如下:
@@ -350,20 +350,20 @@ const p = function () {
   return new Promise((resolve, reject) => {
     const p1 = new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(1);
-      }, 0);
-    });
+        resolve(1)
+      }, 0)
+    })
     p1.then((res) => {
-      console.log(res);
-    });
-    console.log(3);
-    resolve(4);
-  });
-};
+      console.log(res)
+    })
+    console.log(3)
+    resolve(4)
+  })
+}
 p().then((res) => {
-  console.log(res);
-});
-console.log("end");
+  console.log(res)
+})
+console.log('end')
 
 /*
  * 执行结果如下:
@@ -383,26 +383,26 @@ requestAnimationFrame（通常缩写为 rAF）是一个浏览器提供的用于�
 - **函数节流**:在高频率事件(resize,scroll 等)中,为了防止在一个刷新间隔内发生多次函数执行,使用 requestAnimationFrame 可保证每个刷新间隔内,函数只被执行一次,这样既能保证页面流畅性,也能更好的节省函数执行的开销。一个刷新间隔内函数执行多次是没有意义的,因为显示器每 16.7ms 刷新一次,多次绘制并不会在屏幕上体现出来。
 
 ```js
-const element = document.getElementById("animate");
-let position = 0;
-let direction = 1;
+const element = document.getElementById('animate')
+let position = 0
+let direction = 1
 
 function animate() {
   // 移动元素的位置
-  position += direction;
-  element.style.left = position + "px";
+  position += direction
+  element.style.left = position + 'px'
 
   // 当元素到达边界时，改变方向
   if (position >= window.innerWidth - element.clientWidth || position <= 0) {
-    direction *= -1;
+    direction *= -1
   }
 
   // 使用 requestAnimationFrame 安排下一帧动画
-  requestAnimationFrame(animate);
+  requestAnimationFrame(animate)
 }
 
 // 启动动画
-animate();
+animate()
 ```
 
 ## 5.总结

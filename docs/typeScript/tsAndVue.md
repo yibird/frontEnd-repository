@@ -9,32 +9,32 @@
 
 ```vue
 <script lang="ts">
-import { defineComponent, PropType, Component } from "vue";
-export default defineComponent({
-  props: {
-    name: {
-      type: String,
-      required: true,
+  import { defineComponent, PropType, Component } from 'vue'
+  export default defineComponent({
+    props: {
+      name: {
+        type: String,
+        required: true,
+      },
+      data: {
+        type: Array as PropType<Array<Record<string, any>>>,
+        default: () => [],
+      },
+      footer: {
+        type: Object as PropType<Component>,
+        default: () => {},
+      },
     },
-    data: {
-      type: Array as PropType<Array<Record<string, any>>>,
-      default: () => [],
+    emits: {
+      add(obj: Record<string, any>) {},
+      del(id: number) {},
+      update(name: string) {},
     },
-    footer: {
-      type: Object as PropType<Component>,
-      default: () => {},
+    setup(props, ctx) {
+      return {}
     },
-  },
-  emits: {
-    add(obj: Record<string, any>) {},
-    del(id: number) {},
-    update(name: string) {},
-  },
-  setup(props, ctx) {
-    return {};
-  },
-  components: {},
-});
+    components: {},
+  })
 </script>
 ```
 
@@ -43,29 +43,29 @@ export default defineComponent({
 
 ```vue
 <script setup lang="ts">
-import { Component } from "vue";
-/**
- * withDefaults()用于defineProps声明时提供Props默认值。
- * defineProps()用于定义组件的Props。
- * defineEmits()用于定义组件的emit事件。
- *
- * 在setup语法中 withDefaults、defineProps、defineEmits都不需要显式导入。
- */
-interface Props {
-  title: string;
-  data?: Array<Record<string, any>>;
-  footer?: Component;
-}
-interface Emits {
-  add: (obj: Record<string, any>) => void;
-  del: (id: number) => void;
-  update: (name: string) => void;
-}
-const props = withDefaults(defineProps<Props>(), {
-  data: () => [],
-  footer: () => {},
-});
-const emits = defineEmits<Emits>();
+  import { Component } from 'vue'
+  /**
+   * withDefaults()用于defineProps声明时提供Props默认值。
+   * defineProps()用于定义组件的Props。
+   * defineEmits()用于定义组件的emit事件。
+   *
+   * 在setup语法中 withDefaults、defineProps、defineEmits都不需要显式导入。
+   */
+  interface Props {
+    title: string
+    data?: Array<Record<string, any>>
+    footer?: Component
+  }
+  interface Emits {
+    add: (obj: Record<string, any>) => void
+    del: (id: number) => void
+    update: (name: string) => void
+  }
+  const props = withDefaults(defineProps<Props>(), {
+    data: () => [],
+    footer: () => {},
+  })
+  const emits = defineEmits<Emits>()
 </script>
 ```
 

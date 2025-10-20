@@ -77,17 +77,17 @@ CSS 样式权重值:
 // 动态为根元素设置字体大小
 function init() {
   // 获取屏幕宽度
-  var width = document.documentElement.clientWidth;
+  var width = document.documentElement.clientWidth
   // 设置根元素字体大小。此时为宽的10等分
-  document.documentElement.style.fontSize = width / 10 + 'px';
+  document.documentElement.style.fontSize = width / 10 + 'px'
 }
 
 // 首次加载应用,设置一次
-init();
+init()
 // 监听手机旋转的事件的时机,重新设置
-window.addEventListener('orientationchange', init);
+window.addEventListener('orientationchange', init)
 // 监听手机窗口变化,重新设置
-window.addEventListener('resize', init);
+window.addEventListener('resize', init)
 ```
 
 为什么推荐 rem 布局而不是 vw/vh 单位?
@@ -329,15 +329,15 @@ CSS（Cascading Style Sheets）支持多种单位,以下是一些常用的 CSS �
 
 ```js
 // 创建文档片段
-var fragment = document.createDocumentFragment();
+var fragment = document.createDocumentFragment()
 // 离线修改 DOM
 for (var i = 0; i < 10; i++) {
-  var div = document.createElement('div');
-  div.textContent = 'Item ' + i;
-  fragment.appendChild(div);
+  var div = document.createElement('div')
+  div.textContent = 'Item ' + i
+  fragment.appendChild(div)
 }
 // 一次性插入文档中
-document.body.appendChild(fragment);
+document.body.appendChild(fragment)
 ```
 
 - 使用 requestAnimationFrame。对于需要执行动画或者频繁更新的操作,推荐使用 requestAnimationFrame 来优化性能。requestAnimationFrame 会在浏览器下一次重绘之前执行回调函数,从而将多个重排重绘操作合并为一次执行。

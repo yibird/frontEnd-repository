@@ -143,20 +143,18 @@ defineAsyncComponent()用于创建一个只有在需要时才会加载的异步�
 
 ```js
 /** defineAsyncComponent接收一个 Promise */
-import { defineAsyncComponent } from "vue";
-const AsyncComp = defineAsyncComponent(() =>
-  import("./components/AsyncComponent.vue")
-);
-app.component("async-component", AsyncComp);
+import { defineAsyncComponent } from 'vue'
+const AsyncComp = defineAsyncComponent(() => import('./components/AsyncComponent.vue'))
+app.component('async-component', AsyncComp)
 ```
 
 ```js
 /** defineAsyncComponent()接收一个配置对象 */
-import { defineAsyncComponent } from "vue";
+import { defineAsyncComponent } from 'vue'
 
 const AsyncComp = defineAsyncComponent({
   // 工厂函数
-  loader: () => import("./Foo.vue"),
+  loader: () => import('./Foo.vue'),
   // 加载异步组件时要使用的组件
   loadingComponent: LoadingComponent,
   // 加载失败时要使用的组件
@@ -178,14 +176,14 @@ const AsyncComp = defineAsyncComponent({
   onError(error, retry, fail, attempts) {
     if (error.message.match(/fetch/) && attempts <= 3) {
       // 请求发生错误时重试，最多可尝试 3 次
-      retry();
+      retry()
     } else {
       // 注意，retry/fail 就像 promise 的 resolve/reject 一样：
       // 必须调用其中一个才能继续错误处理。
-      fail();
+      fail()
     }
   },
-});
+})
 ```
 
 ### 组件生命周期

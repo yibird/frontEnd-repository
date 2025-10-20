@@ -37,12 +37,12 @@ export default defineConfig({
       output: {
         // 分包配置
         manualChunks() {
-          chunk: ['lodash', 'vue'];
+          chunk: ['lodash', 'vue']
         },
       },
     },
   },
-});
+})
 ```
 
 - 函数形式:除了对象方式外,manualChunks 也支持函数形式来定义手动分包规则。这种方式可以根据特定的条件动态地将模块分组到不同的代码包(chunks)中,以优化打包后的输出。例如对 node_modules 下的模块进行分包,打包后的 chunk 名称为 vendor(通常指的是第三方库或依赖)。
@@ -56,13 +56,13 @@ export default defineConfig({
         // 分包配置
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor';
+            return 'vendor'
           }
         },
       },
     },
   },
-});
+})
 ```
 
 ## 4.Treeshaking(摇树机制)

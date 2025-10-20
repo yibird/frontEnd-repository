@@ -7,18 +7,18 @@
 
 ```js
 // 基本类型赋值
-let a = 1;
-let b = a;
-a = 5;
-console.log(a, b); // 5,1
+let a = 1
+let b = a
+a = 5
+console.log(a, b) // 5,1
 
 // 引用类型赋址,obj发生变化copyObj也会发生变化,哪怕修改的是基本类型
 let obj = {
-  name: "zxp",
-};
-let copyObj = obj;
-obj.name = "ha";
-console.log(obj.name, copyObj.name); // "ha" "ha"
+  name: 'zxp',
+}
+let copyObj = obj
+obj.name = 'ha'
+console.log(obj.name, copyObj.name) // "ha" "ha"
 ```
 
 ## 2.浅拷贝的概念及使用场景
@@ -31,19 +31,19 @@ Object.assign(target,...source) 方法用于将所有可枚举属性的值从一
 
 ```js
 let obj = {
-  name: "zxp",
+  name: 'zxp',
   info: {
-    sex: "男",
+    sex: '男',
     age: 10,
   },
-};
+}
 
-let copyObj = Object.assign({}, obj);
-obj.name = "hhh";
-obj.info.sex = "女";
-console.log(obj); // {name:"hhh",info:{sex:'女',age:10}}
+let copyObj = Object.assign({}, obj)
+obj.name = 'hhh'
+obj.info.sex = '女'
+console.log(obj) // {name:"hhh",info:{sex:'女',age:10}}
 
-console.log(copyObj); // {name:"hhh",info:{sex:'女',age:10}}
+console.log(copyObj) // {name:"hhh",info:{sex:'女',age:10}}
 ```
 
 ### 2.2 ES6 扩展运算符
@@ -52,17 +52,17 @@ ES6 提供的扩展运算符也可以实现对象的浅拷贝,其实现方式跟
 
 ```js
 let obj = {
-  name: "zxp",
+  name: 'zxp',
   info: {
-    sex: "男",
+    sex: '男',
     age: 10,
   },
-};
+}
 
-let copyObj = { ...obj };
-obj.name = "hhh";
-obj.info.sex = "女";
-console.log(obj); // {name:"hhh",info:{sex:'女',age:10}}
+let copyObj = { ...obj }
+obj.name = 'hhh'
+obj.info.sex = '女'
+console.log(obj) // {name:"hhh",info:{sex:'女',age:10}}
 ```
 
 ### 2.3 Array.prototype.slice()和 Array.prototype.concat()浅拷贝数组
@@ -71,10 +71,10 @@ slice() 方法返回一个新的数组对象，这一对象是一个由 begin �
 concat()方法用于合并两个或多个数组。此方法不更改现有数组,而是返回一个新数组。
 
 ```js
-let arr = [1, 2, [3, 4]];
-let copyArr = arr.slice(1);
-arr[2][0] = 0;
-console.log(arr, copyArr); // [1,2,[0,4]] [2,[0,4]]
+let arr = [1, 2, [3, 4]]
+let copyArr = arr.slice(1)
+arr[2][0] = 0
+console.log(arr, copyArr) // [1,2,[0,4]] [2,[0,4]]
 ```
 
 ## 3.深拷贝的概念及使用场景
@@ -89,34 +89,34 @@ JSON.parse(text,[reviver])用于解析 JSON 字符串,构造由字符串描述�
 
 ```js
 // 例子1不传入reviver函数
-const json = '{"result":true, "count":42}';
-const obj = JSON.parse(json);
-console.log(obj); // Object { result: true, count: 42 }
+const json = '{"result":true, "count":42}'
+const obj = JSON.parse(json)
+console.log(obj) // Object { result: true, count: 42 }
 
 // 例子2传入reviver函数
-const json = '{"result":true, "count":42,"age":1000}';
+const json = '{"result":true, "count":42,"age":1000}'
 /*
  * JSON.parse()的第二个参数是一个函数,该函数接收key和value两个参数,key表示转换json文本的
  * key(当key为空字符串时* 表示没有真正的属性),key表示转换json文本的value,可以通过该函数对转换结果做一些处理
  */
 const obj = JSON.parse(json, (key, value) => {
   if (value > 100) {
-    return 100;
+    return 100
   }
-  return value;
-});
-console.log(obj); // Object { result: true, count: 100 }
+  return value
+})
+console.log(obj) // Object { result: true, count: 100 }
 
 //JSON.parse()例子
-JSON.parse("{}"); // {}
-JSON.parse("true"); // true
-JSON.parse('"foo"'); // "foo"
-JSON.parse('[1, 5, "false"]'); // [1, 5, "false"]
-JSON.parse("null"); // null
+JSON.parse('{}') // {}
+JSON.parse('true') // true
+JSON.parse('"foo"') // "foo"
+JSON.parse('[1, 5, "false"]') // [1, 5, "false"]
+JSON.parse('null') // null
 
 // both will throw a SyntaxError,JSON.parse不允许以逗号作为结尾
-JSON.parse("[1, 2, 3, 4, ]");
-JSON.parse('{"foo" : 1, }');
+JSON.parse('[1, 2, 3, 4, ]')
+JSON.parse('{"foo" : 1, }')
 ```
 
 JSON.stringify(value[, replacer [, space]])方法将一个 JavaScript 对象或值转换为 JSON 字符串，如果指定了一个 replacer 函数，则可以选择性地替换值，或者指定的 replacer 是数组，则可选择性地仅包含数组指定的属性。value 表示将要序列化成 一个 JSON 字符串的值。replacer(可选)如果该参数是一个函数,则在序列化过程中,被序列化的值的每个属性都会经过该函数的转换和处理；如果该参数是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；如果该参数为 null 或者未提供，则对象所有的属性都会被序列化。space(可选)用于指定缩进用的空白字符串，用于美化输出（pretty-print）；如果参数是个数字，它代表有多少的空格；上限为 10。该值若小于 1，则意味着没有空格；如果该参数为字符串（当字符串长度超过 10 个字母，取其前 10 个字母），该字符串将被作为空格；如果该参数没有提供（或者为 null），将没有空格。JSON.stringify()返回序列化后的 JSON 字符串,当在循环引用时会抛出异常 TypeError ("cyclic object value")(循环对象值);当尝试去转换 BigInt 类型的值会抛出 TypeError ("BigInt value can't be serialized in JSON")（BigInt 值不能 JSON 序列化)。
@@ -133,45 +133,45 @@ JSON.stringify(value[, replacer [, space]])方法将一个 JavaScript 对象或�
 - 其他类型的对象,包括 Map/Set/WeakMap/WeakSet,仅会序列化可枚举的属性。
 
 ```js
-JSON.stringify({}); // '{}'
-JSON.stringify(true); // 'true'
-JSON.stringify("foo"); // '"foo"'
-JSON.stringify([1, "false", false]); // '[1,"false",false]'
-JSON.stringify({ x: 5 }); // '{"x":5}'
+JSON.stringify({}) // '{}'
+JSON.stringify(true) // 'true'
+JSON.stringify('foo') // '"foo"'
+JSON.stringify([1, 'false', false]) // '[1,"false",false]'
+JSON.stringify({ x: 5 }) // '{"x":5}'
 
-JSON.stringify({ x: 5, y: 6 });
+JSON.stringify({ x: 5, y: 6 })
 // "{"x":5,"y":6}"
 
-JSON.stringify([new Number(1), new String("false"), new Boolean(false)]);
+JSON.stringify([new Number(1), new String('false'), new Boolean(false)])
 // '[1,"false",false]'
 
-JSON.stringify({ x: undefined, y: Object, z: Symbol("") });
+JSON.stringify({ x: undefined, y: Object, z: Symbol('') })
 // '{}'
 
-JSON.stringify([undefined, Object, Symbol("")]);
+JSON.stringify([undefined, Object, Symbol('')])
 // '[null,null,null]'
 
-JSON.stringify({ [Symbol("foo")]: "foo" });
+JSON.stringify({ [Symbol('foo')]: 'foo' })
 // '{}'
 
-JSON.stringify({ [Symbol.for("foo")]: "foo" }, [Symbol.for("foo")]);
+JSON.stringify({ [Symbol.for('foo')]: 'foo' }, [Symbol.for('foo')])
 // '{}'
 
-JSON.stringify({ [Symbol.for("foo")]: "foo" }, function (k, v) {
-  if (typeof k === "symbol") {
-    return "a symbol";
+JSON.stringify({ [Symbol.for('foo')]: 'foo' }, function (k, v) {
+  if (typeof k === 'symbol') {
+    return 'a symbol'
   }
-});
+})
 
 // undefined
 
 // 不可枚举的属性默认会被忽略：
 JSON.stringify(
   Object.create(null, {
-    x: { value: "x", enumerable: false },
-    y: { value: "y", enumerable: true },
-  })
-);
+    x: { value: 'x', enumerable: false },
+    y: { value: 'y', enumerable: true },
+  }),
+)
 
 // "{"y":"y"}"
 
@@ -189,17 +189,17 @@ JSON.stringify(
 注意: 不能用 replacer 方法，从数组中移除值（values），如若返回 undefined 或者一个函数，将会被 null 取代。
 */
 const foo = {
-  foundation: "Mozilla",
-  model: "box",
+  foundation: 'Mozilla',
+  model: 'box',
   week: 45,
-  transport: "car",
+  transport: 'car',
   month: 7,
-};
+}
 const obj = JSON.stringify(foo, (key, value) => {
-  return typeof value !== "string" ? value : undefined;
-});
-console.log(obj); // {"week":45,"month":7}
-JSON.stringify(foo, ["week", "month"]); // '{"week":45,"month":7}',只保留"week"和"month"属性值。
+  return typeof value !== 'string' ? value : undefined
+})
+console.log(obj) // {"week":45,"month":7}
+JSON.stringify(foo, ['week', 'month']) // '{"week":45,"month":7}',只保留"week"和"month"属性值。
 ```
 
 ### 3.2 JSON.parse(JSON.stringify())实现深拷贝
@@ -210,53 +210,53 @@ JSON.parse(JSON.stringify())的缺点:
 
 ```js
 let obj = {
-  name: "zxp",
+  name: 'zxp',
   a: undefined,
-  b: Symbol("h"),
+  b: Symbol('h'),
   c: function () {},
-};
-let copyObj = JSON.parse(JSON.stringify(obj));
+}
+let copyObj = JSON.parse(JSON.stringify(obj))
 // 值为undefined或为ES6提供的Symbol类型和函数类型无法深拷贝
-console.log(obj, copyObj); // {name: "zxp", a: undefined, b: Symbol(h)}  {name: "zxp"}
+console.log(obj, copyObj) // {name: "zxp", a: undefined, b: Symbol(h)}  {name: "zxp"}
 ```
 
 - 不能解决循环引用。
 
 ```js
 let obj = {
-  name: "zxp",
+  name: 'zxp',
   b: {
     c: 2,
     d: 3,
   },
-};
-obj.name = obj.b;
-obj.b.c = obj.name;
-let copyObj = JSON.parse(JSON.stringify(obj));
-console.log(copyObj); // TypeError: Converting circular structure to JSON (类型错误:将循环结构转换为JSON)
+}
+obj.name = obj.b
+obj.b.c = obj.name
+let copyObj = JSON.parse(JSON.stringify(obj))
+console.log(copyObj) // TypeError: Converting circular structure to JSON (类型错误:将循环结构转换为JSON)
 ```
 
 - 不能正确处理 new Date(),不能处理正则表达式。
 
 ```js
 // JSON.parse(JSON.stringify(new Date())) 转换不正确
-console.log(new Date()); // Wed Jan 06 2021 16:56:07 GMT+0800 (CST)
-console.log(JSON.stringify(new Date())); // "2021-01-06T08:56:42.776Z"
-console.log(JSON.parse(JSON.stringify(new Date()))); // 2021-01-06T08:56:56.030Z
+console.log(new Date()) // Wed Jan 06 2021 16:56:07 GMT+0800 (CST)
+console.log(JSON.stringify(new Date())) // "2021-01-06T08:56:42.776Z"
+console.log(JSON.parse(JSON.stringify(new Date()))) // 2021-01-06T08:56:56.030Z
 
 // JSON.parse(JSON.stringify(new Date()))转换不正确的解决办法是将new Date()字符串处转为时间戳处理
-let date = new Date().valueOf();
-console.log(date); //1609923618547
-console.log(JSON.stringify(date)); // "1609923653269"
-console.log(JSON.parse(JSON.stringify(date))); // 1609923653269
+let date = new Date().valueOf()
+console.log(date) //1609923618547
+console.log(JSON.stringify(date)) // "1609923653269"
+console.log(JSON.parse(JSON.stringify(date))) // 1609923653269
 
 // JSON.parse(JSON.stringify())不能处理正则表达式
 let obj = {
-  name: "muyiy",
+  name: 'muyiy',
   a: /'123'/,
-};
-console.log(obj); // {name: "muyiy", a: /'123'/}
-console.log(JSON.parse(JSON.stringify(obj))); // {name: "muyiy", a: Object}
+}
+console.log(obj) // {name: "muyiy", a: /'123'/}
+console.log(JSON.parse(JSON.stringify(obj))) // {name: "muyiy", a: Object}
 ```
 
 除了 JSON.parse(JSON.stringify())这种方式实现深拷贝外,还可以借助第三方框架,例如 jQuery.extend() 和 lodash.cloneDeep()。
@@ -281,7 +281,7 @@ structuredClone()是一个全局函数,它使用结构化克隆算法可以对�
  * ReadableStream、WritableStream、TransformStream、AudioData、ImageBitmap、
  * VideoFrame、OffscreenCanvas、RTCDataChannel
  */
-structuredClone(value, { transfer });
+structuredClone(value, { transfer })
 ```
 
 :::
@@ -289,27 +289,27 @@ structuredClone(value, { transfer });
 
 ```js
 // 示例1
-const obj = { name: "dog" };
-const newObj = structuredClone(obj);
-obj.name = "cat";
-console.log(obj); // { name: 'cat' }
-console.log(newObj); // { name:'dog' }
+const obj = { name: 'dog' }
+const newObj = structuredClone(obj)
+obj.name = 'cat'
+console.log(obj) // { name: 'cat' }
+console.log(newObj) // { name:'dog' }
 
 // 示例2
-var uInt8Array = new Uint8Array(1024 * 1024 * 16); // 16MB
+var uInt8Array = new Uint8Array(1024 * 1024 * 16) // 16MB
 for (var i = 0; i < uInt8Array.length; ++i) {
-  uInt8Array[i] = i;
+  uInt8Array[i] = i
 }
 const transferred = structuredClone(uInt8Array, {
   transfer: [uInt8Array.buffer],
-});
-console.log(uInt8Array.byteLength); // 0
+})
+console.log(uInt8Array.byteLength) // 0
 
 // 示例3 structuredClone()支持循环引用
-const original = { name: "MDN" };
-original.itself = original;
-const clone = structuredClone(original);
-console.log(clone !== original); // true
+const original = { name: 'MDN' }
+original.itself = original
+const clone = structuredClone(original)
+console.log(clone !== original) // true
 ```
 
 :::
@@ -333,32 +333,32 @@ structuredClone()缺点如下:
 ```js
 function deepCopy(obj) {
   // 定义一个空对象接收拷贝后的值
-  let result;
+  let result
   // 判断obj是否是引用类型,typeof判断Object、Array结果都是"object"
-  if (typeof obj === "object") {
+  if (typeof obj === 'object') {
     // 根据obj的构造函数判断obj是否是一个数组,是数组则赋一个空数组,否则赋值一个空对象
-    result = obj.constructor === Array ? [] : {};
+    result = obj.constructor === Array ? [] : {}
     // 遍历obj,for in通常用于遍历对象
     for (let k in obj) {
       // 判断obj[k]是否是引用类型,如果是则递归拷贝(因为obj可能会出现对象嵌套对象的情况),否则返回obj[k]
-      result[k] = typeof obj[k] === "object" ? deepCopy(obj[k]) : obj[k];
+      result[k] = typeof obj[k] === 'object' ? deepCopy(obj[k]) : obj[k]
     }
   } else {
     // 如果obj是基本类型就直接返回
-    result = obj;
+    result = obj
   }
-  return result;
+  return result
 }
 
-var user = { name: "zxp", age: 18 };
-var obj = { count: 5, user };
-var newObj = deepCopy(obj);
-console.log(newObj); // {"count":5,"user":{"name":"zxp","age":18}}
+var user = { name: 'zxp', age: 18 }
+var obj = { count: 5, user }
+var newObj = deepCopy(obj)
+console.log(newObj) // {"count":5,"user":{"name":"zxp","age":18}}
 
 // 缺点:无法解决循环引用问题,递归导致超出最大调用堆栈大小
-var obj1 = { count: 5, user };
-obj1.obj1 = obj1;
-console.log(deepCopy(obj1)); // Uncaught RangeError: Maximum call stack size exceeded(未捕获范围错误:超出了最大调用堆栈大小)
+var obj1 = { count: 5, user }
+obj1.obj1 = obj1
+console.log(deepCopy(obj1)) // Uncaught RangeError: Maximum call stack size exceeded(未捕获范围错误:超出了最大调用堆栈大小)
 ```
 
 ### 4.2 进阶版(解决循环引用)
@@ -367,26 +367,26 @@ console.log(deepCopy(obj1)); // Uncaught RangeError: Maximum call stack size exc
 
 ```js
 function clone(target, map = new Map()) {
-  if (typeof target !== "object") return target;
+  if (typeof target !== 'object') return target
   // 定义新对象
-  const cloneTarget = Array.isArray(target) ? [] : {};
+  const cloneTarget = Array.isArray(target) ? [] : {}
   /**
    * 判断map容器中是否存在当前拷贝的对象,如果存在则说明出现了循环引用情况,此时直接返回拷贝对象,
    * 如果map容器不存在拷贝对象则存储拷贝对象
    */
-  if (map.get(target)) return target;
-  map.set(target, map);
+  if (map.get(target)) return target
+  map.set(target, map)
   for (const key in target) {
     // 如果属性是普通类型就直接赋值给新对象,否则就递归拷贝
-    cloneTarget[key] = clone(target[key], map);
+    cloneTarget[key] = clone(target[key], map)
   }
-  return cloneTarget;
+  return cloneTarget
 }
 var obj = {
-  name: "zxp",
-};
-obj.obj = obj;
-console.log(clone(obj)); // { name: 'zxp', obj: { name: 'zxp', obj: [Circular] } }
+  name: 'zxp',
+}
+obj.obj = obj
+console.log(clone(obj)) // { name: 'zxp', obj: { name: 'zxp', obj: [Circular] } }
 ```
 
 上面的例子就不会出现循环引用问题了,obj 的类型为[Circular]类型,即循环引用的意思。但上述深拷贝有两个问题,第一当拷贝的对象非常庞大时,使用 Map 会对内存造成巨大的额外开销,且需要手动清除 Map 的属性才能释放内存。第二 for in 遍历对象的效率不高,经测试循环方式的效率从高到低排名为: while > for i > for in。所以采用 while 循环代替 for in。
@@ -400,36 +400,36 @@ WeakMap 是 ES6 提供的类似 Map 集合的数据结构,也是用于生成键�
 
 ```js
 function forEach(array, iterator) {
-  let index = -1;
-  const len = array.length;
+  let index = -1
+  const len = array.length
   while (++index < len) {
-    iterator(array[index], index);
+    iterator(array[index], index)
   }
-  return array;
+  return array
 }
 
 function clone(target, map = new WeakMap()) {
-  if (typeof target !== "object") return target;
+  if (typeof target !== 'object') return target
   //定义新对象
-  const cloneTarget = Array.isArray(target) ? [] : {};
+  const cloneTarget = Array.isArray(target) ? [] : {}
   /**
    * 判断map容器中是否存在当前拷贝的对象,如果存在则说明出现了循环引用情况,此时直接返回拷贝对象,
    * 如果map容器不存在拷贝对象则存储拷贝对象
    */
-  if (map.get(target)) return target;
-  map.set(target, map);
-  const keys = Object.keys(target);
+  if (map.get(target)) return target
+  map.set(target, map)
+  const keys = Object.keys(target)
   forEach(keys || target, (value, index) => {
     //如果属性是普通类型就直接赋值给新对象,否则就递归拷贝
-    cloneTarget[value] = clone(target[value], map);
-  });
-  return cloneTarget;
+    cloneTarget[value] = clone(target[value], map)
+  })
+  return cloneTarget
 }
 var obj = {
-  name: "zxp",
-};
-obj.obj = obj;
-console.log(clone(obj)); //{ name: 'zxp', obj: { name: 'zxp', obj: [Circular] } }
+  name: 'zxp',
+}
+obj.obj = obj
+console.log(clone(obj)) //{ name: 'zxp', obj: { name: 'zxp', obj: [Circular] } }
 ```
 
 ### 4.4 完善版
@@ -443,79 +443,78 @@ console.log(clone(obj)); //{ name: 'zxp', obj: { name: 'zxp', obj: [Circular] } 
 ```js
 const typeEnum = {
   /** 可继续遍历的数据类型 */
-  mapType: "[object Map]",
-  setType: "[object Set]",
-  arrayType: "[object Array]",
-  objectType: "[object Object]",
-  argsType: "[object Arguments]",
+  mapType: '[object Map]',
+  setType: '[object Set]',
+  arrayType: '[object Array]',
+  objectType: '[object Object]',
+  argsType: '[object Arguments]',
 
   /** 不可继续遍历的数据类型 */
-  boolType: "[object Boolean]",
-  dateType: "[object Date]",
-  errorType: "[object Error]",
-  numberType: "[object Number]",
-  stringType: "[object String]",
-  regexpType: "[object RegExp]",
-  symbolType: "[object Symbol]",
-  funcType: "[object Function]",
-};
+  boolType: '[object Boolean]',
+  dateType: '[object Date]',
+  errorType: '[object Error]',
+  numberType: '[object Number]',
+  stringType: '[object String]',
+  regexpType: '[object RegExp]',
+  symbolType: '[object Symbol]',
+  funcType: '[object Function]',
+}
 // 获取类型
-const getType = (target) => Object.prototype.toString.call(target);
+const getType = (target) => Object.prototype.toString.call(target)
 // 获取target类型。高阶函数使函数更加简洁
-const isType = (target) => (type) =>
-  Object.prototype.toString.call(target) === `[object ${type}]`;
+const isType = (target) => (type) => Object.prototype.toString.call(target) === `[object ${type}]`
 // 判断target是否是引用类型
 const isObject = (target) => {
-  const type = typeof target;
-  return type !== null && (type !== "function" || type !== "object");
-};
+  const type = typeof target
+  return type !== null && (type !== 'function' || type !== 'object')
+}
 // 初始化对象
-const init = (target) => new target.constructor();
+const init = (target) => new target.constructor()
 
 function forEach(array, iterator) {
-  let index = -1;
-  const len = array.length;
+  let index = -1
+  const len = array.length
   while (++index < len) {
-    iterator(array[index], index);
+    iterator(array[index], index)
   }
-  return array;
+  return array
 }
 
 // 克隆Symbol类型
 function cloneSymbol(target) {
-  return Object(Symbol.prototype.valueOf.call(target));
+  return Object(Symbol.prototype.valueOf.call(target))
 }
 // 克隆正则
 function cloneReg(target) {
-  const reFlags = /\w*$/;
-  const result = new target.constructor(target.source, reFlags.exec(target));
-  result.lastIndex = target.lastIndex;
-  return result;
+  const reFlags = /\w*$/
+  const result = new target.constructor(target.source, reFlags.exec(target))
+  result.lastIndex = target.lastIndex
+  return result
 }
 // 克隆函数
 function cloneFunc(target) {
   // 方法主体正则
-  const bodyReg = /(?<={)(.|\n)+(?=})/m;
+  const bodyReg = /(?<={)(.|\n)+(?=})/m
   // 方法参数正则
-  const paramReg = /(?<=\().+(?=\)\s+{)/;
+  const paramReg = /(?<=\().+(?=\)\s+{)/
   // 函数转字符串
-  const funcString = target.toString();
-  const param = paramReg.exec(funcString);
-  const body = bodyReg.exec(funcString);
+  const funcString = target.toString()
+  const param = paramReg.exec(funcString)
+  const body = bodyReg.exec(funcString)
   if (body) {
     // 判断函数中的参数是否为空
     if (param) {
       // 获取函数的参数
-      const paramArr = param[0].split(",");
-      return new Function(...paramArr, body[0]);
+      const paramArr = param[0].split(',')
+      return new Function(...paramArr, body[0])
     } else {
-      return new Function(body[0]);
+      return new Function(body[0])
     }
   } else {
-    return null;
+    return null
   }
   // 返回执行字符串函数的结果
-  return eval(funcString);
+  return eval(funcString)
 }
 
 // 克隆不可遍历对象
@@ -524,7 +523,7 @@ function cloneOtherType(target, type) {
    * constructor属性返回对创建此对象的数组函数的引用,例如[Function: Symbol]、
    * [Function: Object]
    */
-  const Ctor = target.constructor;
+  const Ctor = target.constructor
   switch (type) {
     case typeEnum.boolType:
     case typeEnum.numberType:
@@ -532,24 +531,24 @@ function cloneOtherType(target, type) {
     case typeEnum.errorType:
     case typeEnum.dateType:
       // 通过new返回一个新对象
-      return new Ctor(target);
+      return new Ctor(target)
     case type.symbolType:
-      return cloneSymbol(target);
+      return cloneSymbol(target)
     case typeEnum.regexpType:
-      return cloneReg(target);
+      return cloneReg(target)
     case typeEnum.funcType:
-      return cloneFunc(target);
+      return cloneFunc(target)
     default:
-      return null;
+      return null
   }
 }
 
 function clone(target, map = new WeakMap()) {
   // 判断target是否是原始类型
-  if (!isObject(target)) return target;
+  if (!isObject(target)) return target
 
-  const type = getType(target);
-  let cloneTarget;
+  const type = getType(target)
+  let cloneTarget
   /**
    * 判断target的类型是否是可继续遍历类型,
    * 如果是不可继续遍历类型就执行cloneOtherType()
@@ -557,13 +556,13 @@ function clone(target, map = new WeakMap()) {
 
   if (Object.values(typeEnum).slice(0, 5).includes(type)) {
     // 初始化cloneTarget
-    cloneTarget = init(target);
+    cloneTarget = init(target)
   } else {
-    return cloneOtherType(target, type);
+    return cloneOtherType(target, type)
   }
   // 防止循环引用
-  if (map.get(target)) return target;
-  map.set(target, map);
+  if (map.get(target)) return target
+  map.set(target, map)
 
   // 克隆 set
   if (type === typeEnum.setType) {
@@ -572,9 +571,9 @@ function clone(target, map = new WeakMap()) {
      * 循环遍历target将set中的元素递归添加到cloneTarget中
      */
     target.forEach((value) => {
-      cloneTarget.add(clone(value));
-    });
-    return cloneTarget;
+      cloneTarget.add(clone(value))
+    })
+    return cloneTarget
   }
   // 克隆 map
   if (type === typeEnum.mapType) {
@@ -583,39 +582,39 @@ function clone(target, map = new WeakMap()) {
      * 循环遍历target将map中的元素递归添加到cloneTarget中
      */
     target.forEach((value, key) => {
-      cloneTarget.set(key, clone(value));
-    });
-    return cloneTarget;
+      cloneTarget.set(key, clone(value))
+    })
+    return cloneTarget
   }
   // 克隆数组和对象
-  const keys = Object.keys(target);
+  const keys = Object.keys(target)
   forEach(keys || target, (value, key) => {
     // 如果属性是普通类型就直接赋值给新对象,否则就递归拷贝
-    cloneTarget[value] = clone(target[value], map);
-  });
-  return cloneTarget;
+    cloneTarget[value] = clone(target[value], map)
+  })
+  return cloneTarget
 }
 
 /**  测试  **/
 const obj = {
-  name: "zxp",
-  sex: "man",
-  sb: Object(Symbol("asd")),
-  set: new Set().add({ like: "女人" }).add({ love: "woman" }),
-  map: new Map().set("name", "zmap"),
+  name: 'zxp',
+  sex: 'man',
+  sb: Object(Symbol('asd')),
+  set: new Set().add({ like: '女人' }).add({ love: 'woman' }),
+  map: new Map().set('name', 'zmap'),
   arr: [1, 2, 3],
-  ctx: { name: "zzz", sex: "woman" },
+  ctx: { name: 'zzz', sex: 'woman' },
   reg: /^w/,
   date: new Date(),
   func1: function () {
-    return 1;
+    return 1
   },
-};
-const cloneObj = clone(obj);
-console.log(cloneObj === obj); // false
-cloneObj.name = "zzzzz";
-console.log(obj.name, cloneObj.name); // zxp zzzzz
-console.log(cloneObj);
+}
+const cloneObj = clone(obj)
+console.log(cloneObj === obj) // false
+cloneObj.name = 'zzzzz'
+console.log(obj.name, cloneObj.name) // zxp zzzzz
+console.log(cloneObj)
 /**
   {
     name: 'zzzzz',
