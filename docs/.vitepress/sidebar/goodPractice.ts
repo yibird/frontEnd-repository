@@ -8,5 +8,10 @@ export default {
       link: '/goodPractice/monorepo.md',
       items: [],
     },
+    {
+      text: '微前端最佳实践',
+      link: '/goodPractice/microFrontend.md',
+      items: [],
+    },
   ],
 }

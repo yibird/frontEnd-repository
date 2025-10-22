@@ -1,4 +1,4 @@
-在大型前端项目中工程化是比不可少的基石,所谓前端工程化,即用工程化的手段和工具,让项目开发更高效、可维护、可协作、可持续交付。前端工程化通常由代码质量工具(ESLint、Prettier、StyleLint)、测试(单元测试、集成测试、端到端测试)、构建工具(Webpack、Rollup、Parcel)、包管理工具(Yarn、npm、pnpm)、版本控制工具(Git)、CI/CD等多方面组成。
+在大型前端项目中工程化是比不可少的基石,所谓前端工程化,即用工程化的手段和工具,让项目开发更高效、可维护、可协作、可持续交付。前端工程化通常由代码质量工具(JSLint、代码格式化工具、CSSLint)、测试(单元测试、集成测试、端到端测试)、构建工具(Webpack、Rollup、Parcel)、包管理工具(Yarn、npm、pnpm)、版本控制工具(Git)、CI/CD等多方面组成。
 
 ## Monorepo与Multirepo的定义
 
@@ -28,22 +28,79 @@
 
 ### 使用Pnpm workspace 搭建monorepo项目
 
+新建根项目,然后新建packages目录作为pnpm workspace,并且在packages目录下新建子项目A、子项目B等,项目目录结构如下:
+
+```
+root-project/
+├── packages/
+│   ├── sub-project-a/
+│   ├── sub-project-b/
+├── package.json
+├── pnpm-lock.yaml
+```
+
+新建`pnpm-workspace.yaml`文件,内容如下:
+
+```yaml
+packages:
+  - 'packages/*'
+```
+
+packages用于指定pnpm workspace中包含的子项目目录,这里指定为`packages/*`,表示`packages`目录下的所有子目录都是pnpm workspace的一部分。
+
 ### pnpm在monorepo安装依赖
+
+在monorepo项目中,安装依赖与multirepo项目不同,分为根项目安装依赖和子项目安装依赖。
+
+- 根项目安装依赖:根项目安装依赖需要加上`-w`选项,表示在根项目安装依赖,例如`pnpm i -w eslint -D`。
+- 子项目安装依赖:在子项目目录执行`pnpm install`安装依赖,或者在根项目使用`--filter`选项指定要安装依赖的子项目,例如`pnpm install eslint --filter sub-project-a`表示在子项目A的目录中安装依赖,并更新根项目的`pnpm-lock.yaml`文件。
+
+pnpm选项说明:
+
+- `-w`:该选项用于在根项目安装依赖,而不是在子项目安装依赖。
+- `--filter`:该选项用于过滤软件包的特定子集。`pnpm install eslint --filter sub-project-a`表示在子项目A的目录中安装依赖,并更新根项目的`pnpm-lock.yaml`文件。
 
 ## 代码质量工具
 
 代码质量工具包括代码格式化、JSLint、CSSLint等多方面,可以帮助开发人员保持一致的代码风格,避免代码质量问题。常见的代码质量工具如下:
 
-- 代码格式化工具:
-  - Prettier:Prettier 是一个代码格式化工具,可以自动格式化代码,保持一致的代码风格。它支持多种语言,包括JavaScript、TypeScript、CSS、SCSS、Less、JSON、Markdown等。虽然Prettier对语言支持比较完善,但其基于JS实现,在大型项目中存在性能瓶颈。
-  - Biome:Biome是一个基于Rust语言实现的工具链,支持代码格式化、JSLint等功能。Biome 是一个适用于 JavaScript、TypeScript、JSX、JSON、CSS 和 GraphQL 的快速格式化工具，与 Prettier 有高达 97% 的兼容覆盖率，能有效节约持续化集成和开发者的时间。Biome基于Rust语言实现,速度比Prettier快很多,对特殊模板(例如Astro、Svelte 和 Vue模板文件)仅提供部分支持,而且不支持Markdown。适用于开发工具库或JSX场景的项目。
-  - OXC fmt:
-- JSLint工具:
-  - ESLint:ESLint 是一个用于检查和修复 JavaScript 代码质量问题的工具。它可以帮助开发人员发现潜在的错误、代码风格问题和最佳实践违规。ESLint 支持自定义规则和插件,可以根据项目需求进行配置。由于基于JS实现,在处理大型项目时可能存在性能问题。
-  - Biome:Biome是一个基于Rust语言实现的工具链,支持代码格式化、JSLint等功能。
-  - OxcLint:OxcLint是一个基于Rust语言实现的高性能JSLint工具,比 ESLint 快数十倍,而兼容大部分ESLint规则,适用于对性能要求较高的场景。
+### 编辑器配置
+
+EditorConfig 是一个 统一编辑器和 IDE 行为的配置文件规范，主要用于团队协作，保证不同开发者在不同编辑器/操作系统下的代码风格一致。在项目根目录创建 `.editorconfig`:
+
+```ini
+# 标记这是根配置，子目录不会再向上查找
+root = true
+
+# [*]表示对所有文件配置
+[*]
+# 字符编码
+charset = utf-8
+# 缩进方式,可选值 space 或 tab
+indent_style = space
+# 缩进空格数
+indent_size = 2
+# Tab 的宽度(显示效果),仅当indent_style为tab时生效
+tab_width = 4
+# 行尾符,可选值有 lf、cr、crlf
+end_of_line = lf
+# 保存时去掉行尾空格
+trim_trailing_whitespace = true
+# 文件末尾是否自动加空行
+insert_final_newline = true
+
+# 对Markdown文件配置
+[*.md]
+trim_trailing_whitespace = false
+```
 
 ### 代码格式化工具
+
+常见的代码格式化工具如下:
+
+- Prettier:Prettier 是一个代码格式化工具,可以自动格式化代码,保持一致的代码风格。它支持多种语言,包括JavaScript、TypeScript、CSS、SCSS、Less、JSON、Markdown等。虽然Prettier对语言支持比较完善,但其基于JS实现,在大型项目中存在性能瓶颈。
+- Biome:Biome是一个基于Rust语言实现的工具链,支持代码格式化、JSLint等功能。Biome 是一个适用于 JavaScript、TypeScript、JSX、JSON、CSS 和 GraphQL 的快速格式化工具，与 Prettier 有高达 97% 的兼容覆盖率，能有效节约持续化集成和开发者的时间。Biome基于Rust语言实现,速度比Prettier快很多,对特殊模板(例如Astro、Svelte 和 Vue模板文件)仅提供部分支持,而且不支持Markdown。适用于开发工具库或JSX场景的项目。
+- OXC fmt:OXC fmt 是一个基于 Rust 实现的高性能代码格式化工具。
 
 #### Prettier
 
@@ -62,35 +119,324 @@ prettier支持多种方式配置prettier,prettier默认配置文件如下:
 - `prettier.config.cjs`:以JS CommonJS模块格式配置prettier,可以在模块中导出配置对象。
 - `package.json`:在 `package.json` 文件的 `"prettier"` 字段中直接配置prettier选项。
 
-根项目新建`.prettierrc`文件、,配置如下:
+根项目新建`prettier.config.js`文件、,配置如下:
 
-```json
-  printWidth: 100,        // 每行最大长度
-  tabWidth: 2,            // 缩进空格数
-  useTabs: false,         // 使用空格代替 tab
-  semi: false,            // 语句末尾不加分号
-  singleQuote: true,      // 使用单引号
-  trailingComma: 'es5',   // 尾随逗号
-  bracketSpacing: true,   // 对象字面量加空格 { foo: bar }
-  arrowParens: 'avoid',   // 单参数箭头函数不加括号
-  vueIndentScriptAndStyle: true, // 缩进 Vue 文件的 script 和 style 标签内容
-  endOfLine: 'auto',      // 根据系统自动换行符
+```js
+// prettier.config.js
+export default {
+  /**
+   * 是否在语句末尾添加分号
+   * true：加分号（默认）
+   * false：不加分号
+   */
+  semi: false,
+
+  /**
+   * 是否使用单引号而不是双引号
+   * true：使用单引号
+   * false：使用双引号
+   */
+  singleQuote: true,
+
+  /**
+   * 每行最大字符数（超过会自动换行）
+   * 默认值：80
+   */
+  printWidth: 100,
+
+  /**
+   * 缩进空格数
+   * 默认值：2
+   */
+  tabWidth: 2,
+
+  /**
+   * 使用制表符(tab)而不是空格缩进
+   * true：使用 tab
+   * false：使用空格（默认）
+   */
+  useTabs: false,
+
+  /**
+   * 尾随逗号规则（即对象或数组最后一个元素后是否加逗号）
+   * 可选值：
+   * - "none"：不加尾逗号
+   * - "es5"：在 ES5 合法的地方加逗号（对象、数组等）
+   * - "all"：尽可能加逗号（函数参数也会加）
+   */
+  trailingComma: 'es5',
+
+  /**
+   * Vue 文件中 <script> 和 <style> 标签内容是否缩进
+   * 默认：false
+   */
+  vueIndentScriptAndStyle: true,
+
+  /**
+   * 在对象字面量中的括号前后是否添加空格
+   * true：{ foo: bar }
+   * false：{foo: bar}
+   */
+  bracketSpacing: true,
+
+  /**
+   * 箭头函数单个参数时是否省略括号
+   * 可选值：
+   * - "avoid"：能省略就省略，如 x => x
+   * - "always"：总是加括号，如 (x) => x
+   */
+  arrowParens: 'avoid',
+
+  /**
+   * 控制换行符样式
+   * 可选值：
+   * - "lf"：仅换行符（Linux/Mac）
+   * - "crlf"：回车 + 换行（Windows）
+   * - "cr"：仅回车
+   * - "auto"：根据系统自动选择
+   */
+  endOfLine: 'lf',
+}
 ```
 
-#### Biome
+在package.json的scripts中添加如下脚本:
+
+```json
+{
+  "scripts": {
+    "lint:format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,vue,md}\""
+  }
+}
+```
+
+终端执行`pnpm run lint:format`会对`src`目录下所有`js,jsx,ts,tsx,vue,md`文件进行格式化。
 
 ### JSLint工具
 
+常见JSLint工具如下:
+
+- ESLint:ESLint 是一个用于检查和修复 JavaScript 代码质量问题的工具。它可以帮助开发人员发现潜在的错误、代码风格问题和最佳实践违规。ESLint 支持自定义规则和插件,可以根据项目需求进行配置。由于基于JS实现,在处理大型项目时可能存在性能问题。
+- Biome:Biome是一个基于Rust语言实现的工具链,支持代码格式化、JSLint等功能。
+- OxcLint:OxcLint是一个基于Rust语言实现的高性能JSLint工具,比 ESLint 快数十倍,而兼容大部分ESLint规则,适用于对性能要求较高的场景。
+
 #### ESLint
+
+::: code-group
+
+```shell [eslint+ts环境]
+# 安装eslint相关依赖
+pnpm i -D eslint @eslint/js globals eslint-config-prettier eslint-plugin-prettier typescript typescript-eslint eslint-plugin-import eslint-plugin-promise
+
+# 依赖说明:
+# eslint: 核心eslint库,用于检查和修复JavaScript代码质量问题。
+# @eslint/js: ESLint 官方 JavaScript 推荐规则。
+# globals: 用于定义全局变量,避免在ESLint中报告未定义的变量错误。
+# eslint-config-prettier: 用于禁用与Prettier冲突的ESLint规则,未使用prettier可忽略该依赖。
+# eslint-plugin-prettier: 用于将Prettier格式化为ESLint规则,确保代码风格一致。未使用prettier可忽略该依赖。
+# typescript: TypeScript 类型检查器,用于检查 TypeScript 代码。
+# typescript-eslint: TypeScript 相关的 ESLint 插件,提供 TypeScript 特定的规则。
+# eslint-plugin-import: 用于检查和修复导入/导出语句的问题,确保模块的正确导入和导出(可选)。
+# eslint-plugin-promise：用于检查和修复 Promise 相关的问题,确保正确使用 Promise 模式(可选)。
+# eslint-plugin-vue: 用于检查和修复 Vue 组件代码质量问题,确保符合 Vue 最佳实践(可选)。
+```
+
+```shell [vue+eslint环境]
+pnpm i -D eslint @eslint/js globals eslint-config-prettier eslint-plugin-prettier typescript typescript-eslint eslint-plugin-import eslint-plugin-promise eslint-plugin-vue
+
+# 依赖说明:
+# eslint: 核心eslint库,用于检查和修复JavaScript代码质量问题。
+# @eslint/js: ESLint 官方 JavaScript 推荐规则。
+# globals: 用于定义全局变量,避免在ESLint中报告未定义的变量错误。
+# eslint-config-prettier: 用于禁用与Prettier冲突的ESLint规则,未使用prettier可忽略该依赖。
+# eslint-plugin-prettier: 用于将Prettier格式化为ESLint规则,确保代码风格一致。未使用prettier可忽略该依赖。
+# typescript: TypeScript 类型检查器,用于检查 TypeScript 代码。
+# typescript-eslint: TypeScript 相关的 ESLint 插件,提供 TypeScript 特定的规则。
+# eslint-plugin-import: 用于检查和修复导入/导出语句的问题,确保模块的正确导入和导出(可选)。
+# eslint-plugin-promise：用于检查和修复 Promise 相关的问题,确保正确使用 Promise 模式(可选)。
+# eslint-plugin-vue: 用于检查和修复 Vue 组件代码质量问题,确保符合 Vue 最佳实践(可选)。
+```
+
+:::
+
+在根项目新建`eslint.config.js`文件(ESLint 9+ 推荐使用 `eslint.config.js` 取代 `.eslintrc.js`),配置如下:
+
+::: code-group
+
+```js [eslint+ts环境]
+import { defineConfig } from 'eslint/config'
+import eslint from '@eslint/js'
+import tseslint from 'typescript-eslint'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
+import eslintImport from 'eslint-plugin-import'
+import eslintPromise from 'eslint-plugin-promise'
+import globals from 'globals'
+
+const ignores = ['**/dist/**', '**/node_modules/**', '.*', 'scripts/**', '**/*.d.ts']
+
+export default defineConfig([
+  // 通用配置
+  {
+    // 忽略lint的文件
+    ignores,
+    // 继承规则
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      eslintConfigPrettier.recommended,
+      eslintImport.recommended,
+      eslintPromise.recommended,
+    ],
+    // 插件配置
+    plugins: {
+      prettier: eslintPluginPrettier,
+    },
+    languageOptions: {
+      // ecma版本
+      ecmaVersion: 'latest',
+      // 模块化类型
+      sourceType: 'module',
+      // 使用typescript-eslint解析器
+      parase: tseslint.parser,
+      globals: {
+        // 浏览器全局变量,不加上使用全局变量(例如window)会警告
+        ...globals.browser,
+      },
+    },
+    // 自定义lint规则
+    rules: {
+      // 禁止使用var定义变量
+      'no-var': 'error',
+    },
+  },
+])
+```
+
+```js [vue+eslint环境]
+import { defineConfig } from 'eslint/config'
+import eslint from '@eslint/js'
+import tseslint from 'typescript-eslint'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
+import eslintImport from 'eslint-plugin-import'
+import eslintPromise from 'eslint-plugin-promise'
+import eslintVue from 'eslint-plugin-vue'
+import globals from 'globals'
+
+const ignores = ['**/dist/**', '**/node_modules/**', '.*', 'scripts/**', '**/*.d.ts']
+
+export default defineConfig([
+  // 通用配置
+  {
+    // 忽略lint的文件
+    ignores,
+    // 继承规则
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      eslintConfigPrettier.recommended,
+      eslintImport.recommended,
+      eslintPromise.recommended,
+    ],
+    // 插件配置
+    plugins: {
+      prettier: eslintPluginPrettier,
+    },
+    languageOptions: {
+      // ecma版本
+      ecmaVersion: 'latest',
+      // 模块化类型
+      sourceType: 'module',
+      // 使用typescript-eslint解析器
+      parase: tseslint.parser,
+      globals: {
+        // 浏览器全局变量,不加上使用全局变量(例如window)会警告
+        ...globals.browser,
+      },
+    },
+    // 自定义lint规则
+    rules: {
+      // 禁止使用var定义变量
+      'no-var': 'error',
+    },
+  },
+  // 针对vue相关环境配置
+  {
+    ignores,
+    // 仅针对src目录下的js,jsx,ts,tsx,vue文件lint
+    files: ['src/**/*.{js,jsx,ts,tsx,vue}'],
+    extends: [...eslintVue.configs['flat/recommended'], eslintConfigPrettier],
+    languageOptions: {
+      globals: {
+        // 浏览器全局变量,不加上使用全局变量(例如window)会警告
+        ...globals.browser,
+      },
+    },
+    // 自定义lint规则
+    rules: {},
+  },
+])
+```
+
+:::
+
+#### OxcLint
 
 ### CSSLint工具
 
-### Git提交规范
+## 拼写检查
 
-### 公共库打包
+cspell是一个基于Node.js的拼写检查工具,可以检查文本文件中的拼写错误。在monorepo项目中,可以使用cspell检查所有子项目的代码文件。
 
-### 子包依赖
+```bash
+# (1).安装cspell cspell-dictionary是一个用于检查单词和获取建议的拼写词典库
+pnpm add -D cspell cspell-dictionary
+# (2).新建cspell配置文件
+touch cspell.json
+```
 
-### 单元测试
+cspell.json配置如下:
 
-### 发布
+```json
+{
+  "import": ["@cspell/dict-lorem-ipsum/cspell-ext.json"],
+  "caseSensitive": false,
+  "dictionaries": ["custom-dictionary"],
+  "dictionaryDefinitions": [
+    {
+      "name": "custom-dictionary",
+      "path": "./.cspell/custom-dictionary.txt",
+      "oddWords": true
+    }
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/dist/**",
+    "**/public/**",
+    "**/static/**",
+    "eslint.config.js",
+    "prettier.config.js"
+  ]
+}
+```
+
+## Git提交规范
+
+## 公共库打包
+
+## 子包依赖
+
+Monorepo 项目中,子包之间相互依赖很常见,例如子项目A依赖于子项目B,子包之间的依赖关系可以通过 `workspaces` 字段在根项目的 `package.json` 中进行配置。子项目A的package.json中添加如下依赖:
+
+```json
+{
+  "dependencies": {
+    "sub-project-b": "workspace:*"
+  }
+}
+```
+
+## 单元测试
+
+## 发布

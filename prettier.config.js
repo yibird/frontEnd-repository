@@ -71,5 +71,5 @@ export default {
    * - "cr"：仅回车
    * - "auto"：根据系统自动选择
    */
-  endOfLine: 'auto',
+  endOfLine: 'lf',
 }

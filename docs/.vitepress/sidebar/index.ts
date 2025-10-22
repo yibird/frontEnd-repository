@@ -28,7 +28,7 @@ const sidebars: Sidebar = [
   vue,
   react,
   typeScript,
-  microFrontEnd,
+  // microFrontEnd,
   programmingStyle,
   designMode,
   networkProtocol,
