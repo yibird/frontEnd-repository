@@ -4,6 +4,15 @@ export default {
   collapsed: true,
   items: [
     {
+      text: 'React',
+      items: [
+        {
+          text: 'React源码预览',
+          link: '/sourceCode/react/summary.md',
+        },
+      ],
+    },
+    {
       text: 'Redux',
       link: '/sourceCode/redux.md',
       items: [],
