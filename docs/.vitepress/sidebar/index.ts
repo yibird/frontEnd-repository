@@ -9,7 +9,8 @@ import buildTools from './buildTools'
 import vue from './vue'
 import react from './react'
 import typeScript from './typeScript'
-import microFrontEnd from './microFrontEnd'
+// import microFrontEnd from './microFrontEnd'
+import sourceCode from './sourceCode'
 import designMode from './designMode'
 import engineering from './engineering'
 import networkProtocol from './networkProtocol'
@@ -29,6 +30,7 @@ const sidebars: Sidebar = [
   react,
   typeScript,
   // microFrontEnd,
+  sourceCode,
   programmingStyle,
   designMode,
   networkProtocol,

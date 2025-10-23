@@ -223,7 +223,7 @@ React 使用 key 的建议:
 
 ## 什么是 Fiber 架构,它解决了什么问题?
 
-在 React 的旧版本中,当组件状态发生变化时,React 会将整个组件树进行递归遍历,生成新的虚拟 DOM 树,并与旧的虚拟 DOM 树进行比较,找出需要更新的部分,然后将这些部分更新到 UI 中。这种遍历方式虽然简单,但是在组件树变得非常大、复杂的情况下,会产生如下问题:
+在 React16之前,当组件状态发生变化时,React 会将整个组件树进行递归遍历,生成新的虚拟 DOM 树,并与旧的虚拟 DOM 树进行比较,找出需要更新的部分,然后将这些部分更新到 UI 中。这种遍历方式虽然简单,但是在组件树变得非常大、复杂的情况下,会产生如下问题:
 
 - 渲染阻塞:如果某个组件的更新需要花费大量的计算时间,整个更新过程会阻塞 UI 渲染,导致页面卡顿或响应缓慢。
 - 优先级控制困难:递归调度难以在运行时中断或暂停,导致难以实现对任务优先级的灵活控制。比如,高优先级的用户交互事件（如点击、输入）可能被低优先级的渲染任务阻塞。
@@ -236,7 +236,7 @@ React 使用 key 的建议:
 - 时间切片(Time Slicing): Fiber 架构中引入了时间切片的概念,将工作分割成小的时间片段,在每个时间片段中执行一部分任务,然后根据剩余时间决定是否继续执行下一个时间片段。这样可以确保长时间运行的任务不会阻塞整个渲染过程,提高了页面的响应速度和流畅性。
 - 并发模式支持: Fiber 架构为未来的并发模式（如 Concurrent Mode）打下了基础,允许多个更新任务以并发方式执行,从而进一步提升性能和用户体验。
 
-Fiber 架构是 React 16 中引入的新的协调算法和架构设计,通过可中断的、增量的、优先级的任务调度方式,解决了 React 在处理复杂组件结构、大量数据和高频更新时可能遇到的性能问题和用户体验问题。它的核心思想是将任务分割成小的可中断单元,支持优先级调度和时间切片,使得 React 应用能够更好地响应用户操作,提高页面渲染的效率和流畅度。
+Fiber 架构是 React 16 中引入的新的协调算法和架构设计,通过可中断的、增量的、优先级的任务调度方式,解决了 React 在处理复杂组件结构、大量数据和高频更新时可能遇到的性能问题和用户体验问题。它的核心思想是将任务分割成小的可中断单元,支持优先级调度和时间切片,使得 React 应用能够更好地响应用户操作,提高页面渲染的效率和流畅度。简单来说Fiber 是 React 内部的可变数据结构(链表 / 树形结构),用来表示组件/元素在运行时的状态与工作单元。
 
 在 React 16 中,FiberNode 是一个复杂的数据结构,用于描述组件和其相关状态:
 
@@ -299,6 +299,52 @@ class FiberNode {
 ```
 
 ## Fiber 与 React.createElement 的关系?
+
+- React.createElement():JSX 是一种 JavaScript 的语法扩展,React使用JSX描述元素,在构建过程中由构建工具(如 Babel，通过 @babel/plugin-transform-react-jsx 插件，并配置 { "runtime": "automatic")将其编译成普通的 JavaScript 函数调用(在 React 17 之前，客户端组件中的JSX会被编译为 React.createElement,从 React 17 开始，为了实现新的 JSX Transform，JSX 编译不再需要引入 React 库，而是直接引入 react/jsx-runtime 中的 jsx 或 jsxs 函数。这使得编译后的代码更小，并且在未来可以实现更灵活的优化)。简单来说,React.createElement()是一个描述元素的的生成函数,用于创建React Element的函数(React Element 是 React 应用中最小的构建块。它是一个轻量级的、不可变的纯 JavaScript 对象),不包含元素在运行时的状态。React Element 对象结构如下:
+
+```js
+{
+  /**
+   * 这是一个 Symbol 类型的值，Symbol.for('react.element')。它的主要作用是作为一种安全机制，防止 XSS 攻击。因为 Symbol 类型的值不能被 JSON 序列化，
+   * 所以恶意代码无法通过 JSON 注入来伪造 React Element 对象。
+   */
+  $$typeof: Symbol.for('react.element'),
+  /**
+   * 表示元素的类型。它可以是:
+   * - 字符串: 对于原生 DOM 元素，type 是一个字符串，例如 'div'、'span'、'h1' 等。
+   * - 函数或类: 对于 React 组件，type 是组件的函数或类本身，例如 App、MyButton 等。
+   */
+  type: 'h1',
+  /**
+   * 用于列表渲染的唯一标识。一个可选的字符串，用于在列表渲染时帮助 React 识别哪些项发生了变化、被添加或被删除。key 在 Diff 算法中扮演着至关重要的角色，它能显著提高列表更新的性能。
+   */
+  key: null,
+  /**
+   * 一个可选的属性，用于获取对底层 DOM 节点实例或类组件实例的引用。在函数组件中，通常使用 useRef Hook 来实现类似的功能。
+   */
+  ref: null,
+  /**
+   * 一个包含所有属性（包括 children）的普通 JavaScript 对象。children 属性可以是一个字符串、一个 React Element、
+   * 一个数组（包含多个 React Element），甚至是 null 或 undefined。
+   */
+  props: {
+    className: 'greeting',
+    children: 'Hello, world!'
+  },
+  _owner: null, // 内部属性，指向创建该 Element 的 Fiber
+  _store: {}, // 内部属性，用于开发模式下的检查
+  // ... 其他内部属性，如 _source, _self 等，主要用于开发模式和调试
+}
+```
+
+- Fiber: Fiber是 React 内部的可变数据结构(链表/树形结构),用来表示组件/元素在运行时的状态与工作单元。
+
+React.createElement()是创建React Element对象的函数,React Element 是 React 协调阶段的输入,它描述了 UI 在某个特定时间点的理想状态。React 会根据这些 React Element 对象来构建或更新其内部的 Fiber 树，并最终将其渲染到真实 DOM 上。虽然 React Element 是 UI 的描述,但 React 内部真正进行协调和渲染工作的是 Fiber 节点。当 React 接收到 React Element 时（例如在 beginWork 阶段），它会将其转换为对应的 Fiber 节点。在react/packages/react-reconciler/src/ReactFiber.js中的createFiberFromElement函数, 实现了将 React Element 转换为 Fiber 节点的逻辑。 通过 createFiberFromElement 函数实现，该函数从 React Element 中提取 type、key、props 等信息，然后调用 createFiberFromTypeAndProps 创建对应的 Fiber 节点。
+
+React Element 与 Fiber 节点的区别:
+
+- React Element: 描述 UI 的“意图”，是轻量级的、不可变的纯对象。
+- Fiber 节点: 描述 UI 的“当前状态”和“工作进度”，是可变的、包含更多运行时信息的内部数据结构，用于驱动协调和渲染过程。
 
 ## 14.什么是 React Hooks?
 

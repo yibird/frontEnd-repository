@@ -13,5 +13,10 @@ export default {
       link: '/goodPractice/microFrontend.md',
       items: [],
     },
+    {
+      text: '性能优化最佳实践',
+      link: '/goodPractice/performanceOptimization.md',
+      items: [],
+    },
   ],
 }

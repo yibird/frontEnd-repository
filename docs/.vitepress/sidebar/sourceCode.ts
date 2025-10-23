@@ -8,5 +8,10 @@ export default {
       link: '/sourceCode/redux.md',
       items: [],
     },
+    {
+      text: 'Zustand',
+      link: '/sourceCode/zustand.md',
+      items: [],
+    },
   ],
 }
