@@ -171,3 +171,44 @@ CDN(Content Delivery Network,内容分发网络)是一种通过在全球范围�
 - 支持负载均衡机制。允许将用户的请求分散到多个服务器上,防止单一服务器成为瓶颈,提高整体系统的稳定性和性能。
 - 支持加速动态内容。除了缓存静态内容,一些高级的 CDN 还提供动态内容加速服务,通过一系列技术手段减少动态内容的响应时间,例如智能路由、TCP 优化等。
 - 更好的安全性。CDN 提供一些安全性特性,如 DDoS(分布式拒绝服务攻击)防护、Web 应用防火墙等,以保护源服务器免受网络攻击。
+
+## 什么是XSS?
+
+XSS(Cross-Site Scripting，跨站脚本攻击)是一种在网页中注入恶意脚本代码的攻击方式。攻击者通过向网站注入恶意的 JavaScript(或 HTML、SVG、事件属性等脚本),在用户的浏览器中执行,用于窃取用户的 Cookie、Token、敏感信息和模拟用户行为(伪造请求、操作账户)。XSS主要分为三种类型:
+
+- 反射型 XSS:恶意脚本来自当前 HTTP 请求(如 URL 参数),服务器直接返回,诱使用户点击恶意链接。
+- 存储型 XSS:恶意脚本被存储到服务器(如数据库)，当其他用户访问正常页面时,脚本从服务器加载并执行(危害最大)。
+- DOM 型 XSS:整个攻击过程在浏览器端完成,不涉及服务器。前端 JavaScript 代码(如 innerHTML、location.hash)不安全地操作 DOM,插入了恶意内容。
+
+常见的解决措施:
+
+- 对输入进行转义:但关键在于输出编码。根据输出位置(HTML 内容、HTML 属性、JavaScript、URL)使用不同的编码规则。
+- 充分利用 CSP(内容安全策略):告诉浏览器只允许加载指定源的资源，是非常有效的终极手段。
+- 使用 HttpOnly Cookie:防止 JavaScript 读取敏感的 Cookie 信息。
+- 避免使用 innerHTML,优先使用 textContent。
+
+## 什么是CSRF?
+
+CSRF(Cross-Site Request Forgery，跨站请求伪造)是指攻击者诱导用户在已登录的可信网站上执行未授权操作。CSRF 利用的是 浏览器会自动携带 Cookie(或 Token)的特性。攻击者无法直接读取用户的 Cookie,但可以利用浏览器自动带上它。CSRF 攻击流程:
+
+- 用户登录了银行网站 bank.com,浏览器保存了登录 Cookie。
+- 然后用户访问了攻击者的网站。
+- 攻击者的网站偷偷发送了一个请求,此时浏览器自动带上 bank.com 的 Cookie。
+- 银行服务器以为这是用户发的请求,于是执行了转账操作！
+
+CSRF 攻击的几种常见方式:
+
+- 图片 / 脚本标签伪造 GET 请求:浏览器访问图片时自动发送请求。
+- 自动提交隐藏表单(POST 请求):利用form元素自动提交表单。
+- 通过 AJAX + CORS 绕过限制:攻击者页面用 JavaScript 发请求,只要目标服务允许跨域携带凭证（Access-Control-Allow-Credentials: true），仍然可能被利用。
+
+防御 CSRF 的核心策略:
+
+- 使用 CSRF Token(最常用):每次请求都附带一个随机 Token，服务器验证。
+- 使用 SameSite Cookie(现代防御):SameSite 属性可以设置为 Strict、Lax 或 None,用于限制 Cookie 只能在特定情况下发送。
+  - Strict:任何跨站请求都不会带 Cookie
+  - Lax:部分跨站请求(如 GET 请求)会带 Cookie,但 POST 请求不会。
+  - None:所有请求都可以发送 Cookie,但需要服务器设置 Secure 属性,且只能通过 HTTPS 发送。
+- 验证请求来源（Referer / Origin Header):服务端可以根据Referer和Origin Header是否请求来源一致,来判断请求是否合法。这种请求可能存在误差,有些请求头可能被浏览器或代理删除。
+- 双重 Cookie 验证:服务端发送一个 csrfToken Cookie,前端发送请求时,将 Cookie 值放入请求头,服务端再次验证是否一致。
+- 限制敏感操作为 POST + 校验内容类型:不要允许 GET 请求执行修改操作,对 POST 请求，要求`Content-Type: application/json`。

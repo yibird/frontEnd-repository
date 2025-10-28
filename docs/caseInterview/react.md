@@ -482,6 +482,32 @@ Diff 算法(差异算法)是一种用于比较两个数据集之间的不同之�
 
 ## React SSR 实现原理?
 
+SSR（Server-Side Rendering,服务端渲染） 指的是:在服务端执行组件生成 HTML，再将 HTML 返回给浏览器。浏览器拿到 HTML 后再执行 JS 代码，对页面进行 Hydration（激活），让其变成可交互的页面。由于SSR在服务端渲染并返回对应的HTML,因此首屏速度比客户端渲染快,而且有利于SEO,对比客户端渲染需要消耗额外的服务器资源,而且实现复杂度高。整个 SSR 流程可分为以下几个阶段:
+
+- 1.浏览器发送 HTTP 请求给服务器。
+- 2.服务端渲染:服务端接收来自客户端的请求,并通过React提供的renderToString()或renderToPipeableStream()将组件内容渲染为 HTML 字符串或流,然后发送 HTML 响应。
+  - renderToString():一次性生成完整 HTML（React 17 及之前的常用方式）,该方法会等待整个组件树渲染完，才能返回 HTML，首屏慢。
+  - renderToPipeableStream():流式输出 HTML（React 18 支持 Streaming SSR）,HTML 可以 边生成边发送给浏览器，实现“流式首屏”。。
+- 3.浏览器解析:浏览器接收来自服务端的HTML响应构建 DOM。
+- 4.Hydration(水合)：当资源脚本加载完后,会通过React提供的hydrateRoot()进行水合,从而最终渲染组件内容。Hydration是指将服务器返回的静态 HTML 与客户端 React 组件“绑定”起来,使页面从静态变为可交互状态的过程。React Hydration过程如下:
+  - 复用 DOM 节点:React 会复用已有的 DOM 节点，而不是重新创建,因此性能非常高效。
+  - 构建 Fiber 树:React 会从根节点开始，基于 DOM 结构构建 Fiber 树。
+  - 事件绑定与状态恢复:React 根据 Fiber 树为对应的 DOM 节点绑定事件。绑定完事件后，组件恢复交互能力。
+  - 完成 Hydration:当所有组件都绑定完事件、状态恢复完毕后，React 会标记页面为已水合（hydrated）。水合过后,从此React 会按正常的客户端模式运行。
+
+Web常见的几种渲染模式对比:
+
+- 客户端渲染(Client-Side Rendering, CSR):客户端渲染指的是，浏览器在拿到一个空的 HTML 模板和一堆 JavaScript 文件后，由 JavaScript 在浏览器中动态生成页面内容 的渲染方式。优缺点如下:
+  - 前后端分离:服务端只负责提供静态资源,前端完全掌控页面逻辑、路由、状态。
+  - 有利于SPA(单页应用):页面跳转不需要刷新,可做复杂交互、动画。
+  - 实现简单、开发效率高:客户端利用组件化、模块化快速开发项目。
+  - 首屏白屏时间长:用户必须等 JS 下载并执行完才看到内容。
+  - 不利于SEO:搜索引擎抓取的是“空 HTML”，除非使用 SSR 或预渲染。
+
+- SSR(Server-Side Rendering,服务端渲染):服务端渲染指的是，在服务端执行组件渲染,将渲染后的 HTML 返回给浏览器。浏览器拿到 HTML 后再执行 JS 代码,对页面进行 Hydration（激活）,让其变成可交互的页面。优缺点:
+- 首屏渲染快:由于HTML内容在服务端直接返回,用户打开页面时直接看到 HTML 内容,无需等待 JS 执行后再显示。
+- 有利于SEO:搜索引擎爬虫能直接读取 HTML 内容；
+
 ## React-Router 工作原理
 
 ## Hooks 实现原理?
