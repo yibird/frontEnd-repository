@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.C7gvd0FP.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"js/regex.md","filePath":"js/regex.md","lastUpdated":1764669646000}'),r={name:"js/regex.md"};function s(o,c,n,d,p,_){return a(),t("div")}const f=e(r,[["render",s]]);export{m as __pageData,f as default};

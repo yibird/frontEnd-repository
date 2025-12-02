@@ -1,1 +1,0 @@
-import{_ as a,c as t,o as e}from"./chunks/framework.C7gvd0FP.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"html/canvas.md","filePath":"html/canvas.md","lastUpdated":1764669426000}'),s={name:"html/canvas.md"};function c(n,r,o,d,m,p){return e(),t("div")}const i=a(s,[["render",c]]);export{_ as __pageData,i as default};
