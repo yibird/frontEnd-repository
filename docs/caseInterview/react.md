@@ -202,9 +202,7 @@ React 使用 key 的建议:
 
 ## 13.React HOC 是什么?有什么作用?
 
-高阶函数是接收一个函数做为参数或者是返回一个函数的函数,高阶组件与高阶函数类似,简单来说高阶组件是一种用于复用组件逻辑的技术,它接收一个组件作为参数,并返回一个新的组件。
-
-## React 的执行流程?
+高阶函数是接收一个函数做为参数或者是返回一个函数的函数,高阶组件与高阶函数类似,简单来说高阶组件是一种用于复用组件逻辑的技术,它接收一个组件作为参数,并返回一个新的组件。HOC 是一个接受一个组件并返回一个新组件的函数,它用于包装或增强组件的功能,以实现逻辑复用。HOC 可以用于将一些通用的逻辑(例如数据加载、身份验证)应用到多个组件中。
 
 ### React15 架构
 
@@ -217,9 +215,49 @@ React 使用 key 的建议:
   - 通知 Renderer 将变化的虚拟 DOM 渲染到页面上。
 - Renderer(渲染器):负责将变化的组件渲染到页面上。
 
-### React16 新架构
+### React16架构
+为了优化React15不可中断,React16 引入了 Fiber 架构,大致可以分为三层:
+- Scheduler(调度器):调度任务的优先级，高优任务优先进入Reconciler
+- Reconciler(协调器):基于Diff算法负责找出变化的组件。
+- Renderer（渲染器):负责将变化的组件渲染到页面上。
 
-## ReactDOM.render()执行流程?
+
+## React 的执行流程?
+当一个 React 应用或组件首次被挂载（Mount）时，它会严格按照初始化(首次渲染)、调度、协调、提交这4个阶段的顺序,以特定的方式执行:
+
+- 初始化阶段:该阶段负责创建 FiberRoot 和初始 current Fiber,为后面调度做准备。
+  - 创建FiberToot：根据ReactDOM.createRoot().render()创建 FiberRoot,生成第一个 workInProgress Fiber。
+  - 初始化根的 update queue、调度器、context、缓存等。
+  - 目的是建立 FiberRoot 和初始 current Fiber，为后面调度做准备。
+  
+- 调度阶段(Scheduler):该阶段确定任务是否需要被执行,以及优先级。调度阶段是输入和优先级管理,它决定了 “什么时候做”,但它本身不修改任何组件或 DOM 结构。具体流程如下:
+  - 触发更新 (Trigger Update):接收来自用户交互 (setState / useState)、副作用 (useEffect) 或外部数据源的更新请求。
+  - 创建工作 (Create Work):根据更新的类型和来源，创建或分配一个 “工作单元”（Work）。工作包括状态更新、属性更新、上下文改变等。
+  - 确定优先级 (Determine Priority):根据 React Concurrent 模式下的调度策略（如 Scheduler）,基于Lane模型给这个工作单元分配一个优先级（例如：立即执行、高优先级、低优先级等）。
+  - 加入调度队列 (Enqueue):将带有优先级的更新放入调度队列,等待或立即进入协调阶段。被加入调度队列中的任务,会根据浏览器空闲时间(基于requestIdleCallback实现)决定是否开始渲染或中断。
+
+- 协调阶段(Reconciler):该阶段通过 Diff算法计算出这次更新后 DOM 树应该变成什么样子。协调阶段是计算和比对,它在内存中完成,不涉及真实 DOM。最终产物是带有副作用标签的 Fiber 树(或副作用列表),协调阶段是整个工作流中最耗时的部分,并且是可中断的。具体流程如下:
+  - 构建 Fiber 树 (Build Fiber Tree):从根 Fiber 开始,遍历整棵 Fiber 树。
+  - 新旧比对 (Diffing):使用Diff算法对比,对比新传入的 props 和 state,与旧的 Fiber 节点的属性进行比对。
+  - 调用组件逻辑 (Call Component Logic):执行组件的 render 函数（类组件）或函数组件的主体代码。这一步会产生新的子元素。
+  - 生成副作用列表 (Generate Side-Effects List):根据比对结果，在 Fiber 节点上打上副作用标签（Effect Tags），例如 Placement (插入)、Update (更新)、Deletion (删除) 等。
+  - 双缓存 (Double Buffering)优化:计算出的所有新 Fiber 节点（以及它们带有的副作用）最终形成一棵新的 WIP (Work In Progress) Fiber 树。
+  - 响应中断 (Respond to Interrupts):如果浏览器通知有更高优先级的任务（如用户输入），React 会暂停当前 WIP 树的构建，转而去处理高优先级任务。
+
+- 提交阶段(Commit / 执行 DOM 更新):该阶段负责将协调阶段计算出的所有变更一次性应用到 DOM 和组件实例上,该阶段是不可中断的，必须一次性完成，以确保 DOM 的一致性。提交阶段通过遍历在协调阶段（Render Phase）打上副作用标签的 Fiber 节点列表（Effect List）来完成工作。具体分为三个子阶段:
+  - Before Mutation (变更前):该阶段在实际更改 DOM 之前,用于获取 DOM 的当前状态。
+    - 执行 getSnapshotBeforeUpdate:这是类组件特有的钩子。在这个阶段调用，允许开发者在 DOM 实际更新前，读取如滚动位置、元素尺寸等信息，并将返回值传递给 componentDidUpdate。
+    - 处理副作用钩子的清理:在处理 Passive 类型的 Effect（即 useEffect）之前，同步处理它们的清理函数。
+  - Mutation (实际变更):该阶段负责执行所有实际的 DOM 插入、更新和删除操作。
+    - 执行所有 DOM 变更:遍历所有带有 Placement (插入)、Update (更新)、Deletion (删除) 等副作用标签的 Fiber 节点，执行对应的操作。
+    - 处理Ref:同步解除旧 Fiber 节点上的 ref 引用，并设置新 Fiber 节点上的 ref 引用。
+  - Layout/Passive(布局阶段/副作用):该阶段负责DOM 更新完成后,执行依赖于新 DOM 布局和内容的逻辑。该阶段分为Layout Phase和Passive Phase两个子阶段:
+    - Layout Phase(布局阶段 - 同步执行):
+      - 执行 componentDidMount / componentDidUpdate：调用类组件在 DOM 挂载或更新后的钩子。
+      - 执行 useLayoutEffect：调用同步 Effect 钩子。这些钩子在浏览器执行绘制之前同步执行,可以安全地读取 DOM 布局,并进行必要的调整(如测量高度或滚动)。注意由于Layout是同步执行的,useLayoutEffect会阻塞浏览器绘制。
+    - Passive Phase(副作用阶段 - 异步执行):
+      - 执行 useEffect (Passive Effect):调用异步 Effect 钩子。React 会将这些 Effect 的执行推迟到浏览器完成绘制之后,并且是在一个较低的优先级上执行。由于Passive Phase是异步执行,可以确保大部分副作用逻辑（如数据获取、订阅、日志记录等）不会阻塞用户界面（UI）的绘制,从而提升用户体验。
+
 
 ## 什么是 Fiber 架构,它解决了什么问题?
 
@@ -346,6 +384,21 @@ React Element 与 Fiber 节点的区别:
 - React Element: 描述 UI 的“意图”，是轻量级的、不可变的纯对象。
 - Fiber 节点: 描述 UI 的“当前状态”和“工作进度”，是可变的、包含更多运行时信息的内部数据结构，用于驱动协调和渲染过程。
 
+## 什么是双缓冲 Fiber ?
+Fiber 树的构建和遍历是协调阶段的核心,React 采用深度优先遍历（DFS）的方式来处理 Fiber 树。为了实现任务的中断和恢复(因为单棵树中断可能导致 UI 显示出不完整的中间状态),React 在内存中同时维护两棵 Fiber 树(双缓冲 Fiber 树):
+- current 树 (当前树): 这棵树代表了当前已经渲染到屏幕上的 UI 状态。它是用户正在看到的界面的内部表示。这棵树上的 Fiber 节点是不可变的（或者说，在一次更新周期中不直接修改）。在应用首次挂载（mount）完成，并将初始 UI 渲染到屏幕后形成。之后，每当一次更新成功提交（commit）后，workInProgress 树就会变成新的 current 树。
+
+- workInProgress 树 (工作中的树): 这棵树是 React 在后台构建或更新的树。当有新的更新（比如 setState、父组件重新渲染等）发生时，React 会基于 current 树来创建或克隆一个 workInProgress 树。所有的计算、diffing（比较差异）、以及副作用的标记都在这棵树上进行。在 Render 阶段 (Reconciliation Phase) 开始时都会生成一棵新的workInProgress 树。当 React 接收到更新请求（例如 setState 调用或父组件重新渲染）时，它会从 current 树的根节点开始，逐个创建或克隆 Fiber 节点来构建 workInProgress 树。
+
+每个 Fiber 节点都有一个 alternate 属性。这个属性非常关键，它将 current 树中的 Fiber 节点和 workInProgress 树中对应的 Fiber 节点连接起来。也就是说，current.alternate 指向 workInProgress 树中的对应节点，而 workInProgress.alternate 指向 current 树中的对应节点。
+
+双缓冲机制主要用于以下目的:
+- 原子性更新与一致性: React 可以在 workInProgress 树上完成所有的计算和准备工作，而不会影响当前屏幕上显示的 UI。只有当 workInProgress 树完全构建好，并且所有必要的 DOM 操作都准备就绪后，React 才会一次性地将 workInProgress 树切换为 current 树，并执行 DOM 更新。这确保了用户不会看到渲染不完整的中间状态，提供了更流畅和一致的用户体验。
+- 可中断与恢复渲染: 由于所有的工作都在 workInProgress 树上进行，如果渲染过程中有更高优先级的任务（如用户输入事件）到来，React 可以暂停 workInProgress 树的构建，去处理高优先级任务，然后再回来从之前中断的地方继续构建 workInProgress 树。current 树在此期间保持不变，用户界面不会卡顿。
+- 错误处理与回退: 如果在构建 workInProgress 树的过程中发生错误（例如，某个组件的 render 方法抛出异常），React 可以选择丢弃整个 workInProgress 树，而 current 树（即用户看到的界面）不受影响。这为实现更健壮的错误边界（Error Boundaries）提供了基础。
+
+- 状态复用与优化: 在创建 workInProgress 树时，如果某个 Fiber 节点及其子树没有发生变化，React 可以直接复用 current 树中对应的 Fiber 节点（通过 alternate 指针），避免了不必要的重新创建和计算，从而提高性能。
+
 ## 14.什么是 React Hooks?
 
 React Hooks 是 React16.8 推出的新特性,是一种只能用于在函数组件或其他 Hooks 中复用逻辑的工具函数,它可以替代类组件中的生命周期和状态管理等功能。使用 React Hooks 需注意如下事项:
@@ -371,7 +424,7 @@ React 内置了如下 Hooks:
 
 ## 为什么在无法在条件分支或判断分支中使用 Hooks?
 
-函数组件首次渲染时,React 会创建一个 Hook 链表来跟踪每个 Hook 的状态,这个链表用于记录当前组件使用的每一个 Hook 调用及其状态。当在一个函数组件中调用 useState、useEffect 等 Hook 时,React 会按照调用顺序将它们添加到当前组件的 Hook 链表中。每个 Hook 调用在链表中都有一个固定的索引,这个索引在组件的整个生命周期内保持不变。。在后续的更新中,React 会重用这个 Hook 链表,而不是重新创建。条件语句可能导致某些 Hooks 在某些渲染中被跳过,违反了初次渲染与后续更新之间的 Hook 调用一致性。
+函数组件首次渲染时,React 会创建一个 Hook 链表来跟踪每个 Hook 的状态,这个链表用于记录当前组件使用的每一个 Hook 调用及其状态,该链表存储在 Fiber 节点的 memoizedState 属性上。当在一个函数组件中调用 useState、useEffect 等 Hook 时,React 会按照调用顺序将它们添加到当前组件的 Hook 链表中。每个 Hook 调用在链表中都有一个固定的索引,这个索引在组件的整个生命周期内保持不变。在后续的更新中,React 会重用这个 Hook 链表,而不是重新创建。条件语句可能导致某些 Hooks 在某些渲染中被跳过,违反了初次渲染与后续更新之间的 Hook 调用一致性。
 
 ## 15.useState()/setState()是异步的还是同步的?
 
@@ -384,7 +437,9 @@ React 内置了如下 Hooks:
 
 ## 16.useState()与 setState()的区别?
 
-useState()与 setState()有所区别,Class 组件存储的是状态的引用,而函数式组件存储的是状态的快照。当函数引用 useState()定义状态时,该函数其实是一个闭包函数(满足有权访问其他函数作用域的函数特征,简单来说就是函数嵌套函数),该函数持有了函数式组件的作用域,函数式的状态是一个快照副本。
+- 使用场景不同:setState()用于在Class组件状态管理,其状态值存储在Class实例中;useState()是React16.8新增的状态管理Hook,只能在函数式组件中使用,其状态存在在对应的组件的Fiber中。
+- 存储方式不同:Class 组件存储的是状态的引用,而函数式组件存储的是状态的快照。当函数引用 useState()定义状态时,该函数其实是一个闭包函数(满足有权访问其他函数作用域的函数特征,简单来说就是函数嵌套函数),该函数持有了函数式组件的作用域,函数式的状态是一个快照副本,可能会产生闭包陷阱,一般会搭配useRef()使用。
+
 
 ## 17.如何获取 useState()异步更新后的值?
 
@@ -450,7 +505,7 @@ useEffect()是 React 提供用于处理组件副作用的 Hooks,例如网络请�
 
 ## React.Context 实现原理?
 
-## React Suspense 的实现原理?
+## React lazy 与 Suspense 的实现原理?
 
 ## ReactDOM.createPortal()实现原理?
 
@@ -459,6 +514,9 @@ useEffect()是 React 提供用于处理组件副作用的 Hooks,例如网络请�
 并发模式(Concurrent Mode)是 React18 新特性之一,可以使 React 应用程序通过渲染组件树来提高响应速度,而不会阻塞主 UI 线程。相比较多线程中的并发,并发模式并不是真正意义上的并发。在 React 中不同任务被分为不同优先级,React 可以中断长时间运行的渲染来处理高优先级的任务。并发模式的并发是在主线程中执行多个任务,通过 React 调度每个任务都可以允许在"运行"和"暂停"两种状态之间切换,从而给用户造成了一种任务并发执行的假象。并发模式与 CPU 的执行原理类似,React 基于时间分片(Time Slicing)策略将渲染工作分成多个时间片(小的时间段),以确保用户界面在加载大量数据或复杂计算时仍然保持响应性。
 
 ## React Server Components?
+React Server Components (RSC,即服务端组件) 是 React 团队近年来推出的一项革命性功能，它从根本上改变了 React 组件的渲染位置和方式，旨在解决现代 Web 应用面临的性能和打包体积问题。这不是简单的服务器端渲染 (SSR),而是一种全新的跨越服务器和客户端的组件模型。Server Components 允许开发者将组件的渲染工作和数据获取逻辑完全放在服务器端执行,而不会增加最终交付给用户浏览器的 JavaScript 打包体积。RSC 是一种规范和模型，它的实际落地需要依赖于像 Next.js (App Router) 这样的框架来实现编译、路由和服务器端运行环境。为了实现这种混合渲染模型,RSC 强制要求开发者明确区分两种组件类型,在Nextjs中提供了"use server"和"use client"两个指令来描述渲染方式:
+- `"use client"`:该指令用来明确告诉 Next.js 编译器和 React 运行时：这个模块及其内部的所有组件和函数，需要发送到客户端运行。
+- `"use server"`:该指令表示服务器端操作标识,用于标识可以在服务器上执行的函数。
 
 ## React diff 算法的时间复杂度是多少?
 
@@ -479,6 +537,14 @@ Diff 算法(差异算法)是一种用于比较两个数据集之间的不同之�
 ## React 与 Vue 的 diff 算法有何不同?
 
 ## React 性能优化策略有哪些?
+- 使用 React.memo 防止子组件重复渲染:React.memo是React提供一个性能优化Api,用于对 props 浅比较,如果不变就跳过渲染。
+- 使用useMemo和useCallback:useCallback 保证函数引用稳定，避免子组件重新渲染。useMemo 则用于缓存计算结果,避免重复计算。
+- 合理使用 key，让列表 Diff 更高效:使用稳定且唯一的 key（不要用 index),避免因为 key 变化导致整个子树重建。
+- 避免过多的 useLayoutEffect:由于useLayoutEffect在Layout阶段执行,而Layout是同步执行的,因此useLayoutEffect会阻塞流程渲染。
+- 使用React.lazy() + Suspense实现代码分割:React.lazy() 是 React 提供的一个用于实现代码分割的 API。它允许开发者将组件按需加载,而不是在应用初始化时就加载所有组件。这可以显著减少初始加载时间,并提高应用的性能。
+- 合理拆分组件:让局部状态只影响小范围 UI。
+- 使用useDeferredValue:useDeferredValue 是 React 18 引入的一个新 Hook,用于延迟更新状态。它可以将状态更新操作推迟到稍后的时间点执行,从而避免阻塞 UI 渲染,例如搜索框输入优化。
+使用useTransition降低优先级:useTransition 通过把某些更新标记为“非紧急更新”，让 React 优先保持界面交互流畅，从而减少卡顿。
 
 ## React SSR 实现原理?
 

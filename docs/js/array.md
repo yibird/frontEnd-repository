@@ -165,9 +165,9 @@ every(callback(element,index,arr),thisArg):测试数组内所有元素是否都�
 const arr1 = [12, 5, 8, 130, 44]
 const arr2 = [12, 54, 19, 23, 322]
 const arr3 = [1, -1, 2, 123, 75]
-console.log(arr1.every((item) => item > 10)) // false
-console.log(arr2.every((item) => item > 10)) // true
-console.log(arr3.every((item) => Boolean(item))) // false
+console.log(arr1.every(item => item > 10)) // false
+console.log(arr2.every(item => item > 10)) // true
+console.log(arr3.every(item => Boolean(item))) // false
 ```
 
 ### 2.6 Array.prototype.fill()
@@ -191,12 +191,12 @@ filter(callback(element,index,array),thisArg):创建一个新数组,其数组包
 
 ```js
 const arr1 = [12, 4, 90, 11, 123]
-console.log(arr.filter((item) => item > 10)) // [12,90,11,123]
+console.log(arr.filter(item => item > 10)) // [12,90,11,123]
 
 const fruits = ['apple', 'banana', 'grapes', 'mango', 'orange']
-const filterItems = (query) => {
+const filterItems = query => {
   // toLowerCase()用于将字符串转为英文小写
-  return fruits.filter((item) => item.toLowerCase().indexOf(query.toLowerCase()) > -1)
+  return fruits.filter(item => item.toLowerCase().indexOf(query.toLowerCase()) > -1)
 }
 console.log(filterItems('ap')) // ['apple','grapes'];
 console.log(filterItems('an')) // ['banana','mango','orange']
@@ -219,9 +219,9 @@ const arr = [
   { name: '王五', age: 60 },
   { name: '李老六', age: 35 },
 ]
-console.log(arr.find((item) => item.age > 18)) // {name: '张三', age: 19}
+console.log(arr.find(item => item.age > 18)) // {name: '张三', age: 19}
 
-console.log(arr.find((item) => item.age > 66)) // undefined
+console.log(arr.find(item => item.age > 66)) // undefined
 ```
 
 ### 2.9 Array.prototype.findIndex()
@@ -238,9 +238,9 @@ const arr = [
   { name: '王五', age: 60 },
   { name: '李老六', age: 35 },
 ]
-console.log(arr.findIndex((item) => item.age > 18)) // 0
+console.log(arr.findIndex(item => item.age > 18)) // 0
 
-console.log(arr.findIndex((item) => item.age > 66)) // -1
+console.log(arr.findIndex(item => item.age > 66)) // -1
 ```
 
 ### 2.10 Array.prototype.flat
@@ -372,16 +372,87 @@ console.log(arr.pop()) // 5
 console.log(arr) // [1,2,3,4]
 ```
 
-## 5.数组去重
+## 5.判断是否是数组的4种方式
 
-### 5.1 使用 set 不允许重复元素的特性
+### 5.1 通过JSON.stringify()将数组转换为字符串,判断是否是数组
+
+JSON.stringify() 是 JavaScript 中一个非常重要的内置方法,用于将 JavaScript 值转换为 JSON 字符串,可以通过JSON.stringify()将数组转换为字符串,
+如果转换后的第一个字符串是"["那么就说明是数组,否则就不是数组。注意:这种方式在循环引用问题下会报错,不推荐使用。
+
+```js
+const arr1 = [1, 3, 4, 5]
+const isArr = JSON.stringify(arr1)[0] === '['
+console.log(isArr) // true
+
+// 注意:在出现循环引用场景下,JSON.stringify()会报错,不推荐使用
+const arr2 = [1, 3, 5, {}, 4]
+arr2[3].arr2 = arr2
+console.log(JSON.stringify(arr2)) // 报错:Converting circular structure to JSON
+```
+
+### 5.2 通过instanceof判断是否是数组
+
+instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上,如果实例对象的原型链上有构造函数的 prototype 属性,那么 instanceof 运算符就会返回 true,否则返回 false。注意:instanceof 运算符只能用于检测对象是否是数组,不能用于检测基本数据类型是否是数组。由于instanceof 运算符基于原型链判断,如果一旦改变目标对象的原型链,则可能导致判断错误。其次instanceof运算符也无法判断`iframe.contentwindow.Array`。
+
+```js
+const arr1 = []
+const isArr1 = arr1 instanceof Array
+console.log(isArr1) // true
+
+// 注意:instanceof 运算符只能用于检测对象是否是数组,不能用于检测基本数据类型是否是数组。一旦改变目标对象的原型链,则可能导致判断错误
+const arr2 = {}
+// 改变arr2的原型为Array.prototype,会导致instanceof 运算符判断错误
+Object.setPrototypeOf(arr2, Array.prototype)
+const isArr2 = arr2 instanceof Array
+console.log(isArr2) // true
+
+/**
+ * 注意:instanceof 无法 iframe.contentwindow.Array,由于window.Array 是一个全局对象,而 iframe.contentwindow.Array
+ * 是一个 iframe 中的数组对象,它们的原型链不同,因此 instanceof 运算符无法判断 iframe.contentwindow.Array 是否是数组。
+ */
+
+const Array1 = window.Array
+const iframe = document.querySelector('iframe')
+const Array2 = iframe.contentwindow.Array
+console.log(Array1 === Array2) // false
+const arr = new Array2()
+console.log(arr instanceof Array) // false
+```
+
+### 5.3 Object.prototype.toString.call()判断是否是数组
+
+Object.prototype.toString 是 JavaScript 中所有对象都继承的方法，它返回一个表示对象类型的字符串。调用 Object.prototype.toString 方法时,会返回一个字符串,该字符串的格式为"[object 类型]",其中类型是对象的类型,例如"Array","Object","String"等,在ES5前Object.prototype.toString是精确判断类型的唯一方式。注意:在ES6标准中,提供了Symbol.toStringTag,它是一个内置的 Symbol 值,允许自定义 `Object.prototype.toString.call()` 方法返回的字符串中的类型标签,因此`Object.prototype.toString.call()`无法精确判断类型。
+
+```js
+const arr1 = []
+console.log(Object.prototype.toString.call(arr1)) // '[object Array]'
+
+// 注意:Symbol.toStringTag 可以自定义对象的类型标签,因此 Object.prototype.toString.call() 无法精确判断类型
+const arr2 = {
+  [Symbol.toStringTag]: 'Array',
+}
+console.log(Object.prototype.toString.call(arr2)) // '[object Array]'
+```
+
+### 5.4 通过Array.isArray()判断是否是数组
+
+Array.isArray() 是 JavaScript 中专门用于判断一个值是否为数组的静态方法,它是一个原生方法,底层由C++实现,可以精确判断是否是数组。
+
+```js
+const arr1 = []
+console.log(Array.isArray(arr1)) // true
+```
+
+## 6.数组去重
+
+### 6.1 使用 set 不允许重复元素的特性
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2]
 console.log(Array.from(new Set(arr))) // [1,2,3,4]
 ```
 
-### 5.2 创建一个新数组,使用 indexOf()includes()或判断新数组是否存在指定元素,如果不存在就添加元素
+### 6.2 创建一个新数组,使用 indexOf()includes()或判断新数组是否存在指定元素,如果不存在就添加元素
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2]
@@ -404,7 +475,7 @@ for (let i = 0; i < arr.length; i++) {
 console.log(newArray) // [1, 2, 3, 4]
 ```
 
-### 5.3 通过对象键名不允许重复的特性去重
+### 6.3 通过对象键名不允许重复的特性去重
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2]
@@ -420,16 +491,16 @@ for (let i = 0; i < arr.length; i++) {
 console.log(objArr) //[1, 2, 3, 4]
 ```
 
-### 5.4 利用 filter 去重
+### 6.4 利用 filter 去重
 
 ```js
 var arr = [1, 2, 3, 4, 1, 2]
 console.log(arr.filter((curValue, index, array) => array.indexOf(curValue) === index)) // [1, 2, 3, 4]
 ```
 
-## 6.数组相关题目
+## 7.数组相关题目
 
-### 6.1 已知如下数组，编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组。
+### 7.1 已知如下数组，编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组。
 
 ```js
 var arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10]
@@ -448,7 +519,7 @@ console.log(Array.from(new Set(arr.flat(Infinity))).sort((a, b) => a - b))
 ```js
 const arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10]
 Array.prototype.flat = function () {
-  return [].concat(...this.map((item) => (Array.isArray(item) ? item.flat() : [item])))
+  return [].concat(...this.map(item => (Array.isArray(item) ? item.flat() : [item])))
 }
 Array.prototype.unique = function () {
   return [...new Set(this)]
@@ -458,14 +529,14 @@ console.log(arr.flat().unique().sort(sort))
 // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 ```
 
-## 7.数组技巧
+## 8.数组技巧
 
 compose(组合)函数和 pipe(管道)函数属于函数式编程(FP)中的概念,函数式编程中,组合函数是一种将多个函数组合在一起形成一个新函数的技术,管道是函数式编程的一种编程模式,它允许将函数链接在一起以构建数据流,两者都可以组织多个函数执行,其区别如下:
 
 - 接收参数不同。管道函数接收一个初始值和一组函数,它会依次将初始值传入每个函数,最终输出管道的最后一个函数的结果。而组合函数接收一组数组,并将多个函数组合成一个新的函数,组合函数会将每个函数的输出作为上一个函数的输入,最终输出组合函数的结果。
 - 函数调用顺序不同。管道函数是从左到右依次调用每个函数,而组合函数是从右到左依次调用每个函数。
 
-### 7.1 通过 reduce()实现 pipe(管道)函数
+### 8.1 通过 reduce()实现 pipe(管道)函数
 
 ```js
 const pipe = function (value, ...fns) {
@@ -485,12 +556,12 @@ const result = pipe(3, addOne, double)
 console.log(result) // 8
 ```
 
-### 7.2 通过 reduceRight() 或 reduce()实现 compose(组合)函数
+### 8.2 通过 reduceRight() 或 reduce()实现 compose(组合)函数
 
 ```js
 // 实现方式1:基于reduceRight实现compose函数,reduceRight()由右到左遍历数组
 const compose = function (...fns) {
-  return (args) => {
+  return args => {
     return fns.reduceRight((result, fn) => {
       return fn(result)
     }, args)
@@ -515,7 +586,7 @@ const composeFn = compose(double, addOne)
 console.log(composeFn(3)) // 8
 ```
 
-## 8.数组与树形结构转换
+## 9.数组与树形结构转换
 
 在实际开发中由于存储数据时采用线性结构,但展示数据时以树形结构显示,例如菜单列表,数据库以行的形式存储着菜单项,但是展示数据时需要根据菜单项的层级关系转为树形结构显示,因此需要实现数组和树形结构的互转。数组结构如下:
 
@@ -532,15 +603,15 @@ const nodes = [
 ]
 ```
 
-### 8.1 数组转树形结构
+### 9.1 数组转树形结构
 
-#### 8.1.1 使用递归数组转树
+#### 9.1.1 使用递归数组转树
 
 ```js
 function arrayToTree(nodes, parentId = null) {
   return nodes
-    .filter((node) => node.parentId === parentId)
-    .map((node) => ({ ...node, children: arrayToTree(nodes, node.id) }))
+    .filter(node => node.parentId === parentId)
+    .map(node => ({ ...node, children: arrayToTree(nodes, node.id) }))
 }
 ```
 
@@ -548,7 +619,7 @@ function arrayToTree(nodes, parentId = null) {
 
 递归方式实现数组转树比较简单,其时间复杂度是 O(n^2),n 表示节点的数量,空间复杂度为 O(n^2)。递归方式仅使用小规模数据,处理大规模数据时可能会导致栈溢出。
 
-#### 8.1.2 使用迭代数组转树
+#### 9.1.2 使用迭代数组转树
 
 迭代方法也可以用于将数组转换为树形结构,但是实现起来比递归方法更复杂。遍历数组找到所有父节点 ID 等于当前节点 ID 的节点,并将其添加到当前节点的子节点列表中。
 
@@ -577,7 +648,7 @@ function arrayToTree(nodes) {
 
 迭代实现数组转树时间复杂度为 O(n),其中 n 是节点的数量,空间复杂度为 O(n)。此种方式使用于适合大规模数据,相较于递归实现比较复杂。
 
-#### 8.1.3 使用 reduce 数组转树
+#### 9.1.3 使用 reduce 数组转树
 
 ```js
 function arrayToTree(nodes) {
@@ -600,12 +671,12 @@ function arrayToTree(nodes) {
 
 reduce 与迭代方式类似,但实现更为简洁,其时间复杂度为 O(n),n 表示节点的数量,空间复杂度为 O(n),适用于中小规模数据。
 
-#### 8.1.4 使用哈希表数组转树
+#### 9.1.4 使用哈希表数组转树
 
 ```js
 function arrayToTree(nodes) {
   // 初始化map,map的key为node.id,value为node的所有属性和chidrent属性组成的对象
-  const map = new Map(nodes.map((node) => [node.id, { ...node, children: [] }]))
+  const map = new Map(nodes.map(node => [node.id, { ...node, children: [] }]))
   const tree = []
   // 遍历map的value集合
   for (const node of map.values()) {
@@ -625,12 +696,12 @@ function arrayToTree(nodes) {
 
 map 实现数组转树的时间复杂度为 O(n),其中 n 是节点的数量,空间复杂度为 O(n)。map 方式适合大规模数据,而且由于使用了 Map,相比于迭代方式,能够更方便地进行节点的查找和删除。
 
-#### 8.1.5 使用深度优先搜索(DFS)数组转树
+#### 9.1.5 使用深度优先搜索(DFS)数组转树
 
 ```js
 function arrayToTreeDFS(nodes) {
   // 初始化map,map的key为node.id,value为node的所有属性和chidrent属性组成的对象
-  const map = new Map(nodes.map((node) => [node.id, { ...node, children: [] }]))
+  const map = new Map(nodes.map(node => [node.id, { ...node, children: [] }]))
   const tree = []
   // 遍历map的value集合
   for (const node of map.values()) {
@@ -660,7 +731,7 @@ function arrayToTreeDFS(nodes) {
 
 基于 DFS 实现的数组转树时间复杂度为 O(n),其中 n 是节点的数量,空间复杂度为 O(n)。这种方式适用于大规模数据的处理,而且可以更方便地进行深度优先搜索。
 
-### 8.2 树结构转数组
+### 9.2 树结构转数组
 
 树结构转数组:
 
@@ -668,7 +739,7 @@ function arrayToTreeDFS(nodes) {
 
 - 层次遍历方式:使用层次遍历(逐层从左到右)的方式遍历树,将节点的值按照层次顺序存储到数组中。这种方式可以直观地将树结构转换为数组,而且在还原树结构时不需要额外的信息,只需按照层次顺序逐个构建节点。
 
-#### 8.1 前序遍历
+#### 9.1 前序遍历
 
 ```js
 const root = [
@@ -729,14 +800,14 @@ function treeToArrayPreorder(root) {
       }
     }
   }
-  root.forEach((node) => {
+  root.forEach(node => {
     traverse(node)
   })
   return result
 }
 ```
 
-#### 8.2 层次遍历
+#### 9.2 层次遍历
 
 ```js
 function treeToArrayLevelOrder(root) {

@@ -158,7 +158,7 @@ window.addEventListener('resize', init)
 .parent {
   position: relative;
 }
-/* 子元素绝对定义,设置top、left边距,通过transform位移垂直居中 */
+/* 子元素绝对定位,设置top、left边距,通过transform位移垂直居中 */
 .child {
   position: absolute;
   top: 50%;

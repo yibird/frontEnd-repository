@@ -205,7 +205,7 @@ console.log(isType([], 'Object')) //false
 console.log(isType(null, 'Object')) //false
 
 // 封装成高阶函数:判断obj是否是type类型
-const isType = (obj) => (type) => Object.prototype.toString.call(obj) === `[object ${type}]`
+const isType = obj => type => Object.prototype.toString.call(obj) === `[object ${type}]`
 // 测试
 console.log(isType('123')('String')) //true
 console.log(isType('123')('Number')) //false
@@ -277,16 +277,16 @@ const typeEnum = {
   funcType: '[object Function]',
 }
 // 获取类型
-const getType = (target) => Object.prototype.toString.call(target)
+const getType = target => Object.prototype.toString.call(target)
 // 获取target类型。高阶函数使函数更加简洁
-const isType = (target) => (type) => Object.prototype.toString.call(target) === `[object ${type}]`
+const isType = target => type => Object.prototype.toString.call(target) === `[object ${type}]`
 // 判断target是否是引用类型
-const isObject = (target) => {
+const isObject = target => {
   const type = typeof target
   return type !== null && (type !== 'function' || type !== 'object')
 }
 // 初始化对象
-const init = (target) => new target.constructor()
+const init = target => new target.constructor()
 
 function forEach(array, iterator) {
   let index = -1
@@ -387,7 +387,7 @@ function clone(target, map = new WeakMap()) {
      * 当target是Set类型,cloneTarget的初始化值是Set {},
      * 循环遍历target将set中的元素递归添加到cloneTarget中
      */
-    target.forEach((value) => {
+    target.forEach(value => {
       cloneTarget.add(clone(value))
     })
     return cloneTarget
@@ -450,6 +450,43 @@ console.log(cloneObj)
 
 ## 4.手写防抖节流函数
 
+“防抖（Debounce）” 和 “节流（Throttle）” 都是为了控制高频率触发事件的高阶函数,可以优化性能、减少资源浪费。
+
+- 防抖（Debounce）:在事件频繁触发时,只在最后一次触发后的一段时间才执行回调。如果在这段时间内又触发了事件,则重新计时,常用于搜索框输入请求、窗口Resize等场景。防抖的实现也很简单,其核心利用setTimeout(定时器),定义一个定时器,在事件触发时,如果定时器存在,则清除定时器,重新计时(如果函数被多次调用,timer总是有值,因此需要先清理定时器,从而保证函数多次调用只执行最后一次)。如果定时器不存在,则创建定时器,在定时器到期后执行回调函数。
+
+```js
+function debounce(fn, delay = 500) {
+  let timer = null
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
+}
+```
+
+- 节流（Throttle）:在高频触发的事件中,保证在固定时间间隔内只执行一次。常用于滚动加载(scroll)、鼠标移动(mousemove)等场景。节流的实现也很简单,其核心记录上次执行的时间,只有当时间间隔大于设定值时才允许执行。
+
+```js
+function throttle(fn, delay = 500) {
+  // 上次fn函数执行的时间
+  let prevTime = null
+  return function (...args) {
+    // 当前时间
+    const now = Date.now()
+    // 如果上次执行时间不存在或者时间间隔大于设定值,则执行函数
+    if (now - prevTime > delay) {
+      // 更新上次执行时间
+      prevTime = now
+      fn.apply(this, args)
+    }
+  }
+}
+```
+
 ## 5.解析 URL 参数函数
 
 ### 5.1 通过 URLSearchParams()解析 URL 参数
@@ -475,7 +512,7 @@ function getParams(url) {
     const str = url.split('?')[1]
     // 分割&号得到参数数组
     const arr = str.split('&')
-    arr.forEach((item) => {
+    arr.forEach(item => {
       const key = item.split('=')[0],
         value = item.split('=')[1]
       res[key] = decodeURIComponent(value) // 解码
@@ -513,7 +550,7 @@ class EventEmitter {
     const callbacks = this.events[event]
     // 循环执行回调函数列表的回调函数,并传入参数
     if (callbacks) {
-      callbacks.forEach((cb) => cb.apply(this, payload))
+      callbacks.forEach(cb => cb.apply(this, payload))
     }
     return this
   }
@@ -529,7 +566,7 @@ class EventEmitter {
        * 如果callback是函数则删除事件对应的回调函数,否则将重置该事件
        */
       this.events[event] =
-        typeof callback === 'function' ? this.events[event].filter((cb) => cb !== callback) : []
+        typeof callback === 'function' ? this.events[event].filter(cb => cb !== callback) : []
     }
     return this
   }
@@ -673,7 +710,7 @@ console.log(numFormat(b)) // 123,456.4542
 ```js
 function numFormat(num, separator = ',') {
   // \d+表示匹配多个数字,仅会匹配到小数点之前的内容
-  return num.toString().replace(/\d+/, (n) => {
+  return num.toString().replace(/\d+/, n => {
     // \d表示匹配数字,(?=(\d{3})+$)/g表示全局捕获以三位数字结尾的内容,$1为捕获到的内容
     return n.replace(/\d(?=(\d{3})+$)/g, function ($1) {
       return $1 + separator
@@ -699,7 +736,7 @@ const toString = Object.prototype.toString
  * @param {*} val 目标对象
  * @returns
  */
-const isMergeableObject = (val) => {
+const isMergeableObject = val => {
   const nonNullObject = val && typeof val === 'object'
   return (
     nonNullObject &&
@@ -712,7 +749,7 @@ const isMergeableObject = (val) => {
  * @param {*} val 目标对象
  * @returns
  */
-const emptyTarget = (val) => (Array.isArray(val) ? [] : {})
+const emptyTarget = val => (Array.isArray(val) ? [] : {})
 
 /**
  * 数组默认合并方法。
@@ -854,6 +891,113 @@ console.log(render(template, data)); // name:zchengfeng,age:18
 
 ## 11.手写 setTimeout()
 
+### 11.1 基于 setInterval 模拟
+
+```js
+function mySetTimeout(fn, delay = 0) {
+  const start = Date.now()
+  const timer = setInterval(() => {
+    if (Date.now() - start >= delay) {
+      clearInterval(timer)
+      fn()
+    }
+  }, 1) // 每1ms检查一次
+  return timer
+}
+
+function myClearTimeout(timer) {
+  clearInterval(timer)
+}
+```
+
+这种方式基于setInterval轮询实现,每次轮询检查当前时间是否超过设定值,如果超过则执行函数并清除定时器。虽然实现简单,但依赖于系统定时器,而且轮询间隔越小,性能越差。
+
+### 11.2 基于 Promise + 循环事件模拟（无内置定时器）
+
+```js
+function sleep(ms) {
+  const start = Date.now()
+  while (Date.now() - start < ms) {
+    // 主动阻塞（同步等待）
+  }
+}
+
+function mySetTimeout(fn, delay = 0) {
+  Promise.resolve().then(() => {
+    sleep(delay)
+    fn()
+  })
+}
+```
+
+这种方式不依赖setTimeout 或 setInterval,只靠事件循环和微任务“耗时”,但是会阻塞主线程,一般不推荐使用。
+
+### 11.3 基于 requestAnimationFrame 模拟
+
+requestAnimationFrame是一个基于渲染帧频率的异步调度器,在下一帧渲染前执行(约16.6ms 一次),可以利用帧循环不断检查 当前时间 - 开始时间 是否超过目标 delay。当达到目标延迟时，执行回调函数 fn()。例如延迟时间为1000ms,浏览器每帧约 16.6ms,因此大约 60 帧后就能触发函数。
+
+```js
+function mySetTimeout(fn, delay) {
+  // 记录开始时间
+  let start = performance.now()
+  //  定时器对象,canceled用于取消定时器
+  let timerId = { canceled: false }
+
+  function loop(now) {
+    // 检查定时器是否取消
+    if (timerId.canceled) return
+    // 检查是否超过延迟时间
+    if (now - start >= delay) {
+      fn()
+    } else {
+      // 继续请求下一个动画帧
+      requestAnimationFrame(loop)
+    }
+  }
+  //  初始请求动画帧
+  requestAnimationFrame(loop)
+  return timerId
+}
+
+function myClearTimeout(timerId) {
+  timerId.canceled = true
+}
+```
+
+这种方式基于requestAnimationFrame实现,虽然实现精度高,但只能在浏览器环境使用。
+
+### 11.4 利用 Date.now() + Promise 实现异步等待
+
+```js
+function mySetTimeout(fn, delay = 0) {
+  // 取消状态标识
+  let canceled = false
+  // 记录当前时间
+  const start = Date.now()
+
+  // 检查函数
+  function check() {
+    // 检查取消状态
+    if (canceled) return
+    // 获取函数当前执行时间
+    const now = Date.now()
+    // 检查是否超过延迟时间
+    if (now - start >= delay) {
+      fn()
+    } else {
+      // 把 check 放入微任务队列
+      Promise.resolve().then(check)
+    }
+  }
+
+  Promise.resolve().then(check)
+
+  return () => (canceled = true)
+}
+```
+
+这种实现方式不使用 setTimeout 或 setInterval,基于事件循环 + 微任务实现异步延迟,也适用于非浏览器环境。
+
 ## 12.手写 setInterval()
 
 setInterval 常用于计时场景,例如倒计时组件,由于 setInterval 的缺点,通常不会直接使用 setInterval 实现计时功能,而是借助 setTimeout 模拟 setInterval,setInterval 的缺点如下:
@@ -986,9 +1130,78 @@ compareVersion('0.0.1', '0.0.2') // true
 compareVersion('0.0.1', '0.0.11') // true
 ```
 
-## Promise 异常处理函数
+## 15.Promise 异常处理函数
+
+Promise虽然提供了catch方法用于处理异常,但在实际项目中,一般使用async await语法来简化异步操作,基于go语言的错误机制结合async await语法,可以返回错误和结果提升可读性。
+
+```ts
+/**
+ * 异步函数转换为Promise<[E, null] | [null, T]>,Promise返回数组中第一项为错误信息,第二项为结果,
+ * 异步函数执行成功时,返回[null, T],异步函数执行失败时,返回[E, null]
+ * @param promise 异步函数
+ * @param callback 回调函数
+ * @returns Promise<[E, null] | [null, T]>
+ */
+export async function asyncTo<T, E = Error>(
+  promise: Promise<T>,
+  callback?: () => void
+): Promise<[E, null] | [null, T]> {
+  try {
+    const res = await promise
+    return [null, res]
+  } catch (error) {
+    return [error as E, null]
+  } finally {
+    // 如果 callback 是异步的也等待它
+    // 并且保证 finally 一定在函数返回前执行（对 await 的调用）
+    if (callback) {
+      callback()
+    }
+  }
+}
+```
 
 ## 惰性函数
+
+惰性函数是一种编程优化技巧,其实现原理是利用闭包和高阶函数函数式编程特性,在第一次调用时执行函数,并将结果缓存起来,后续调用直接返回缓存结果,避免重复执行。惰性函数常用于浏览器特性检测、重量级计算缓存、环境相关的功能初始化、延迟加载的模块系统等场景。
+
+```js
+function lazy(fn) {
+  let result
+  let initialized = false
+
+  return function () {
+    if (!initialized) {
+      result = fn()
+      initialized = true
+    }
+    return result
+  }
+}
+```
+
+惰性函数优化API兼容性检测,避免重复检测API:
+
+```js
+// 检测浏览器支持的动画API
+function getAnimationFrame() {
+  if (typeof requestAnimationFrame !== 'undefined') {
+    getAnimationFrame = () => requestAnimationFrame
+  } else if (typeof webkitRequestAnimationFrame !== 'undefined') {
+    getAnimationFrame = () => webkitRequestAnimationFrame
+  } else if (typeof mozRequestAnimationFrame !== 'undefined') {
+    getAnimationFrame = () => mozRequestAnimationFrame
+  } else {
+    getAnimationFrame = () => callback => setTimeout(callback, 1000 / 60)
+  }
+
+  return getAnimationFrame()
+}
+
+// 使用
+const raf = getAnimationFrame()
+raf(() => console.log('动画帧'))
+```
 
 ## 函数式编程工具函数
 

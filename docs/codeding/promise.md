@@ -1,4 +1,4 @@
-## 手写 Promise
+## 1.手写 Promise
 
 Promise 是 ES6 提供的异步解决方案,Promise 通过链式调用可以解决回调函数(回调函数在事件循环中属于微任务)嵌套而产生的回调地狱问题,手写 Promise 会涉及 Promise、Class、this 显式绑定(call、apply、bind)、事件循环(Event Loop)等知识点。Promise 的特点如下:
 
@@ -55,7 +55,7 @@ class MyPromise {
       setTimeout(() => {
         this.promiseStatus = FULFILLED
         this.promiseResult = result
-        this.onFulfilltedCallbacks.forEach((callback) => callback(result))
+        this.onFulfilltedCallbacks.forEach(callback => callback(result))
       })
     }
   }
@@ -72,18 +72,18 @@ class MyPromise {
       setTimeout(() => {
         this.promiseStatus = REJECTED
         this.promiseResult = reason
-        this.onRejectedCallbacks.forEach((callback) => callback(reason))
+        this.onRejectedCallbacks.forEach(callback => callback(reason))
       })
     }
   }
 
   then(onFulfilled, onRejected) {
     // 如果onFulfilled()或onRejected()是函数则直接返回,否则通过函数包装,传入什么就返回什么
-    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : (value) => value
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
     onRejected =
       typeof onRejected === 'function'
         ? onRejected
-        : (reason) => {
+        : reason => {
             throw reason
           }
     // 执行then()会返回一个新的Promise实例
@@ -91,7 +91,7 @@ class MyPromise {
       const { PENDING, FULFILLED } = MyPromise
       const { promiseStatus, onFulfilltedCallbacks, onRejectedCallbacks } = this
       // 对onFulfillted和onRejected的返回值进行处理
-      const handle = (fn) => {
+      const handle = fn => {
         try {
           resolvePromise(promise, fn(this.promiseResult), resolve, reject)
         } catch (err) {
@@ -157,7 +157,7 @@ function resolvePromise(promise, result, resolve, reject) {
     const { PENDING, FULFILLED, REJECTED } = MyPromise
     const map = {
       [PENDING]: () => {
-        result.then((y) => resolvePromise(promise, y, resolve, reject), reject)
+        result.then(y => resolvePromise(promise, y, resolve, reject), reject)
       },
       [FULFILLED]: () => resolve(result.promiseResult),
       [REJECTED]: () => reject(result.promiseResult),
@@ -182,16 +182,16 @@ function resolvePromise(promise, result, resolve, reject) {
          */
         then.call(
           result,
-          (y) => {
+          y => {
             if (called) return
             called = true
             resolvePromise(promise, y, resolve, reject)
           },
-          (r) => {
+          r => {
             if (called) return
             called = true
             reject(r)
-          },
+          }
         )
       } catch (e) {
         if (called) return
@@ -236,7 +236,7 @@ class MyPromise {
       setTimeout(() => {
         this.promiseStatus = FULFILLED
         this.promiseResult = result
-        this.onFulfilltedCallbacks.forEach((callback) => callback(result))
+        this.onFulfilltedCallbacks.forEach(callback => callback(result))
       })
     }
   }
@@ -246,23 +246,23 @@ class MyPromise {
       setTimeout(() => {
         this.promiseStatus = REJECTED
         this.promiseResult = reason
-        this.onRejectedCallbacks.forEach((callback) => callback(reason))
+        this.onRejectedCallbacks.forEach(callback => callback(reason))
       })
     }
   }
 
   then(onFulfilled, onRejected) {
-    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : (value) => value
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
     onRejected =
       typeof onRejected === 'function'
         ? onRejected
-        : (reason) => {
+        : reason => {
             throw reason
           }
     const promise = new MyPromise((resolve, reject) => {
       const { PENDING, FULFILLED } = MyPromise
       const { promiseStatus, onFulfilltedCallbacks, onRejectedCallbacks } = this
-      const handle = (fn) => {
+      const handle = fn => {
         try {
           resolvePromise(promise, fn(this.promiseResult), resolve, reject)
         } catch (err) {
@@ -288,7 +288,7 @@ function resolvePromise(promise, result, resolve, reject) {
     const { PENDING, FULFILLED, REJECTED } = MyPromise
     const map = {
       [PENDING]: () => {
-        result.then((y) => resolvePromise(promise, y, resolve, reject), reject)
+        result.then(y => resolvePromise(promise, y, resolve, reject), reject)
       },
       [FULFILLED]: () => resolve(result.promiseResult),
       [REJECTED]: () => reject(result.promiseResult),
@@ -305,16 +305,16 @@ function resolvePromise(promise, result, resolve, reject) {
       try {
         then.call(
           result,
-          (y) => {
+          y => {
             if (called) return
             called = true
             resolvePromise(promise, y, resolve, reject)
           },
-          (r) => {
+          r => {
             if (called) return
             called = true
             reject(r)
-          },
+          }
         )
       } catch (e) {
         if (called) return
@@ -348,7 +348,7 @@ p.then(() => {
   return new MyPromise((resolve, reject) => {
     resolve(5)
   })
-}).then((result) => {
+}).then(result => {
   console.log(result)
 })
 
@@ -404,31 +404,40 @@ module.exports = MyPromise
 
 ![promiseTest](../assets/images/promise-test.png)
 
-## 手写 async await
+## 2.手写 async await
 
-## 手写 Promise 错误处理函数
+## 3.手写 Promise 错误处理函数
 
-```js
-/*
- * asyncTo支持泛型,接收Promise对象和执行函数,无论Promise的状态如何最终执行函数都会被执行,
- * asyncTo返回一个数组,数组的第一个元素是传入的promise产生的错误信息,元素二是promise执行成功
- * 返回的数据
+Promise虽然提供了catch方法用于处理异常,但在实际项目中,一般使用async await语法来简化异步操作,基于go语言的错误机制结合async await语法,可以返回错误和结果提升可读性。
+
+```ts
+/**
+ * 异步函数转换为Promise<[E, null] | [null, T]>,Promise返回数组中第一项为错误信息,第二项为结果,
+ * 异步函数执行成功时,返回[null, T],异步函数执行失败时,返回[E, null]
+ * @param promise 异步函数
+ * @param callback 回调函数
+ * @returns Promise<[E, null] | [null, T]>
  */
-function asyncTo<E = Error, T = any>(promise: Promise<any>, fn?: () => void) {
-  return (
-    new Promise() <
-    [null, T] >
-    ((resolve, reject) => {
-      return promise
-        .then((data: T) => resolve([null, data]))
-        .catch((err: E) => reject([err, null]))
-        .finally(() => fn && fn());
-    })
-  );
+export async function asyncTo<T, E = Error>(
+  promise: Promise<T>,
+  callback?: () => void
+): Promise<[E, null] | [null, T]> {
+  try {
+    const res = await promise
+    return [null, res]
+  } catch (error) {
+    return [error as E, null]
+  } finally {
+    // 如果 callback 是异步的也等待它
+    // 并且保证 finally 一定在函数返回前执行（对 await 的调用）
+    if (callback) {
+      callback()
+    }
+  }
 }
 ```
 
-## 异步请求控制并发数
+## 4.异步请求控制并发数
 
 ```js
 const limitRequest = (urls = [], limit = 0) => {
@@ -464,7 +473,7 @@ const limitRequest = (urls = [], limit = 0) => {
 }
 ```
 
-## Promise 错误重试函数
+## 5.Promise 错误重试函数
 
 解析:返回一个新的 Promise,遍历 count 次,每次遍历 count 减一,每次遍历都会使用`try catch`捕获外部传入的 Promise 执行时产生的异常,执行成功则调用`resolve()`修改 Promise 的状态为`fulfilled`,则立即终止循环,如果执行 count 次外部 Promise 任务仍未执行成功,则直接调用`reject()`修改 Promise 的状态为`rejected`。
 
@@ -501,4 +510,15 @@ retry(fn, 3).catch(() => {
 })
 ```
 
-## 实现带有延迟的 Promise
+## 6.实现带有延迟的 Promise
+
+```js
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// 使用示例
+delay(1000).then(() => {
+  console.log('1秒后执行')
+})
+```
