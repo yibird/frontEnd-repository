@@ -418,7 +418,7 @@ Webpack 提供的 ModuleFederationPlugin 插件是实现模块联邦的核心。
 
 - 模块清单生成:在编译阶段,Module Federation 插件会为每个应用生成一个模块清单(manifest),该清单记录了应用中暴露的模块及其依赖关系。这些清单文件通常以 remoteEntry.js 命名。
 - 模块暴露:通过 exposes 配置,应用可以指定哪些模块可以被其他应用使用。Webpack 会为这些模块生成对应的打包文件,并在清单中记录它们的路径和依赖。
-- 远程模块引用:通过 remotes 配置,应用可以指定从哪些远程地址加载模块。远程模块地址通常包括远程应用的名称和其清单文件的 URL。例如 app1@http://localhost:3001/remoteEntry.js。
+- 远程模块引用:通过 remotes 配置,应用可以指定从哪些远程地址加载模块。远程模块地址通常包括远程应用的名称和其清单文件的 URL。例如 `http://localhost:3001/remoteEntry.js`。
 - 动态模块加载:当应用在运行时需要加载一个远程模块时,Webpack 会先加载对应的清单文件（如 remoteEntry.js）,然后根据清单信息动态加载需要的模块文件。
 - 模块共享:通过 shared 配置,应用可以指定共享的模块和依赖。Webpack 会确保在同一版本范围内只加载一次共享模块,以避免重复加载和版本冲突。
 
