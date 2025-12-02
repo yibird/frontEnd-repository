@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.C7gvd0FP.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"js/bom.md","filePath":"js/bom.md","lastUpdated":1764669426000}'),o={name:"js/bom.md"};function s(r,c,n,m,d,p){return a(),t("div")}const f=e(o,[["render",s]]);export{i as __pageData,f as default};

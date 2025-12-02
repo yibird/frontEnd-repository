@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as s}from"./chunks/framework.2cee8389.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"js/closure.md","filePath":"js/closure.md","lastUpdated":1718591071000}'),a={name:"js/closure.md"};function r(o,c,n,d,l,p){return t(),s("div")}const m=e(a,[["render",r]]);export{i as __pageData,m as default};
