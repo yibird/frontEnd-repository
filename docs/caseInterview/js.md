@@ -98,21 +98,6 @@ function isPlainObject(obj) {
 Number.isNaN()方法和 isNaN()的区别在于,Number.isNaN()不会将传入的非数值类型进行强制转换为数值类型,而是首先判断传入的参数是否为数值类型,只要是非数值类型就直接返回 false。而 isNaN()会对非数值类型进行强制转换为数值类型,然后再进行判断。
 
 ```ts
-<<<<<<< HEAD
-console.log(isNaN(NaN)); // true
-console.log(isNaN(true)); // true
-console.log(isNaN("aa")); // true
-console.log(isNaN("")); // false
-console.log(isNaN(null)); // false
-console.log(isNaN(undefined)); // false
-
-console.log(Number.isNaN(NaN)); // true
-console.log(Number.isNaN(true)); // false
-console.log(Number.isNaN("aa")); // false
-console.log(Number.isNaN("")); // false
-console.log(Number.isNaN(null)); // false
-console.log(Number.isNaN(undefined)); // false
-=======
 console.log(isNaN(NaN)) // true
 console.log(isNaN(true)) // true
 console.log(isNaN('aa')) // true
@@ -126,7 +111,6 @@ console.log(Number.isNaN('aa')) // false
 console.log(Number.isNaN('')) // false
 console.log(Number.isNaN(null)) // false
 console.log(Number.isNaN(undefined)) // false
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 ```
 
 ## 7.JS 0.1+0.2 为什么不等于 0.3?
@@ -213,13 +197,8 @@ console.log(obj.value === 1 && obj.value === 2 && obj.value === 3) // 输出 tru
 
 ```js
 // 变量提升,在变量声明之前使用变量会产生undefined值
-<<<<<<< HEAD
-console.log(a); // undefined
-var a = "hello";
-=======
 console.log(a) // undefined
 var a = 'hello'
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 
 // 函数提升
 foo() // 1
@@ -228,17 +207,10 @@ function foo() {
 }
 
 // 函数提升的优先级高于变量提升,因为函数声明的优先级高于变量声明的优先级
-<<<<<<< HEAD
-foo(); // "hello"
-var foo = "world";
-function foo() {
-  console.log("hello");
-=======
 foo() // "hello"
 var foo = 'world'
 function foo() {
   console.log('hello')
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 }
 ```
 
@@ -435,17 +407,10 @@ module.exports = {
 }
 
 // main.js
-<<<<<<< HEAD
-var lib = require("./lib");
-console.log(lib.counter); // 3
-lib.incCounter();
-console.log(lib.counter); // 3
-=======
 var lib = require('./lib')
 console.log(lib.counter) // 3
 lib.incCounter()
 console.log(lib.counter) // 3
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 
 /*
  * 在main.js中调用incCounter()但counter的值仍是3,这说明lib模块内部对值的
@@ -470,17 +435,10 @@ export function incCounter() {
 }
 
 // mian.js
-<<<<<<< HEAD
-import { counter, incCounter } from "./lib";
-console.log(counter); // 3
-incCounter();
-console.log(counter); // 4
-=======
 import { counter, incCounter } from './lib'
 console.log(counter) // 3
 incCounter()
 console.log(counter) // 4
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 // 从结果来看ESM是属于动态引用的,lib模块counter变化会影响main模块的counter
 ```
 
@@ -589,11 +547,7 @@ function createValidator(rule) {
 
 // 基本的验证规则
 function isRequired(value) {
-<<<<<<< HEAD
-  return value !== undefined && value !== null && value !== "";
-=======
   return value !== undefined && value !== null && value !== ''
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 }
 
 function isEmail(value) {
@@ -611,19 +565,11 @@ const validateEmail = createValidator(isEmail)
 const validateNumeric = createValidator(isNumeric)
 
 // 使用验证函数
-<<<<<<< HEAD
-const userInput = "";
-
-console.log(validateRequired(userInput)); // false
-console.log(validateEmail("example.com")); // false
-console.log(validateNumeric("123abc")); // false
-=======
 const userInput = ''
 
 console.log(validateRequired(userInput)) // false
 console.log(validateEmail('example.com')) // false
 console.log(validateNumeric('123abc')) // false
->>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 ```
 
 ## 26.FileReader 的作用?
@@ -680,8 +626,6 @@ Web Worker 的应用场景包括:
 - 绘制(Paint):一旦布局完成,浏览器开始绘制页面。它会将页面的每个可见元素绘制成像素,填充颜色、边框等。
 - 合成(Composite):最后,浏览器将不同层的像素组合成最终的页面图像。这个过程称为合成。合成可以使用硬件加速来提高性能。
 
-<<<<<<< HEAD
-
 ## 什么是回流(Reflow)和重绘(Repaint)?
 
 回流(Reflow)和重绘(Repaint)是浏览器在渲染页面时的两种更新手段:
@@ -696,30 +640,7 @@ Web Worker 的应用场景包括:
 - 使用 transform 代替 top/left:transform不会触发布局,只触发合成,而且还支持GPU 加速。
 - 避免频繁读取布局属性:JS每次读取布局属性都会触发重新布局计算。浏览器为了性能,会“延迟计算布局”(Lazy Layout),当修改样式时,浏览器不会立刻重新计算布局,如果在修改后立即读取布局,浏览器会强制同步回流(Forced Synchronous Layout),该阶段会立即停止延迟策略,强制执行布局计算,再返回正确值。
 
-## 30.什么是事件循环
-
-=======
-
 ## 30.什么是事件循环?
-
-事件循环(Event Loop)是协调“同步任务”和“异步任务”执行顺序的机制。由于JS采用单线程模型,主线程一次只能做一件事,为了能同时处理多个任务(比如网络请求、定时器、UI 事件等),JS引入了事件循环。
-
-- 同步任务:同步任务会立即执行,并阻塞主线程,直到任务完成。
-- 异步任务:异步任务不会立即执行(不会阻塞主线程),而是在任务完成后通过事件循环机制通知主线程执行。异步任务通常包括定时器、事件处理、网络请求等。
-
-事件循环的工作流程:
-
-- JS 主线程每次执行任务时,要先看看执行的任务是同步任务还是异步的 API。
-- 如果是同步任务放入执行栈中顺序执行,直到执行结束。
-- 如果是异步任务则将任务添加到对应的任务队列,在JS事件循环中,任务队列分为微任务队列和宏任务队列,微任务是“轻量级、立即执行”的任务,用于保证异步逻辑的及时性;而宏任务是“重量级、调度型”的任务，用于保证系统的稳定性和渲染节奏。
-  - 微任务:Promise.then、MutationObserver、queueMicrotask、process.nextTick(Node)。
-  - 宏任务:setTimeout、setInterval、setImmediate、I/O、UI 事件。
-- JS 主线程执行完同步任务后,就会检查任务队列中是否存在任务,如果存在任务则执行该任务。
-- 主线程不断循环上述流程,每一次循环操作被称为 tick,同一次 tick 中,微任务的执行优先级总是高于宏任务。
-
-执行异步任务时会根据任务事件类型将任务添加至宏任务队列或微任务队列,如果当前执行栈为空,则主线程优先查看微任务队列中是否存在任务,如果存在任务则依次执行微任务队列中的回调,直到微任务队列中所有任务执行完毕后,才会将宏任务队列中的任务逐个添加到执行栈中执行。如果微任务队列中不存在任务,则会将宏任务队列中的任务逐个添加到执行栈中执行。执行栈执行任务结束后会检查微任务队列中是否存在任务,若存在任务则优先处理微任务队列中的任务,然后再执行宏任务队列中的任务,所以在同一次事件循环中,微任务执行时机永远优于宏任务。
-
-> > > > > > > 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
 
 **事件循环（Event Loop）**是 JavaScript 运行时（浏览器或 Node.js）用来协调「调用栈、异步任务、回调执行顺序」的一套调度机制。由于 JavaScript 采用单线程模型,无法同时执行多段代码,也不能阻塞等待,所以必须通过“事件循环”来调度异步任务,让单线程也能实现非阻塞并发。一个 JS 运行环境通常包含:调用栈（Call Stack）、任务队列（Task Queue）、微任务队列（Microtask Queue）、Web APIs / Node APIs、事件循环（Event Loop）。JS事件循环执行流程如下:
 
@@ -770,68 +691,33 @@ Web Worker 的应用场景包括:
     <button id="child">Click me</button>
   </div>
 </div>
-
 <script>
-    // 设置在捕获阶段执行的事件处理函数
-    document
-  <<<<<<< HEAD
-      .getElementById("grandparent")
-      .addEventListener(
-        "click",
-        () => console.log("Grandparent capturing"),
-        true,
-      );
-    document
-      .getElementById("parent")
-      .addEventListener("click", () => console.log("Parent capturing"), true);
-    document
-      .getElementById("child")
-      .addEventListener("click", () => console.log("Child capturing"), true);
-    // 设置在冒泡阶段执行的事件处理函数
-    document
-      .getElementById("grandparent")
-      .addEventListener(
-        "click",
-        () => console.log("Grandparent bubbling"),
-        false,
-      );
-    document
-      .getElementById("parent")
-      .addEventListener("click", () => console.log("Parent bubbling"), false);
-    document
-      .getElementById("child")
-      .addEventListener("click", () => console.log("Child bubbling"), false);
-  =======
-      .getElementById('grandparent')
-      .addEventListener('click', () => console.log('Grandparent capturing'), true)
-    document
-      .getElementById('parent')
-      .addEventListener('click', () => console.log('Parent capturing'), true)
-    document
-      .getElementById('child')
-      .addEventListener('click', () => console.log('Child capturing'), true)
-    // 设置在冒泡阶段执行的事件处理函数
-    document
-      .getElementById('grandparent')
-      .addEventListener('click', () => console.log('Grandparent bubbling'), false)
-    document
-      .getElementById('parent')
-      .addEventListener('click', () => console.log('Parent bubbling'), false)
-    document
-      .getElementById('child')
-      .addEventListener('click', () => console.log('Child bubbling'), false)
-  >>>>>>> 1c3f1f7cc5b95e4ae4d8329dd12847d72d5693f7
-    /**
-     * 点击 button 元素时,事件捕获阶段的控制台输出:
-     * Grandparent capturing
-     * Parent capturing
-     * Child capturing
-     *
-     * 点击 button 元素时,事件冒泡阶段的控制台输出:
-     * Child capturing
-     * Parent capturing
-     * Grandparent capturing
-     */
+  // 获取 DOM 元素
+  const grandparent = document.getElementById('grandparent')
+  const parent = document.getElementById('parent')
+  const child = document.getElementById('child')
+
+  /**
+   * 设置在【捕获阶段】执行的函数 (addEventListener 的第三个参数为 true),
+   * 点击 button 元素时,事件捕获阶段的控制台输出:
+   * Grandparent capturing
+   * Parent capturing
+   * Child capturing
+   */
+  grandparent.addEventListener('click', () => console.log('Grandparent capturing'), true)
+  parent.addEventListener('click', () => console.log('Parent capturing'), true)
+  child.addEventListener('click', () => console.log('Child capturing'), true)
+
+  /**
+   * 设置在【冒泡阶段】执行的函数 (addEventListener 的第三个参数为 false 或不写),
+   * 点击 button 元素时,事件冒泡阶段的控制台输出:
+   * Child capturing
+   * Parent capturing
+   * Grandparent capturing
+   */
+  grandparent.addEventListener('click', () => console.log('Grandparent bubbling'), false)
+  parent.addEventListener('click', () => console.log('Parent bubbling'), false)
+  child.addEventListener('click', () => console.log('Child bubbling'), false)
 </script>
 ```
 
