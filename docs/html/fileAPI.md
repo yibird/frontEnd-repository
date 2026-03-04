@@ -18,29 +18,22 @@ File 在 HTML 中表示一个文件对象,FileList 表示多个 File 对象列�
 <input id="fileEl" type="file" multiple />
 
 <script>
-  const fileEl = document.getElementById("fileEl");
+  const fileEl = document.getElementById('fileEl')
   // 监听change事件
   fileEl.onchange = (e) => {
     // 获取已选中文件列表,返回一个FileList对象,通过Array.from()转为数组
-    const files = Array.from(fileEl.files);
-    if (files.length === 0) return;
+    const files = Array.from(fileEl.files)
+    if (files.length === 0) return
     files.forEach((file) => {
-      const {
-        name,
-        size,
-        type,
-        lastModified,
-        lastModifiedDate,
-        webkitRelativePath,
-      } = file;
-      console.log("文件名:", name);
-      console.log("文件大小(字节):", size);
-      console.log("文件MIME type:", type);
-      console.log("文件最后修改日期:", lastModified);
-      console.log("文件最后修改事件:", lastModifiedDate);
-      console.log("文件path:", webkitRelativePath);
-    });
-  };
+      const { name, size, type, lastModified, lastModifiedDate, webkitRelativePath } = file
+      console.log('文件名:', name)
+      console.log('文件大小(字节):', size)
+      console.log('文件MIME type:', type)
+      console.log('文件最后修改日期:', lastModified)
+      console.log('文件最后修改事件:', lastModifiedDate)
+      console.log('文件path:', webkitRelativePath)
+    })
+  }
 </script>
 ```
 
@@ -74,32 +67,32 @@ HTML5 中 Blob 对象用于表示原始二进制数据(File 对象继承自 Blob
  */
 
 // 1.创建一个空数据的Blob对象
-const blob01 = new Blob(); // Blob {size: 0, type: ''}
+const blob01 = new Blob() // Blob {size: 0, type: ''}
 
 // 2.创建一个DOMString内容、MIME类型为text/html的Blob对象
 const blob02 = new Blob(['<a id="a"><b id="b">hey!</b></a>'], {
-  type: "text/html",
-});
-console.log(blob02); // Blob {size: 32, type: 'text/html'}
+  type: 'text/html',
+})
+console.log(blob02) // Blob {size: 32, type: 'text/html'}
 
 // 3.创建一个Blob内容的Blob对象
-const blob03 = new Blob([new Blob(["hahaha"])], {
-  type: "",
-});
-console.log(blob03); // Blob {size: 6, type: ''}
+const blob03 = new Blob([new Blob(['hahaha'])], {
+  type: '',
+})
+console.log(blob03) // Blob {size: 6, type: ''}
 
 // 4.创建一个ArrayBuffer内容的Blob对象
-const arrayBuffer = new ArrayBuffer(10); // 创建一个长度为10字节的ArrayBuffer
+const arrayBuffer = new ArrayBuffer(10) // 创建一个长度为10字节的ArrayBuffer
 const blob04 = new Blob([arrayBuffer], {
-  type: "text/plain",
-});
-console.log(blob04); // Blob{Blob {size: 10, type: 'text/plain'}}
+  type: 'text/plain',
+})
+console.log(blob04) // Blob{Blob {size: 10, type: 'text/plain'}}
 
 // 5.创建一个ArrayBufferView内容的Blob对象
 // 根据ArrayBuffer创建一个ArrayBufferView对象,DataView属于ArrayBufferView的子类
-const view = new DataView(new ArrayBuffer(16));
-const blob05 = new Blob([view]);
-console.log(blob05); // Blob {size: 16, type: ''}
+const view = new DataView(new ArrayBuffer(16))
+const blob05 = new Blob([view])
+console.log(blob05) // Blob {size: 16, type: ''}
 ```
 
 ### FileReader 对象

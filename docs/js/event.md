@@ -10,7 +10,7 @@ JS 中事件机制是基于观察者模式实现,当元素被触发时就会执�
 
 <script>
   function btnClick() {
-    console.log("click...");
+    console.log('click...')
   }
 </script>
 ```
@@ -22,11 +22,11 @@ JS 中事件机制是基于观察者模式实现,当元素被触发时就会执�
 
 <script>
   // 获取button元素
-  const button = document.getElementById("btn");
+  const button = document.getElementById('btn')
   // 绑定点击事件
   button.onclick = () => {
-    console.log("click...");
-  };
+    console.log('click...')
+  }
 </script>
 ```
 
@@ -46,8 +46,8 @@ addEventListener()接收如下参数:
 
 ```js
 // addEventListener语法
-target.addEventListener(type, listener, options);
-target.addEventListener(type, listener, useCapture);
+target.addEventListener(type, listener, options)
+target.addEventListener(type, listener, useCapture)
 ```
 
 ```html
@@ -55,11 +55,11 @@ target.addEventListener(type, listener, useCapture);
 
 <script>
   // 获取button元素
-  const button = document.getElementById("btn");
+  const button = document.getElementById('btn')
   // 绑定点击事件
-  button.addEventListener("click", (e) => {
-    console.log("click", e);
-  });
+  button.addEventListener('click', (e) => {
+    console.log('click', e)
+  })
 </script>
 ```
 
@@ -136,19 +136,19 @@ target.addEventListener(type, listener, useCapture);
 
 ### 2.8 键盘事件
 
-| **事件名称** | **触发时机**                                        | **说明**                                                                                                                                        |
-| ------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| keydown      | 按下某个键时将触发按键事件。                        | 与按键事件不同,该事件将针对所有键触发,而不管它们是否生成字符值。通过事件对象的 keycode 可获取按键的编码。                                       |
-| keypress     | 除 Shift、Fn、CapsLock 外的任意键被按住(连续触发)。 | 生成字符值的键的示例包括字母、数字和标点符号键。不生成字符值的键的示例包括修饰键，如 `、` 或 ` Alt``Shift``Ctrl``Meta `。MDN 不推荐使用该事件。 |
-| keyup        | 释放某个键时将触发该事件。                          |                                                                                                                                                 |
+| **事件名称** | **触发时机**                                        | **说明**                                                                                                                                      |
+| ------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| keydown      | 按下某个键时将触发按键事件。                        | 与按键事件不同,该事件将针对所有键触发,而不管它们是否生成字符值。通过事件对象的 keycode 可获取按键的编码。                                     |
+| keypress     | 除 Shift、Fn、CapsLock 外的任意键被按住(连续触发)。 | 生成字符值的键的示例包括字母、数字和标点符号键。不生成字符值的键的示例包括修饰键，如 `、` 或 `Alt``Shift``Ctrl``Meta`。MDN 不推荐使用该事件。 |
+| keyup        | 释放某个键时将触发该事件。                          |                                                                                                                                               |
 
 ### 2.9 鼠标事件
 
-| **事件名称** | **触发时机**                                        | **说明**                                                                                                                                        |
-| ------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| keydown      | 按下某个键时将触发按键事件。                        | 与按键事件不同,该事件将针对所有键触发,而不管它们是否生成字符值。通过事件对象的 keycode 可获取按键的编码。                                       |
-| keypress     | 除 Shift、Fn、CapsLock 外的任意键被按住(连续触发)。 | 生成字符值的键的示例包括字母、数字和标点符号键。不生成字符值的键的示例包括修饰键，如 `、` 或 ` Alt``Shift``Ctrl``Meta `。MDN 不推荐使用该事件。 |
-| keyup        | 释放某个键时将触发该事件。                          |                                                                                                                                                 |
+| **事件名称** | **触发时机**                                        | **说明**                                                                                                                                      |
+| ------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| keydown      | 按下某个键时将触发按键事件。                        | 与按键事件不同,该事件将针对所有键触发,而不管它们是否生成字符值。通过事件对象的 keycode 可获取按键的编码。                                     |
+| keypress     | 除 Shift、Fn、CapsLock 外的任意键被按住(连续触发)。 | 生成字符值的键的示例包括字母、数字和标点符号键。不生成字符值的键的示例包括修饰键，如 `、` 或 `Alt``Shift``Ctrl``Meta`。MDN 不推荐使用该事件。 |
+| keyup        | 释放某个键时将触发该事件。                          |                                                                                                                                               |
 
 ### 2.10 拖放事件
 
@@ -175,21 +175,21 @@ target.addEventListener(type, listener, useCapture);
 <p></p>
 
 <script>
-  const form = document.querySelector("form");
-  const fname = document.getElementById("fname");
-  const lname = document.getElementById("lname");
-  const para = document.querySelector("p");
-  form.addEventListener("submit", (e) => {
+  const form = document.querySelector('form')
+  const fname = document.getElementById('fname')
+  const lname = document.getElementById('lname')
+  const para = document.querySelector('p')
+  form.addEventListener('submit', (e) => {
     /*
      * 默认情况下点击按钮就会触发form表单提交,无法添加额外的校验。
      * 当fname和lname的值为空时,则会阻止浏览器默认行为,阻止form表单提交
      */
-    if (fname.value === "" || lname.value === "") {
+    if (fname.value === '' || lname.value === '') {
       // 阻止浏览器默认行为
-      e.preventDefault();
-      para.textContent = "You need to fill in both names!";
+      e.preventDefault()
+      para.textContent = 'You need to fill in both names!'
     }
-  });
+  })
 </script>
 ```
 
@@ -211,31 +211,31 @@ target.addEventListener(type, listener, useCapture);
 <script>
   // 事件冒泡
   function eventBubbling() {
-    const parent = document.querySelector(".parent");
-    const child = document.querySelector(".child");
+    const parent = document.querySelector('.parent')
+    const child = document.querySelector('.child')
     parent.onclick = () => {
-      console.log("parent click...");
-    };
+      console.log('parent click...')
+    }
     child.onclick = () => {
-      console.log("child click...");
-    };
+      console.log('child click...')
+    }
   }
 
   // 阻止事件冒泡
   function stopEventBubbling() {
-    const father = document.querySelector(".father");
-    const son = document.querySelector(".son");
+    const father = document.querySelector('.father')
+    const son = document.querySelector('.son')
     father.onclick = () => {
-      console.log("father click...");
-    };
+      console.log('father click...')
+    }
     son.onclick = (e) => {
       // 阻止事件向上冒泡
-      e.stopPropagation();
-      console.log("son click...");
-    };
+      e.stopPropagation()
+      console.log('son click...')
+    }
   }
-  eventBubbling(); // 点击child元素,先打印 "child click..."  后打印 "parent click..."
-  stopEventBubbling(); // 点击son元素,只打印 "son click..."
+  eventBubbling() // 点击child元素,先打印 "child click..."  后打印 "parent click..."
+  stopEventBubbling() // 点击son元素,只打印 "son click..."
 </script>
 ```
 
@@ -253,47 +253,47 @@ target.addEventListener(type, listener, useCapture);
 <script>
   // 事件捕获
   function eventCapture() {
-    const parent = document.querySelector(".parent");
-    const child = document.querySelector(".child");
+    const parent = document.querySelector('.parent')
+    const child = document.querySelector('.child')
     parent.addEventListener(
-      "click",
+      'click',
       () => {
-        console.log("parent click...");
+        console.log('parent click...')
       },
-      true
-    );
+      true,
+    )
     child.addEventListener(
-      "click",
+      'click',
       () => {
-        console.log("child click...");
+        console.log('child click...')
       },
-      true
-    );
+      true,
+    )
   }
 
   // 阻止事件捕获
   function stopEventCapture() {
-    const father = document.querySelector(".father");
-    const son = document.querySelector(".son");
+    const father = document.querySelector('.father')
+    const son = document.querySelector('.son')
     father.addEventListener(
-      "click",
+      'click',
       (e) => {
         // stopPropagation()和stopImmediatePropagation()都具有阻止事件捕获的效果
-        e.stopImmediatePropagation();
-        console.log("father click...");
+        e.stopImmediatePropagation()
+        console.log('father click...')
       },
-      true
-    );
+      true,
+    )
     son.addEventListener(
-      "click",
+      'click',
       () => {
-        console.log("son click...");
+        console.log('son click...')
       },
-      true
-    );
+      true,
+    )
   }
-  eventCapture(); // 点击child元素,先打印 "parent click..." 后打印 "child click..."
-  stopEventCapture(); // 点击son元素,只打印 "father click..."
+  eventCapture() // 点击child元素,先打印 "parent click..." 后打印 "child click..."
+  stopEventCapture() // 点击son元素,只打印 "father click..."
 </script>
 ```
 
@@ -308,16 +308,16 @@ target.addEventListener(type, listener, useCapture);
   <li>3</li>
 </ul>
 <script>
-  const ul = document.querySelector("ul");
-  ul.addEventListener("click", (e) => {
+  const ul = document.querySelector('ul')
+  ul.addEventListener('click', (e) => {
     // 获取目标元素
-    const target = event.target || event.srcElement;
+    const target = event.target || event.srcElement
     // 如果目标元素的标签名为li,则说明点击的是子元素
-    if (target.tagName.toLowerCase() === "li") {
+    if (target.tagName.toLowerCase() === 'li') {
       // 打印元素内容
-      console.log(target.innerHTML);
+      console.log(target.innerHTML)
     }
-  });
+  })
 </script>
 ```
 
@@ -337,34 +337,34 @@ JS 事件系统是基于发布订阅模式的实现,通过自定义事件即可�
 - dispatchEvent(event):根据 Event 对象触发事件。
 
 ```js
-const ul = document.querySelector("ul");
-const event = new Event("hello", {
+const ul = document.querySelector('ul')
+const event = new Event('hello', {
   // 允许冒泡
   bubbles: true,
   // 允许取消
   cancelable: true,
-});
-ul.addEventListener("hello", (e) => {
+})
+ul.addEventListener('hello', (e) => {
   // 监听hello事件,e:Event {type: 'hello', target: ul, currentTarget: ul, …}
-  console.log("监听hello事件,e:", e);
-});
+  console.log('监听hello事件,e:', e)
+})
 // 触发 custom 事件
-ul.dispatchEvent(event);
+ul.dispatchEvent(event)
 
 // 创建custom事件
-const customEvenet = new CustomEvent("custom", {
-  detail: { name: "dog" },
+const customEvenet = new CustomEvent('custom', {
+  detail: { name: 'dog' },
   // 允许冒泡
   bubbles: true,
   // 允许取消
   cancelable: true,
-});
+})
 // 监听 custom 事件
-ul.addEventListener("custom", (e) => {
+ul.addEventListener('custom', (e) => {
   // 监听custom事件,e:CustomEvent {detail: {…}, type: 'custom', target: ul, currentTarget: ul, …}
-  console.log("监听custom事件,e:", e);
-  console.log("监听custom事件,detail:", e.detail); // 监听custom事件,detail: { name: "dog" }
-});
+  console.log('监听custom事件,e:', e)
+  console.log('监听custom事件,detail:', e.detail) // 监听custom事件,detail: { name: "dog" }
+})
 // 触发 custom 事件
-ul.dispatchEvent(customEvenet);
+ul.dispatchEvent(customEvenet)
 ```

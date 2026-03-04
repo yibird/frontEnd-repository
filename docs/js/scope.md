@@ -20,13 +20,13 @@
 
 ```js
 // 变量提升,在变量声明之前使用变量会产生undefined值
-console.log(x); // undefined
-var x = 10;
+console.log(x) // undefined
+var x = 10
 
 /** 上面代码等同于如下代码  */
-var x;
-console.log(x); // undefined
-x = 10;
+var x
+console.log(x) // undefined
+x = 10
 ```
 
 ### 函数提升
@@ -34,25 +34,25 @@ x = 10;
 注意:函数表达式并不会被提升,只有函数声明才会被提升。
 
 ```js
-foo(); // 1
+foo() // 1
 function foo() {
-  console.log(1);
+  console.log(1)
 }
 
 /** 上面代码等同于如下代码 */
 function foo() {
-  console.log(1);
+  console.log(1)
 }
-foo(); // 1
+foo() // 1
 ```
 
 在 JavaScript 中,函数声明的优先级高于变量声明。也就是说,如果在作用域中同时存在同名的函数声明和变量声明,那么函数声明会被提升到作用域顶部,而变量声明会被提升,但不覆盖已经存在的同名函数声明。
 
 ```js
 // 函数声明的优先级高于变量声明,因此 foo 最终被赋值为函数
-foo(); // 输出"Hello"
-var foo = "world";
+foo() // 输出"Hello"
+var foo = 'world'
 function foo() {
-  console.log("Hello");
+  console.log('Hello')
 }
 ```

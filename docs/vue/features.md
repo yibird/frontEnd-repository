@@ -19,7 +19,6 @@ Vue 团队于 2020 年 9 月 18 日晚 11 点半发布了 Vue3.0 版本,截止�
 
 - **`<script setup>`语法糖**:
   `<script setup>`是一种编译时语法糖,与 Vue3.2 正式发布,它用于在单文件组件 (SFC) 中更加容易使用 Composition API,相比较`<script>`它具有如下优点:
-
   - 在 setup 语法糖中定义的变量或方法可以直接用于模板(无需返回)。这是因为`<script setup>`被编译成一个内联在模板范围内的渲染函数,向模板暴露作用域。
   - 能够使用 TypeScript 声明 props 和 emit。Vue 提供了 defineProps 和 defineEmits 两个编译宏用于定义 props 和 emit。
   - 更好的运行时性能(模板编译成同作用域的 render 函数,没有中间代理)。
@@ -76,17 +75,17 @@ Vue3 支持模板(SFC)和 JSX 两种方式项目,其中模板更易于被分析�
 
 ```js
 // vite.config.ts
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   // 新增配置支持JSX
   esbuild: {
-    jsxFactory: "h",
-    jsxFragment: "Fragment",
+    jsxFactory: 'h',
+    jsxFragment: 'Fragment',
     jsxInject: "import { h } from 'vue';",
   },
-});
+})
 ```
 
 ```jsx
@@ -129,11 +128,11 @@ pnpm add @vitejs/plugin-vue-jsx -D
 
 ```ts
 // 在vite.config.js 引入@vitejs/plugin-vue-jsx插件
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import vueJsx from "@vitejs/plugin-vue-jsx";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 
 export default defineConfig({
   plugins: [vue(), vueJsx()],
-});
+})
 ```

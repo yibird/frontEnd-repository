@@ -5,44 +5,42 @@
 - **继承 React.Component 类**。
 
 ```tsx
-import React, { ComponentType } from "react";
+import React, { ComponentType } from 'react'
 
 // 高阶组件Props
-type HOCProps = { desc: string };
+type HOCProps = { desc: string }
 
 function HOC<T extends HOCProps>(WrappedComponent: ComponentType<T>) {
   return class extends React.Component<Omit<T, keyof HOCProps>> {
     constructor(props: T) {
-      super(props);
+      super(props)
     }
     render() {
-      return (
-        <WrappedComponent {...(this.props as T)} desc="wrapper component" />
-      );
+      return <WrappedComponent {...(this.props as T)} desc="wrapper component" />
     }
-  };
+  }
 }
 
 // 自定义一个组件
-type MyComponentProps = { name: string };
+type MyComponentProps = { name: string }
 function MyComponent(props: MyComponentProps & HOCProps) {
-  return <div>{props.name}</div>;
+  return <div>{props.name}</div>
 }
 // 通过HOC返回一个新的组件
-const EnhancedMyComponent = HOC(MyComponent);
+const EnhancedMyComponent = HOC(MyComponent)
 // 渲染HOC返回的组件
 function App() {
-  return <EnhancedMyComponent name="John" />;
+  return <EnhancedMyComponent name="John" />
 }
 ```
 
 - **函数式高阶组件**。
 
 ```tsx
-import React, { ComponentType } from "react";
+import React, { ComponentType } from 'react'
 
 // 高阶组件Props
-type HOCProps = { desc: string };
+type HOCProps = { desc: string }
 /**
  * 定义高阶组件。使用<T extends HOCProps>约束HOC组件的Props继承自HOCProps。
  * @param WrappedComponent:被高阶组件包装的组件,其类型为ComponentType,
@@ -51,20 +49,20 @@ type HOCProps = { desc: string };
 function HOC<T extends HOCProps>(WrappedComponent: ComponentType<T>) {
   // 返回一个新的组件
   return function (props: Omit<T, keyof HOCProps>) {
-    return <WrappedComponent {...(props as T)} desc="wrapper component" />;
-  };
+    return <WrappedComponent {...(props as T)} desc="wrapper component" />
+  }
 }
 
 // 自定义一个组件
-type MyComponentProps = { name: string };
+type MyComponentProps = { name: string }
 function MyComponent(props: MyComponentProps & HOCProps) {
-  return <div>{props.name}</div>;
+  return <div>{props.name}</div>
 }
 // 通过HOC返回一个新的组件
-const EnhancedMyComponent = HOC(MyComponent);
+const EnhancedMyComponent = HOC(MyComponent)
 // 渲染HOC返回的组件
 function App() {
-  return <EnhancedMyComponent name="John" />;
+  return <EnhancedMyComponent name="John" />
 }
 ```
 
@@ -75,25 +73,25 @@ function App() {
 将通用的功能逻辑封装在 HOC 中,可以在多个组件之间共享这些功能,从而减少重复代码的编写。在提交表单场景中,由于 Input 组件和 Select 都需要做非空验证,可以使用 HOC 来封装通用的验证逻辑。
 
 ```jsx
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
 // 定义一个高阶组件用于表单验证
 const withFormValidation = (WrappedComponent) => {
   return class extends Component {
     constructor(props) {
-      super(props);
+      super(props)
       this.state = {
-        value: "",
+        value: '',
         isValid: true,
-      };
+      }
     }
 
     handleChange = (event) => {
-      const value = event.target.value;
+      const value = event.target.value
       // 假设只有非空值才是有效的
-      const isValid = value.trim() !== "";
-      this.setState({ value, isValid });
-    };
+      const isValid = value.trim() !== ''
+      this.setState({ value, isValid })
+    }
 
     render() {
       return (
@@ -103,10 +101,10 @@ const withFormValidation = (WrappedComponent) => {
           isValid={this.state.isValid}
           onChange={this.handleChange}
         />
-      );
+      )
     }
-  };
-};
+  }
+}
 
 // 创建一个普通的输入组件
 const Input = ({ value, isValid, onChange }) => (
@@ -114,21 +112,17 @@ const Input = ({ value, isValid, onChange }) => (
     type="text"
     value={value}
     onChange={onChange}
-    style={{ borderColor: isValid ? "green" : "red" }}
+    style={{ borderColor: isValid ? 'green' : 'red' }}
   />
-);
+)
 
 const Select = ({ value, isValid, onChange }) => (
-  <Select
-    value={value}
-    onChange={onChange}
-    style={{ borderColor: isValid ? "green" : "red" }}
-  />
-);
+  <Select value={value} onChange={onChange} style={{ borderColor: isValid ? 'green' : 'red' }} />
+)
 
 // 使用 HOC 包装Input和Select组件
-const InputWithValidation = withFormValidation(Input);
-const SelectWithValidation = withFormValidation(Select);
+const InputWithValidation = withFormValidation(Input)
+const SelectWithValidation = withFormValidation(Select)
 
 // 在应用中使用包装后的组件
 function App() {
@@ -137,9 +131,9 @@ function App() {
       <InputWithValidation />
       <ButtonWithValidation value="Submit" />
     </div>
-  );
+  )
 }
-export default App;
+export default App
 ```
 
 ### 2.2 属性代理
@@ -152,16 +146,16 @@ export default App;
 高阶组件最常用的功能是承接上层的 props,在混入 HOC 内部的 state,来增强组件。
 
 ```tsx
-import React, { ComponentType, useState } from "react";
+import React, { ComponentType, useState } from 'react'
 
-type WrappedCompProps = { name: string } & { age: number };
+type WrappedCompProps = { name: string } & { age: number }
 
 function HOC(WrappedComponent: ComponentType<WrappedCompProps>) {
   // HOC组件内部定义状态
-  const [state, setState] = useState({ age: 18 });
-  return (props: Omit<WrappedCompProps, "age">) => {
-    return <WrappedComponent {...props} {...state} />;
-  };
+  const [state, setState] = useState({ age: 18 })
+  return (props: Omit<WrappedCompProps, 'age'>) => {
+    return <WrappedComponent {...props} {...state} />
+  }
 }
 
 function MyComponent(props: WrappedCompProps) {
@@ -169,11 +163,11 @@ function MyComponent(props: WrappedCompProps) {
     <div>
       name:{props.name},age:{props.age}
     </div>
-  );
+  )
 }
-const EnhancedMyComponent = HOC(MyComponent);
+const EnhancedMyComponent = HOC(MyComponent)
 function App() {
-  return <EnhancedMyComponent name="John" />;
+  return <EnhancedMyComponent name="John" />
 }
 ```
 
@@ -186,16 +180,16 @@ function App() {
 function HOC(WrappedComponent) {
   return class extends React.Component {
     constructor(props) {
-      super(props);
-      this.state = { name: "" };
-      this.onChange = this.onChange.bind(this);
+      super(props)
+      this.state = { name: '' }
+      this.onChange = this.onChange.bind(this)
     }
 
     onChange = (event) => {
       this.setState({
         name: event.target.value,
-      });
-    };
+      })
+    }
 
     render() {
       // 对WrappedComponent组件提供了修改state的回调函数用于修改HOC组件内部的状态
@@ -204,17 +198,17 @@ function HOC(WrappedComponent) {
           value: this.state.name,
           onChange: this.onChange,
         },
-      };
-      return <WrappedComponent {...this.props} {...newProps} />;
+      }
+      return <WrappedComponent {...this.props} {...newProps} />
     }
-  };
+  }
 }
 
 // 使用
 @HOC
 class Example extends Component {
   render() {
-    return <input name="name" {...this.props.name} />;
+    return <input name="name" {...this.props.name} />
   }
 }
 ```
@@ -226,10 +220,8 @@ class Example extends Component {
 ```tsx
 function HOC(WrappedComponent: any) {
   return (props: any) => (
-    <div>
-      {props.isShow ? <WrappedComponent {...props} /> : <div>暂无数据</div>}
-    </div>
-  );
+    <div>{props.isShow ? <WrappedComponent {...props} /> : <div>暂无数据</div>}</div>
+  )
 }
 ```
 
@@ -240,10 +232,10 @@ HOC 除了可以进行条件渲染,渲染劫持功能外,还可以进行节流�
 ```tsx
 function HOC(Component) {
   return function renderWrapComponent(props) {
-    const { num } = props;
-    const RenderElement = useMemo(() => <Component {...props} />, [num]);
-    return RenderElement;
-  };
+    const { num } = props
+    const RenderElement = useMemo(() => <Component {...props} />, [num])
+    return RenderElement
+  }
 }
 ```
 
@@ -274,18 +266,18 @@ function HOC (WrappedComponent: any) {
 function withBackgroundColor(WrappedComponent) {
   function wrappedComponentStaic() {
     // 调用WrappedComponent的静态方法
-    WrappedComponent.hello();
+    WrappedComponent.hello()
   }
   return class extends React.Component {
     render() {
       return (
-        <div style={{ backgroundColor: "#ccc" }}>
+        <div style={{ backgroundColor: '#ccc' }}>
           <WrappedComponent {...this.props} {...newProps} />
           <button onClick={wrappedComponentStaic}>button</button>
         </div>
-      );
+      )
     }
-  };
+  }
 }
 ```
 
@@ -298,12 +290,12 @@ function withBackgroundColor(WrappedComponent) {
   return class extends React.Component {
     render() {
       return (
-        <div style={{ backgroundColor: "#ccc" }}>
+        <div style={{ backgroundColor: '#ccc' }}>
           <WrappedComponent {...this.props} {...newProps} />
         </div>
-      );
+      )
     }
-  };
+  }
 }
 ```
 
@@ -316,10 +308,10 @@ const HOC = (WrappedComponent) => {
   return class extends WrappedComponent {
     render() {
       // 调用父类的render(),即调用WrappedComponent的render()
-      return super.render();
+      return super.render()
     }
-  };
-};
+  }
+}
 ```
 
 - 相较于属性代理方式,使用反向继承方式实现的高阶组件的特点是允许高阶组件通过 this 访问原组件,所以可以直接读取和操作原组件的 state/ref/生命周期方法。
@@ -344,9 +336,9 @@ function HOC(WrappedComponent) {
 
     render() {
       // 使用 super 调用传入组件的 render 方法
-      return super.render();
+      return super.render()
     }
-  };
+  }
 }
 ```
 
@@ -355,7 +347,7 @@ function HOC(WrappedComponent) {
 ```tsx
 function HOC(WrappedComponent) {
   // 从WrappedComponent原型上获取 componentDidMount 生命周期函数
-  const didMount = WrappedComponent.prototype.componentDidMount;
+  const didMount = WrappedComponent.prototype.componentDidMount
 
   // 继承了传入组件
   return class HOC extends WrappedComponent {
@@ -365,16 +357,16 @@ function HOC(WrappedComponent) {
        * 组件的生命周期
        */
       if (didMount) {
-        didMount.apply(this);
+        didMount.apply(this)
       }
       // ...
     }
 
     render() {
       // 使用 super 调用传入组件的 render 方法
-      return super.render();
+      return super.render()
     }
-  };
+  }
 }
 ```
 
@@ -384,22 +376,22 @@ function HOC(WrappedComponent) {
 
 ```jsx
 function HOC(WrappedComponent) {
-  const didMount = WrappedComponent.prototype.componentDidMount;
+  const didMount = WrappedComponent.prototype.componentDidMount
   // 继承了传入组件
   return class HOC extends WrappedComponent {
     async componentDidMount() {
       if (didMount) {
-        await didMount.apply(this);
+        await didMount.apply(this)
       }
       // 将 WrappedComponent组件中state的 number 值修改成 2
-      this.setState({ number: 2 });
+      this.setState({ number: 2 })
     }
 
     render() {
       // 使用 super 调用传入组件的 render 方法
-      return super.render();
+      return super.render()
     }
-  };
+  }
 }
 ```
 
@@ -412,12 +404,12 @@ const HOC = (WrappedComponent) =>
   class extends WrappedComponent {
     render() {
       if (this.props.isRender) {
-        return super.render();
+        return super.render()
       } else {
-        return <div>暂无数据</div>;
+        return <div>暂无数据</div>
       }
     }
-  };
+  }
 ```
 
 - 修改 React 元素树:可以通过 `React.cloneElement` 方法修改由 render 方法输出的 React 组件树:
@@ -428,20 +420,20 @@ function HigherOrderComponent(WrappedComponent) {
   return class extends WrappedComponent {
     render() {
       // 获取 WrappedComponent组件的组件树
-      const tree = super.render();
-      const newProps = {};
-      if (tree && tree.type === "input") {
-        newProps.value = "something here";
+      const tree = super.render()
+      const newProps = {}
+      if (tree && tree.type === 'input') {
+        newProps.value = 'something here'
       }
       const props = {
         ...tree.props,
         ...newProps,
-      };
+      }
       // 克隆元素,返回新的组件树
-      const newTree = React.cloneElement(tree, props, tree.props.children);
-      return newTree;
+      const newTree = React.cloneElement(tree, props, tree.props.children)
+      return newTree
     }
-  };
+  }
 }
 ```
 
@@ -472,15 +464,15 @@ function HigherOrderComponent(WrappedComponent) {
 ```jsx
 function logProps(InputComponent) {
   InputComponent.prototype.componentDidUpdate = function (prevProps) {
-    console.log("Current props: ", this.props);
-    console.log("Previous props: ", prevProps);
-  };
+    console.log('Current props: ', this.props)
+    console.log('Previous props: ', prevProps)
+  }
   // 返回原始的 input 组件，暗示它已经被修改。
-  return InputComponent;
+  return InputComponent
 }
 
 // 每次调用 logProps 时，增强组件都会有 log 输出。
-const EnhancedComponent = logProps(InputComponent);
+const EnhancedComponent = logProps(InputComponent)
 ```
 
 HOC 不应该修改传入组件,而应该使用组合的方式,通过将组件包装在容器组件中实现功能:
@@ -489,14 +481,14 @@ HOC 不应该修改传入组件,而应该使用组合的方式,通过将组件�
 function logProps(WrappedComponent) {
   return class extends React.Component {
     componentDidUpdate(prevProps) {
-      console.log("Current props: ", this.props);
-      console.log("Previous props: ", prevProps);
+      console.log('Current props: ', this.props)
+      console.log('Previous props: ', prevProps)
     }
     render() {
       // 将 input 组件包装在容器中，而不对其进行修改。Good!
-      return <WrappedComponent {...this.props} />;
+      return <WrappedComponent {...this.props} />
     }
-  };
+  }
 }
 ```
 
@@ -532,12 +524,12 @@ render() {
 
 ```jsx
 //react-redux的connect就是一个HOC函数,connect是一个高阶组件的高阶函数
-const ConnectedComment = connect(commentSelector, commentActions)(CommentList);
+const ConnectedComment = connect(commentSelector, commentActions)(CommentList)
 
 //上面的代码可拆分为如下,connect是一个函数,它的返回值为另外一个函数。
-const enhance = connect(commentSelector, commentActions);
+const enhance = connect(commentSelector, commentActions)
 //返回值为 HOC，它会返回已经连接 Redux store 的组件,所以说connect是一个高阶组件的高阶函数
-const ConnectedComment = enhance(CommentList);
+const ConnectedComment = enhance(CommentList)
 ```
 
 ### 3.4 为包装组件指定显示名称以便轻松调试
@@ -551,14 +543,12 @@ function withSubscription(WrappedComponent) {
   class WithSubscription extends React.Component {
     /* ... */
   }
-  WithSubscription.displayName = `WithSubscription(${getDisplayName(
-    WrappedComponent
-  )})`;
-  return WithSubscription;
+  WithSubscription.displayName = `WithSubscription(${getDisplayName(WrappedComponent)})`
+  return WithSubscription
 }
 
 function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || "Component";
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component'
 }
 ```
 
@@ -587,12 +577,12 @@ render() {
 // 定义静态函数
 WrappedComponent.staticMethod = function () {
   /*...*/
-};
+}
 // 现在使用 HOC
-const EnhancedComponent = enhance(WrappedComponent);
+const EnhancedComponent = enhance(WrappedComponent)
 
 // 增强组件没有 staticMethod
-typeof EnhancedComponent.staticMethod === "undefined"; // true
+typeof EnhancedComponent.staticMethod === 'undefined' // true
 ```
 
 为了解决这个问题，你可以在返回之前把这些方法拷贝到容器组件上:
@@ -603,21 +593,21 @@ function enhance(WrappedComponent) {
     /*...*/
   }
   // 必须准确知道应该拷贝哪些方法 :(
-  Enhance.staticMethod = WrappedComponent.staticMethod;
-  return Enhance;
+  Enhance.staticMethod = WrappedComponent.staticMethod
+  return Enhance
 }
 ```
 
 但要这样做，你需要知道哪些方法应该被拷贝。你可以使用  [hoist-non-react-statics](https://github.com/mridgway/hoist-non-react-statics)  自动拷贝所有非 React 静态方法:
 
 ```jsx
-import hoistNonReactStatic from "hoist-non-react-statics";
+import hoistNonReactStatic from 'hoist-non-react-statics'
 function enhance(WrappedComponent) {
   class Enhance extends React.Component {
     /*...*/
   }
-  hoistNonReactStatic(Enhance, WrappedComponent);
-  return Enhance;
+  hoistNonReactStatic(Enhance, WrappedComponent)
+  return Enhance
 }
 ```
 
@@ -625,14 +615,14 @@ function enhance(WrappedComponent) {
 
 ```jsx
 // 使用这种方式代替...
-MyComponent.someFunction = someFunction;
-export default MyComponent;
+MyComponent.someFunction = someFunction
+export default MyComponent
 
 // ...单独导出该方法...
-export { someFunction };
+export { someFunction }
 
 // ...并在要使用的组件中，import 它们
-import MyComponent, { someFunction } from "./MyComponent.js";
+import MyComponent, { someFunction } from './MyComponent.js'
 ```
 
 ### 3.7 Ref 不会被传递

@@ -34,7 +34,7 @@
   .dark img,
   .dark video,
   .dark svg,
-  .dark div[class*="language-"] {
+  .dark div[class*='language-'] {
     filter: invert(110%) hue-rotate(180deg);
     opacity: 0.8;
   }
@@ -66,10 +66,10 @@
 </style>
 
 <script>
-  const btn = document.querySelector("button");
+  const btn = document.querySelector('button')
   btn.onclick = function () {
-    document.documentElement.classList.toggle("dark");
-  };
+    document.documentElement.classList.toggle('dark')
+  }
 </script>
 ```
 
@@ -139,10 +139,10 @@
 </style>
 
 <script>
-  const btn = document.querySelector("button");
+  const btn = document.querySelector('button')
   btn.onclick = function () {
-    document.documentElement.classList.toggle("dark");
-  };
+    document.documentElement.classList.toggle('dark')
+  }
 </script>
 ```
 

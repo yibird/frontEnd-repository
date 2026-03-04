@@ -4,11 +4,11 @@
 
 ```js
 function reverseString(str) {
-  let result = "";
+  let result = ''
   for (let i = str.length - 1; i >= 0; i--) {
-    result += str[i];
+    result += str[i]
   }
-  return result;
+  return result
 }
 ```
 
@@ -16,7 +16,7 @@ function reverseString(str) {
 
 ```js
 function reverseString(str) {
-  return str.split("").reverse().join("");
+  return str.split('').reverse().join('')
 }
 ```
 
@@ -25,23 +25,23 @@ function reverseString(str) {
 ```js
 function reverseString(str) {
   // 字符串转数组
-  const strArr = str.split("");
+  const strArr = str.split('')
   // 定义左右两个指针,左指针的初始值为0,右指针的初始值为strArr.length - 1
   let left = 0,
-    right = strArr.length - 1;
+    right = strArr.length - 1
   /**
    * 循环迭代,每次迭代左指针都会向右移动一次(左指针+1),右指针向左移动一次(即右指针-1),
    * 当左指针 == 右指针 时说明元素已经被迭代完毕,因此 left < right作为循环的终止条件
    */
   while (left < right) {
     // 定义临时变量接收左指针的值,交换左右指针指向的字符
-    const temp = strArr[left];
-    strArr[left] = strArr[right];
-    strArr[right] = temp;
-    left++;
-    right--;
+    const temp = strArr[left]
+    strArr[left] = strArr[right]
+    strArr[right] = temp
+    left++
+    right--
   }
-  return strArr.join("");
+  return strArr.join('')
 }
 ```
 
@@ -54,33 +54,33 @@ function reverseString(str) {
 ```js
 function isPalindrome(str) {
   // 忽略大小写、非字母数字字符
-  str = str.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const reverseStr = str.split("").reverse().join("");
-  return reverseStr === str;
+  str = str.toLowerCase().replace(/[^a-z0-9]/g, '')
+  const reverseStr = str.split('').reverse().join('')
+  return reverseStr === str
 }
 
-console.log(isPalindrome("level")); // true
-console.log(isPalindrome("case")); // false
+console.log(isPalindrome('level')) // true
+console.log(isPalindrome('case')) // false
 ```
 
 - 双指针法。使用两个指针,一个从字符串的开头向右移动,另一个从字符串的末尾向左移动,逐个比较字符是否相等。如果所有字符都匹配,则字符串是回文的。
 
 ```js
 function isPalindrome(str) {
-  const strArray = str.split("");
+  const strArray = str.split('')
   let left = 0,
-    right = strArray.length - 1;
+    right = strArray.length - 1
 
   while (left < right) {
-    if (strArray[left] !== strArray[right]) return false;
-    left++;
-    right--;
+    if (strArray[left] !== strArray[right]) return false
+    left++
+    right--
   }
-  return true;
+  return true
 }
 
-console.log(isPalindrome("level")); // true
-console.log(isPalindrome("case")); // false
+console.log(isPalindrome('level')) // true
+console.log(isPalindrome('case')) // false
 ```
 
 ## 查找字符串中出现次数最多的字符串
@@ -90,39 +90,39 @@ console.log(isPalindrome("case")); // false
 ```js
 function findMostFrequent(str) {
   // 将字符串转为数组
-  const words = str.split("");
+  const words = str.split('')
   // 字符串计数对象,用于记录每个单词的出现次数
-  const wordCount = {};
+  const wordCount = {}
 
   for (const word of words) {
     // 忽略大小写和非字母数字字符
-    const cleanedWord = word.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (cleanedWord !== "") {
+    const cleanedWord = word.toLowerCase().replace(/[^a-z0-9]/g, '')
+    if (cleanedWord !== '') {
       if (wordCount[cleanedWord] !== undefined) {
-        wordCount[cleanedWord] += 1;
+        wordCount[cleanedWord] += 1
       } else {
-        wordCount[cleanedWord] = 0;
+        wordCount[cleanedWord] = 0
       }
     }
   }
 
   // 出现最多的字符串
-  let mostFrequentWord = "";
+  let mostFrequentWord = ''
   // 最大出现次数
-  let maxCount = 0;
+  let maxCount = 0
 
   // 遍历字符串计数对象
   for (let word in wordCount) {
     // 如果字符串的出现次数 大于 最大出现次数,则覆盖最大出现次数,并将出现次数的最大的字符赋值给mostFrequentWord
     if (wordCount[word] > maxCount) {
-      maxCount = wordCount[word];
-      mostFrequentWord = word;
+      maxCount = wordCount[word]
+      mostFrequentWord = word
     }
   }
-  return mostFrequentWord;
+  return mostFrequentWord
 }
 
-console.log(findMostFrequent("aabbbbccc")); // b
+console.log(findMostFrequent('aabbbbccc')) // b
 ```
 
 - 基于桶排序找出字符串中出现次数最多的字符串:
@@ -136,24 +136,24 @@ console.log(findMostFrequent("aabbbbccc")); // b
 ```js
 function findMostFrequent(str) {
   // 将字符串转为数组
-  const words = str.split("");
+  const words = str.split('')
   // 字符串计数对象,用于记录每个单词的出现次数
-  const wordCount = {};
+  const wordCount = {}
 
   for (const word of words) {
     // 忽略大小写和非字母数字字符
-    const cleanedWord = word.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (cleanedWord !== "") {
+    const cleanedWord = word.toLowerCase().replace(/[^a-z0-9]/g, '')
+    if (cleanedWord !== '') {
       if (wordCount[cleanedWord] !== undefined) {
-        wordCount[cleanedWord] += 1;
+        wordCount[cleanedWord] += 1
       } else {
-        wordCount[cleanedWord] = 0;
+        wordCount[cleanedWord] = 0
       }
     }
   }
 
   // 创建桶数组
-  const bucket = new Array(words.length + 1).fill(null);
+  const bucket = new Array(words.length + 1).fill(null)
   /**
    * 将单词放入对应出现次数的桶中,桶以字符出现的次数为索引插入字符,字符出现的次数可能相同,因此使用数组保存字符。
    * 由于桶以字符出现的次数为索引,因此出现次数最小的字符索引越靠前,出现次数最多的字符索引越靠后,
@@ -161,24 +161,24 @@ function findMostFrequent(str) {
    * [null,['a'],['c'],['b'],null,null,null,null,null,null]
    */
   for (const word in wordCount) {
-    const count = wordCount[word];
+    const count = wordCount[word]
     if (bucket[count] === null) {
-      bucket[count] = [word];
+      bucket[count] = [word]
     } else {
-      bucket[count].push(word);
+      bucket[count].push(word)
     }
   }
 
   // 找到最后一个非空桶
   for (let i = bucket.length - 1; i >= 0; i--) {
     if (bucket[i] !== null) {
-      return bucket[i][0]; // 返回该桶中的第一个单词
+      return bucket[i][0] // 返回该桶中的第一个单词
     }
   }
-  return null;
+  return null
 }
 
-console.log(findMostFrequent("aabbbbccc")); // b
+console.log(findMostFrequent('aabbbbccc')) // b
 ```
 
 ## 字符串数字格式化
@@ -189,29 +189,29 @@ console.log(findMostFrequent("aabbbbccc")); // b
 
 ```js
 function stringNumberFormat(str, formatChar) {
-  if (typeof str !== "string") {
-    throw new TypeError("str is not a string");
+  if (typeof str !== 'string') {
+    throw new TypeError('str is not a string')
   }
-  const len = str.length;
-  if (len === 0) return str;
-  let formatResult = "",
-    result = "";
+  const len = str.length
+  if (len === 0) return str
+  let formatResult = '',
+    result = ''
   // 倒序遍历字符串,每遍历3次都在字符串后面拼接格式化字符
   for (let i = len - 1; i >= 0; i--) {
     if ((len - i) % 3 === 0 && i !== 0) {
-      formatResult += str[i] + formatChar;
+      formatResult += str[i] + formatChar
     } else {
-      formatResult += str[i];
+      formatResult += str[i]
     }
   }
   // 由于formatResult的结果值是倒序的,需要倒序遍历拼接字符串为正序
   for (let i = formatResult.length - 1; i >= 0; i--) {
-    result += formatResult[i];
+    result += formatResult[i]
   }
-  return result;
+  return result
 }
 
-console.log(stringNumberFormat("100000000", ",")); // "100,000,000"
+console.log(stringNumberFormat('100000000', ',')) // "100,000,000"
 ```
 
 ### 正则表达式替换
@@ -226,10 +226,10 @@ console.log(stringNumberFormat("100000000", ",")); // "100,000,000"
 
 ```js
 function stringNumberFormat(str, formatChar) {
-  if (typeof str !== "string") {
-    throw new TypeError("str is not a string");
+  if (typeof str !== 'string') {
+    throw new TypeError('str is not a string')
   }
-  return str.replace(/\B(?=(\d{3})+(?!\d))/g, formatChar);
+  return str.replace(/\B(?=(\d{3})+(?!\d))/g, formatChar)
 }
 ```
 
@@ -239,14 +239,14 @@ Number.toLocaleString() 是 JavaScript 内置的方法,用于将数字格式化�
 
 ```js
 function stringNumberFormat(str) {
-  const number = parseFloat(str);
+  const number = parseFloat(str)
   if (Number.isNaN(number)) {
-    throw new Error("str cannot be converted to a number");
+    throw new Error('str cannot be converted to a number')
   }
-  return number.toLocaleString();
+  return number.toLocaleString()
 }
-console.log(stringNumberFormat("100000000")); // "100,000,000"
-console.log(stringNumberFormat("ss100000000")); // Error: str cannot be converted to a number
+console.log(stringNumberFormat('100000000')) // "100,000,000"
+console.log(stringNumberFormat('ss100000000')) // Error: str cannot be converted to a number
 ```
 
 ## 比较两个版本号
@@ -260,10 +260,10 @@ console.log(stringNumberFormat("ss100000000")); // Error: str cannot be converte
 ```js
 function compareVersions(v1, v2) {
   // 分割两个版本号
-  const arr1 = v1.split(","),
-    arr2 = v2.split(",");
+  const arr1 = v1.split(','),
+    arr2 = v2.split(',')
   // 获取两个版本号中长度最长的版本号作为遍历次数
-  const count = Math.max(arr1.length, arr2.length);
+  const count = Math.max(arr1.length, arr2.length)
 
   // 循环
   for (let i = 0; i < count; i++) {
@@ -272,15 +272,15 @@ function compareVersions(v1, v2) {
      * 因此访问arr2[i]时结果为undefined,所以使用 arr2[i] || "0" 进行
      * 补零,补零之后的结果为 1.0.0
      */
-    const v1Part = parseInt(arr1[i] || "0", 10);
-    const v2Part = parseInt(arr2[i] || "0", 10);
+    const v1Part = parseInt(arr1[i] || '0', 10)
+    const v2Part = parseInt(arr2[i] || '0', 10)
 
     if (v1Part > v2Part) {
-      return 1;
+      return 1
     } else if (v1Part < v2Part) {
-      return -1;
+      return -1
     }
-    return 0;
+    return 0
   }
 }
 ```

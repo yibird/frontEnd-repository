@@ -57,8 +57,8 @@ XMLHttpRequest 常用方法如下:
 const xhr = window.XMLHttpRequest
   ? new XMLHttpRequest()
   : window.ActiveXObject
-  ? new ActiveXObject("Microsoft.XMLHTTP")
-  : null;
+    ? new ActiveXObject('Microsoft.XMLHTTP')
+    : null
 ```
 
 ### 2.2 创建 Http 请求并发送请求
@@ -69,13 +69,13 @@ url 表示请求路径,async 表示是否异步(为 true 表示异步请求,为 
 
 ```js
 // 2.1 创建GET请求,请求参数包含在请求URL中。
-xhr.open("get", "http//localhost:8080/test-get?name='zxp'&ag=18", true);
-xhr.send(); // 发送GET请求
+xhr.open('get', "http//localhost:8080/test-get?name='zxp'&ag=18", true)
+xhr.send() // 发送GET请求
 
 // 2.2 创建POST请求,请求参数包含在请求体,POST请求需要设置请求头
-xhr.open("post", "http://localhost:8080/test-post", true);
-xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // 设置请求头
-xhr.send("name='zxp'&age=18"); // 发送POST请求,POST请求请求参数写在send()中
+xhr.open('post', 'http://localhost:8080/test-post', true)
+xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded') // 设置请求头
+xhr.send("name='zxp'&age=18") // 发送POST请求,POST请求请求参数写在send()中
 ```
 
 ### 2.3 设置响应 Http 状态变化函数
@@ -108,7 +108,7 @@ xhr.onreadystatechange = function () {
     // xhr.responseText 获得字符串形式的响应数据。
     // xhr.responseXML 获得XML 形式的响应数据。
   }
-};
+}
 ```
 
 ### 2.4 处理响应结果
@@ -117,9 +117,9 @@ xhr.onreadystatechange = function () {
 /*
    同步请求:发送同步请求可以直接通过XMLHttpRequest对象的responseText属性直接获取响应结果
 */
-xhr.open("get", "http//localhost:8080/test-get?name='zxp'&ag=18", false);
-xhr.send(); // 发送请求你
-document.body.innerText = xhr.responseText; // xhr.responseText获取响应结果
+xhr.open('get', "http//localhost:8080/test-get?name='zxp'&ag=18", false)
+xhr.send() // 发送请求你
+document.body.innerText = xhr.responseText // xhr.responseText获取响应结果
 
 /*
    异步请求:发送异步请求则需要在onreadystatechange事件请求成功响应后通过XMLHttpRequest对象
@@ -132,68 +132,68 @@ xhr.onreadystatechange = function () {
     // 具体的逻辑处理 ...
     // xhr.responseText 获得字符串形式的响应数据。
     // xhr.responseXML 获得XML 形式的响应数据。
-    console.log(xhr.responseText); // xhr.responseText获取响应结果
+    console.log(xhr.responseText) // xhr.responseText获取响应结果
   }
-};
+}
 ```
 
 ### 2.5 使用 Promise 封装 XMLHttpRequest
 
 ```ts
-export type Method = "get" | "GET" | "options" | "OPTIONS" | "post" | "POST";
+export type Method = 'get' | 'GET' | 'options' | 'OPTIONS' | 'post' | 'POST'
 
 enum ResponseType {
   // 原始二进制数据缓冲区
-  ARRAY_BUFFER = "arraybuffer",
+  ARRAY_BUFFER = 'arraybuffer',
   // 文档
-  DOCUMENT = "document",
+  DOCUMENT = 'document',
   // json对象
-  JSON = "json",
+  JSON = 'json',
   // 文本
-  TEXT = "text",
+  TEXT = 'text',
   // 二进制流
-  STREAM = "stream",
+  STREAM = 'stream',
   // blob
-  BLOB = "blob",
+  BLOB = 'blob',
 }
 
 enum ContentType {
   // JSON数据格式
-  JSON = "application/json;charset=utf-8",
+  JSON = 'application/json;charset=utf-8',
   // FORM表单数据格式
-  FORM = "application/x-www-form-urlencoded;charset=utf-8",
+  FORM = 'application/x-www-form-urlencoded;charset=utf-8',
   // XML数据格式
-  XML = "application/xml;charset=utf-8",
+  XML = 'application/xml;charset=utf-8',
   // 二进制流数据格式,一般用于文件下载
-  STREAM = "application/octet-stream;charset=utf-8",
+  STREAM = 'application/octet-stream;charset=utf-8',
   // pdf数据格式
-  PDF = "application/pdf;charset=utf-8",
+  PDF = 'application/pdf;charset=utf-8',
   // word数据格式
-  WORD = "application/msword;charset=utf-8",
+  WORD = 'application/msword;charset=utf-8',
   // html数据格式
-  TEXT = "text/html;charset=utf-8",
+  TEXT = 'text/html;charset=utf-8',
 }
 
 interface RequestConfig {
-  url?: string;
-  method?: Method;
-  data?: Record<string, any>;
-  headers?: Record<string, any>;
-  timeout?: number;
-  baseUrl?: string;
-  responseType?: ResponseType;
-  withCredentials?: boolean;
+  url?: string
+  method?: Method
+  data?: Record<string, any>
+  headers?: Record<string, any>
+  timeout?: number
+  baseUrl?: string
+  responseType?: ResponseType
+  withCredentials?: boolean
 }
 
 const stringify = (data: Record<string, any>) => {
-  let params = "";
-  const arr = Object.keys(data);
-  if (arr.length === 0) return params;
+  let params = ''
+  const arr = Object.keys(data)
+  if (arr.length === 0) return params
   arr.forEach((key) => {
-    params += `${key}=${data[key]}`;
-  });
-  return params.slice(0, -1);
-};
+    params += `${key}=${data[key]}`
+  })
+  return params.slice(0, -1)
+}
 
 /**
  * 检查url是否是绝对url
@@ -201,90 +201,90 @@ const stringify = (data: Record<string, any>) => {
  * @returns 是否是绝对url
  */
 const isURL = (url: string) => {
-  return /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\\/?%&=]*)?/.test(url);
-};
+  return /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\\/?%&=]*)?/.test(url)
+}
 
-export const xhr = new XMLHttpRequest() || window.XMLHttpRequest;
+export const xhr = new XMLHttpRequest() || window.XMLHttpRequest
 const defaultConfig: RequestConfig = {
-  method: "GET",
+  method: 'GET',
   data: {},
   timeout: 0,
-  baseUrl: "",
+  baseUrl: '',
   headers: {
-    "content-type": ContentType.JSON,
+    'content-type': ContentType.JSON,
   },
   responseType: ResponseType.JSON,
   withCredentials: false,
-};
+}
 
 export const request = (config?: RequestConfig) => {
   const { url, method, data, headers, timeout, baseUrl, withCredentials } = {
     ...defaultConfig,
     ...config,
-  } as Required<RequestConfig>;
-  const isGet = ["get", "GET"].includes(method);
-  const isPost = ["post", "POST"].includes(method);
+  } as Required<RequestConfig>
+  const isGet = ['get', 'GET'].includes(method)
+  const isPost = ['post', 'POST'].includes(method)
 
   // 拼接baseUrl,拼接get请求参数
-  let requestURL = isURL(url) ? url : baseUrl + url;
+  let requestURL = isURL(url) ? url : baseUrl + url
   // 拼接get请求参数
-  requestURL = isGet ? url + "?" + stringify(data!) : url;
+  requestURL = isGet ? url + '?' + stringify(data!) : url
   // 打开请求
-  xhr.open(method!, requestURL, true);
+  xhr.open(method!, requestURL, true)
   // 遍历设置请求头
 
   Object.keys(headers).forEach((key) => {
-    xhr.setRequestHeader(key, headers[key]);
-  });
-  isPost && xhr.setRequestHeader("content-type", ContentType.FORM);
+    xhr.setRequestHeader(key, headers[key])
+  })
+  isPost && xhr.setRequestHeader('content-type', ContentType.FORM)
 
   // 设置请求超时时间
-  xhr.timeout = timeout;
+  xhr.timeout = timeout
   // 设置跨域请求时是否需要使用凭证
-  xhr.withCredentials = withCredentials;
+  xhr.withCredentials = withCredentials
   // 发送请求,对post请求参数处理
-  xhr.send(isPost ? stringify(data) : "");
+  xhr.send(isPost ? stringify(data) : '')
 
   return new Promise((resolve, reject) => {
     // 监听readyState属性变化
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        resolve(xhr.responseText);
+        resolve(xhr.responseText)
       }
-    };
+    }
     // 当请求遇到错误时,将触发error 事件
     xhr.onerror = (e: ProgressEvent) => {
-      reject(new Error(`${e.type}:request was aborted`));
-    };
-  });
-};
+      reject(new Error(`${e.type}:request was aborted`))
+    }
+  })
+}
 
 // 测试
 setTimeout(() => {
   request({
-    url: "https://jsonplaceholder.typicode.com/todos/1",
+    url: 'https://jsonplaceholder.typicode.com/todos/1',
   })
     .then((res) => {
-      console.log(res);
+      console.log(res)
     })
     .catch((err) => {
-      console.log(err);
-    });
-}, 1000);
+      console.log(err)
+    })
+}, 1000)
 
 setTimeout(() => {
   request({
-    url: "https://jsonplaceholder.typicode.com/posts",
-    method: "POST",
-    data: { name: "z乘风", age: 18 },
+    url: 'https://jsonplaceholder.typicode.com/posts',
+    method: 'POST',
+    data: { name: 'z乘风', age: 18 },
   })
     .then((res) => {
-      console.log(res);
+      console.log(res)
     })
     .catch((err) => {
-      console.log(err);
-    });
-}, 3000);
+      console.log(err)
+    })
+}, 3000)
 ```
 
 ## 3.Fetch
@@ -305,12 +305,12 @@ Promise<Response> fetch(req:Request,init?:RequestInit)
 ```ts
 // 创建请求头对象
 const initHeader: Headers = new Headers({
-  "Content-Type": "application/json",
-});
+  'Content-Type': 'application/json',
+})
 
 const initOptions: RequestInit = {
   // 请求方法。可选值有GET、POST、PUT、DELETE等等
-  method: "GET",
+  method: 'GET',
   // 请求的头信息。可以是一个Header对象,也可以是
   headers: initHeader,
   /*
@@ -327,14 +327,14 @@ const initOptions: RequestInit = {
     navigate:表示这是一个浏览器的页面切换请求,navigate请求仅在浏览器切换页面时创建,
         该请求应该返回HTML
   */
-  mode: "cors",
+  mode: 'cors',
   /*
     请求的资格证书。如omit、same-origin 或者 include。为了在当前域名内自动发送cookie,必须提供这个选项。
     omit:从不向服务器发送cookies
     same-origin(默认):只有当URL与响应脚本同源才发送 cookies、HTTP Basic authentication 等验证信息
     include:不论是不是跨域的请求,总是发送请求资源域在本地的 cookies、HTTP Basic authentication 等验证信息
   */
-  credentials: "omit",
+  credentials: 'omit',
   /*
     请求缓存模式。可选值有default、no-store、reload 、no-cache 、force-cache、only-if-cached。
     default:浏览器从HTTP缓存中寻找匹配的请求。如果缓存匹配上并且有效,它将直接从缓存中返回资源。
@@ -356,13 +356,13 @@ const initOptions: RequestInit = {
     only-if-cached:浏览器在其HTTP缓存中寻找匹配的请求。如果有匹配项(新的或旧的),则从缓存中返回。
         如果没有匹配,浏览器将返回一个错误。
   */
-  cache: "default",
+  cache: 'default',
   /*
     表示包含?如何处理重定向模式,可选值有follow、error、manual
   */
-  redirect: "follow",
-};
-const url = "https://jsonplaceholder.typicode.com/todos/1";
+  redirect: 'follow',
+}
+const url = 'https://jsonplaceholder.typicode.com/todos/1'
 fetch(url, initOptions)
   .then((res) => {
     /**
@@ -379,16 +379,16 @@ fetch(url, initOptions)
      * formData:返回一个将结果解析为FormData类型的Promise对象。
      */
     if (!res.ok) {
-      throw new Error("request error!");
+      throw new Error('request error!')
     }
-    return res.json();
+    return res.json()
   })
   .then((data) => {
-    console.log(data); // {completed: false,id: 1,title: "delectus aut autem",userId: 1}
+    console.log(data) // {completed: false,id: 1,title: "delectus aut autem",userId: 1}
   })
   .catch((err) => {
-    console.log("err:" + err);
-  });
+    console.log('err:' + err)
+  })
 ```
 
 ### 3.2 fetch 发送 POST 请求
@@ -398,28 +398,28 @@ fetch(url, initOptions)
 ```ts
 // 创建请求头对象,也可以自定义请求头信息,例如Auth-Token
 const initHeader = new Headers({
-  "Content-Type": "application/x-www-form-urlencoded",
-  "Auth-Token": "123asdjibasdgiuqweqwe",
-});
+  'Content-Type': 'application/x-www-form-urlencoded',
+  'Auth-Token': '123asdjibasdgiuqweqwe',
+})
 // 创建请求对象
 const request = new Request(url, {
-  method: "POST",
+  method: 'POST',
   headers: initHeader,
   body: JSON.stringify(data), // 通过JSON.strinify()序列化请求参数
-  mode: "cors",
-  credentials: "omit",
-  cache: "default",
-} as any);
+  mode: 'cors',
+  credentials: 'omit',
+  cache: 'default',
+} as any)
 
 fetch(request, initOptions)
   .then((res) => {
     if (!res.ok) {
-      throw new Error("request error!");
+      throw new Error('request error!')
     }
-    return res.json();
+    return res.json()
   })
   .then((data) => console.log(data))
-  .catch((err) => console.log("err:" + err));
+  .catch((err) => console.log('err:' + err))
 
 // 如果fetch的第一个参数是一个Request对象且传入了配置对象时,那么Request对象会与配置对象进行合并
 fetch(request)
@@ -438,12 +438,12 @@ fetch(request)
      * formData:返回一个将结果解析为FormData类型的Promise对象。
      */
     if (!res.ok) {
-      throw new Error("request error!");
+      throw new Error('request error!')
     }
-    return res.json();
+    return res.json()
   })
   .then((data) => console.log(data)) // {id: 101}
-  .catch((err) => console.log("err:" + err));
+  .catch((err) => console.log('err:' + err))
 ```
 
 ### 3.3 fetch 设置超时时间
@@ -453,29 +453,29 @@ XMLHttpRequest 对象提供了超时时间可以拒绝请求时间大于超时�
 
 ```ts
 // 创建一个AbortController对象,AbortController对象允许中止一个或多个Web请求
-const controller = new AbortController();
+const controller = new AbortController()
 // 返回一个AbortSignal对象实例,它可以用来 with/abort 一个Web(网络)请求,需要传递至fetch请求中
-let signal = controller.signal;
+let signal = controller.signal
 
 const timeoutPromise = (timeout: number) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // 请求超时
-      resolve(new Response("timeout", { status: 504, statusText: "timeout " }));
+      resolve(new Response('timeout', { status: 504, statusText: 'timeout ' }))
       // 通过AbortController对象的abort()终止一个或多个请求
-      controller.abort();
-    }, timeout);
-  });
-};
+      controller.abort()
+    }, timeout)
+  })
+}
 
 // fetch请求
-const url = "https://jsonplaceholder.typicode.com/todos/1";
+const url = 'https://jsonplaceholder.typicode.com/todos/1'
 const fetchPromise = () => {
   return fetch(url, { signal }) // 传入AbortSignal对象实例
     .then((res) => res.json())
     .then((data) => console.log(data))
-    .catch((err) => console.log("err:", err));
-};
+    .catch((err) => console.log('err:', err))
+}
 
 /**
  * 请求处理器通过Promise.race()判断请求是否超时,race()可以接收多个Promise,它有点类似于竞速机制,
@@ -484,24 +484,24 @@ const fetchPromise = () => {
  */
 Promise.race([timeoutPromise(10), fetchPromise()])
   .then((res) => {
-    console.log(res); // Response {type: 'default', url: '', redirected: false, status: 504, ok: false, …}
+    console.log(res) // Response {type: 'default', url: '', redirected: false, status: 504, ok: false, …}
   })
   .catch((err) => {
-    console.log(err); // err: DOMException: The user aborted a request.
-  });
+    console.log(err) // err: DOMException: The user aborted a request.
+  })
 ```
 
 除了 Promise.race()方式判断请求是否超时外,也可以通过包装 Promise 实现,其核心代码在于`promise.then(resolve, reject)`,通过请求 Promise 控制外部 Promise 的状态,当请求 Promise 执行成功且执行时机优于 setTimeout 回调时,则会调用外部 Promise 的 resolve 将外部 Promise 状态修改为 fulfilled(已成功)。
 
 ```ts
 // 创建一个AbortController对象,AbortController对象允许中止一个或多个Web请求
-const controller = new AbortController();
+const controller = new AbortController()
 // 返回一个AbortSignal对象实例,它可以用来 with/abort 一个Web(网络)请求,需要传递至fetch请求中
-let signal = controller.signal;
+let signal = controller.signal
 
 // fetch请求
-const url = "https://jsonplaceholder.typicode.com/todos/1";
-const fetchPromise = fetch(url, { signal });
+const url = 'https://jsonplaceholder.typicode.com/todos/1'
+const fetchPromise = fetch(url, { signal })
 
 /**
  * @param timeout 超时时间
@@ -516,25 +516,25 @@ const timeoutPromise = (timeout: number, promise: Promise<any>) => {
      * 若setTimeout的函数执行时机早于promise.then(),则说明请求已超时,外部Promise状态更改
      * 为rejected
      */
-    promise.then(resolve, reject);
+    promise.then(resolve, reject)
     setTimeout(() => {
-      controller.abort(); // 中止请求
-      const err = new Response("timeout", {
+      controller.abort() // 中止请求
+      const err = new Response('timeout', {
         status: 504,
-        statusText: "timeout ",
-      });
-      reject.bind(null, err);
-    }, timeout);
-  });
-};
+        statusText: 'timeout ',
+      })
+      reject.bind(null, err)
+    }, timeout)
+  })
+}
 
 timeoutPromise(10, fetchPromise)
   .then((res: any) => {
-    console.log(123);
-    return res.json();
+    console.log(123)
+    return res.json()
   })
   .then((data) => console.log(data))
-  .catch((err) => console.log("err:", err));
+  .catch((err) => console.log('err:', err))
 ```
 
 ## 4.Axios 封装
@@ -558,30 +558,30 @@ XMLHttpRequest 对象通过 `about()`终止请求。
 ```ts
 setTimeout(() => {
   request({
-    url: "https://jsonplaceholder.typicode.com/todos/1",
+    url: 'https://jsonplaceholder.typicode.com/todos/1',
   })
     .then((res) => {
-      console.log(res);
+      console.log(res)
     })
     .catch((err) => {
-      console.log(err);
-    });
-  xhr.abort(); // 中止请求
-}, 1000);
+      console.log(err)
+    })
+  xhr.abort() // 中止请求
+}, 1000)
 
 setTimeout(() => {
   request({
-    url: "https://jsonplaceholder.typicode.com/posts",
-    method: "POST",
-    data: { name: "z乘风", age: 18 },
+    url: 'https://jsonplaceholder.typicode.com/posts',
+    method: 'POST',
+    data: { name: 'z乘风', age: 18 },
   })
     .then((res) => {
-      console.log(res);
+      console.log(res)
     })
     .catch((err) => {
-      console.log(err);
-    });
-}, 3000);
+      console.log(err)
+    })
+}, 3000)
 ```
 
 ![prototype](../assets/images/request01.png)
@@ -592,15 +592,15 @@ setTimeout(() => {
 
 ```ts
 // 实例化AbortController对象
-const controller = new AbortController();
+const controller = new AbortController()
 // 获取signal(信号)
-const signal = controller.signal;
-fetch("https://jsonplaceholder.typicode.com/posts/1", {
+const signal = controller.signal
+fetch('https://jsonplaceholder.typicode.com/posts/1', {
   signal,
 })
   .then((response) => response.json())
-  .then((json) => console.log(json));
-controller.abort(); // 中止请求
+  .then((json) => console.log(json))
+controller.abort() // 中止请求
 ```
 
 ![prototype](../assets/images/request02.png)
@@ -612,17 +612,17 @@ controller.abort(); // 中止请求
 #### 5.3.1 AbortController 中止 Axios 请求
 
 ```ts
-import axios from "axios";
+import axios from 'axios'
 // 实例化AbortController对象
-const controller = new AbortController();
+const controller = new AbortController()
 // 获取signal(信号)
-const signal = controller.signal;
-axios("https://jsonplaceholder.typicode.com/posts/1", {
+const signal = controller.signal
+axios('https://jsonplaceholder.typicode.com/posts/1', {
   signal,
 }).then((res) => {
-  console.log(res);
-});
-controller.abort(); // 中止请求
+  console.log(res)
+})
+controller.abort() // 中止请求
 ```
 
 ![prototype](../assets/images/request03.png)
@@ -633,23 +633,23 @@ controller.abort(); // 中止请求
 /*
  * 方式1:通过source()工厂方法创建一个Cannel Token
  */
-import axios from "axios";
-const CancelToken = axios.CancelToken;
+import axios from 'axios'
+const CancelToken = axios.CancelToken
 // 通过CancelToken.source 工厂方法创建一个 cancel token
-const source = CancelToken.source();
-axios("https://jsonplaceholder.typicode.com/posts/1", {
+const source = CancelToken.source()
+axios('https://jsonplaceholder.typicode.com/posts/1', {
   cancelToken: source.token,
 })
   .then((res) => {
-    console.log(res);
+    console.log(res)
   })
   .catch((err) => {
     if (axios.isCancel(err)) {
-      console.log("Request canceled", err.message);
+      console.log('Request canceled', err.message)
     }
-  });
+  })
 // 中止请求,参数可选
-source.cancel("cancel request");
+source.cancel('cancel request')
 ```
 
 ```ts
@@ -657,25 +657,25 @@ source.cancel("cancel request");
  * 方式2:通过传递一个 executor 函数到 CancelToken 的构造函数来创建
  * 一个 cancel token
  */
-import axios, { Canceler } from "axios";
-const CancelToken = axios.CancelToken;
-let cancel: Canceler;
-axios("https://jsonplaceholder.typicode.com/posts/1", {
+import axios, { Canceler } from 'axios'
+const CancelToken = axios.CancelToken
+let cancel: Canceler
+axios('https://jsonplaceholder.typicode.com/posts/1', {
   cancelToken: new CancelToken(function executor(c) {
     // executor 函数接收一个 cancel 函数作为参数
-    cancel = c;
+    cancel = c
   }),
 })
   .then((res) => {
-    console.log(res);
+    console.log(res)
   })
   .catch((err) => {
     if (axios.isCancel(err)) {
-      console.log("Request canceled", err.message);
+      console.log('Request canceled', err.message)
     }
-  });
+  })
 
-cancel!("cancel request"); // 中止请求
+cancel!('cancel request') // 中止请求
 ```
 
 ![prototype](../assets/images/request04.png)
@@ -684,26 +684,26 @@ cancel!("cancel request"); // 中止请求
 
 ```ts
 // 按需决定是否使用 polyfill,该依赖支持事件处理的abortcontroller的垫片
-import "yet-another-abortcontroller-polyfill";
-import Request from "umi-request";
+import 'yet-another-abortcontroller-polyfill'
+import Request from 'umi-request'
 
-const controller = new AbortController(); // 创建一个控制器
+const controller = new AbortController() // 创建一个控制器
 // 返回一个 AbortSignal 对象实例，它可以用来 with/abort 一个 DOM 请求
-const { signal } = controller;
-signal.addEventListener("abort", () => {
-  console.log("aborted!");
-});
+const { signal } = controller
+signal.addEventListener('abort', () => {
+  console.log('aborted!')
+})
 
-Request("/api/response_after_1_sec", {
+Request('/api/response_after_1_sec', {
   // 这将信号和控制器与获取请求相关联然后允许我们通过调用 AbortController.abort() 中止请求
   signal,
-});
+})
 
 // 取消请求
 setTimeout(() => {
   // 中止一个尚未完成的DOM请求。这能够中止 fetch 请求,任何响应Body的消费者和流。
-  controller.abort();
-}, 100);
+  controller.abort()
+}, 100)
 ```
 
 ## 6.拦截请求(扩展)

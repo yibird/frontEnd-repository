@@ -9,33 +9,33 @@
 function func1() {
   // 函数体
 }
-func1();
+func1()
 
 // 方式2:通过字面量定义函数,由于function(){}没有函数名,所以又被称为匿名函数
 const func2 = function (a, b) {
-  return a + b;
-};
-console.log(func2(1, 1)); // 2
+  return a + b
+}
+console.log(func2(1, 1)) // 2
 
 /*
  * 方式3:通过实例化Function构造函数定义函数,Function()除最后一个参数,其余参数均为函数参数名称,
  * Function()最后一个为函数主体,注意:这种方式不安全,容易遭受攻击
  */
-const func3 = new Function("a", "b", "return a*b");
-console.log(func3(2, 3)); // 6
+const func3 = new Function('a', 'b', 'return a*b')
+console.log(func3(2, 3)) // 6
 
 // 方式4:箭头函数
 const func4 = () => {
-  console.log("箭头函数");
-};
+  console.log('箭头函数')
+}
 
 // 在函数上定义属性或函数
 function func5() {}
-func5.name = "z乘风";
-func5.hello = function () {};
-console.log(func5); // f func5(){}
-console.log(func5.name); // z乘风
-console.log(func5.hello); // f (){}
+func5.name = 'z乘风'
+func5.hello = function () {}
+console.log(func5) // f func5(){}
+console.log(func5.name) // z乘风
+console.log(func5.hello) // f (){}
 ```
 
 ## 2.函数的 length 和 name 属性
@@ -54,24 +54,24 @@ console.log(func5.hello); // f (){}
  * 情况4:Function.length为1。
  */
 
-var fn01 = function () {};
+var fn01 = function () {}
 // 函数无形参
-console.log(fn01.length); // 0
+console.log(fn01.length) // 0
 
-var fn02 = function (...args) {};
+var fn02 = function (...args) {}
 // 由于args是一个剩余参数,形参数量不包含剩余参数
-console.log(fn02.length); // 0
+console.log(fn02.length) // 0
 
-var fn03 = function (a = 1, b, c) {};
+var fn03 = function (a = 1, b, c) {}
 // 由于函数第一个形参是默认参数,第一个参数之前的参数个数是0个
-console.log(fn03.length); // 0
+console.log(fn03.length) // 0
 
-var fn04 = function (a, b, c = 1, d) {};
+var fn04 = function (a, b, c = 1, d) {}
 // 由于函数形参c是一个默认参数,形参个数只会包括c之前的参数个数,即a和b两个
-console.log(fn04.length); // 2
+console.log(fn04.length) // 2
 
 // Function构造器的函数长度为1
-console.log(Function.length); // 1
+console.log(Function.length) // 1
 ```
 
 </CodeGroupItem>
@@ -161,21 +161,21 @@ this 默认绑定可以分为以下情况:
 - 严格模式下,不能将全局对象用于默认绑定,this 会绑定到 undefined。只有函数运行在非严格模式下,默认绑定才能绑定到全局对象。在严格模式下调用函数则不影响默认绑定。
 
 ```js
-var x = 10;
+var x = 10
 function fn() {
-  "use strict"; // 严格模式下 this指向undefined
-  console.log(this.x);
+  'use strict' // 严格模式下 this指向undefined
+  console.log(this.x)
 }
-fn(); // Uncaught TypeError: Cannot read properties of undefined (reading 'x')
+fn() // Uncaught TypeError: Cannot read properties of undefined (reading 'x')
 
 function fn() {
-  console.log(this.x);
+  console.log(this.x)
 }
-var x = 10;
-(function () {
-  "use strict"; // 严格模式下调用函数不会影响默认绑定
-  fn(); // 10
-})();
+var x = 10
+;(function () {
+  'use strict' // 严格模式下调用函数不会影响默认绑定
+  fn() // 10
+})()
 ```
 
 ### 4.2 隐式绑定
@@ -184,13 +184,13 @@ var x = 10;
 
 ```js
 function fn() {
-  console.log(this.x);
+  console.log(this.x)
 }
 const obj = {
   x: 10,
   fn: fn, // obj的fn属性引用了fn函数,fn函数中的this指向obj
-};
-obj.fn(); // 10
+}
+obj.fn() // 10
 ```
 
 **隐式绑定丢失的两种情况**
@@ -201,31 +201,31 @@ obj.fn(); // 10
 ```js
 // 情况1
 function fn() {
-  console.log(this.x);
+  console.log(this.x)
 }
 const obj = {
   x: 10,
   fn: fn,
-};
+}
 // 由于runFn不带任何修饰的函数调用,this绑定是应用默认绑定规则,this指向全局对象
-var runFn = obj.fn; // 函数别名
-var x = 20;
-runFn(); // 20
+var runFn = obj.fn // 函数别名
+var x = 20
+runFn() // 20
 
 // 情况2,setTimeout(fn,delay)也属于这种情况
 function fn() {
-  console.log(this.x);
+  console.log(this.x)
 }
 // 函数的参数传递就相当于隐式赋值,此时callback的this会丢失,
 function doFn(callback) {
-  callback();
+  callback()
 }
 var obj = {
   x: 10,
   fn: fn,
-};
-var x = 20;
-doFn(obj.fn); // 20
+}
+var x = 20
+doFn(obj.fn) // 20
 ```
 
 ### 4.2 显式绑定
@@ -239,20 +239,20 @@ doFn(obj.fn); // 20
 ```js
 // apply
 function fn(age, city) {
-  console.log(this.name, age, city);
+  console.log(this.name, age, city)
 }
 var obj = {
-  name: "z乘风",
-};
+  name: 'z乘风',
+}
 // apply()强制改变函数this,fn函数中的this指向obj
-fn.apply(obj, [18, "深圳"]); // "z乘风" 18 "深圳"
+fn.apply(obj, [18, '深圳']) // "z乘风" 18 "深圳"
 
 // call()强制改变函数this,fn函数中的this指向obj
-fn.call(obj, 18, "广州"); // "z乘风" 18 "广州"
+fn.call(obj, 18, '广州') // "z乘风" 18 "广州"
 
 // bind()强制改变函数this并返回一个新的函数,fn函数中的this指向obj
-var newFn = fn.bind(obj, 18, "香港");
-newFn(); // "z乘风" 18 "香港"
+var newFn = fn.bind(obj, 18, '香港')
+newFn() // "z乘风" 18 "香港"
 ```
 
 ### 4.4 new 绑定
@@ -262,11 +262,11 @@ newFn(); // "z乘风" 18 "香港"
 ```js
 // 构造函数首字母大写
 function Fn(x) {
-  this.x = x;
+  this.x = x
 }
 // f和Fn()函数进行this绑定,即Fn()中的this指向f
-var f = new Fn(10);
-console.log(f.x); // 10
+var f = new Fn(10)
+console.log(f.x) // 10
 ```
 
 当使用 new 操作符会自动执行如下步骤:
@@ -302,9 +302,9 @@ ES6 新增一种特殊函数类型:箭头函数,箭头函数无法使用上述�
 ```js
 var fn = function () {
   return (x) => {
-    console.log(x);
-  };
-};
+    console.log(x)
+  }
+}
 ```
 
 ### 4.6 箭头函数与普通函数的区别
@@ -325,26 +325,26 @@ var fn = function () {
 
 ```js
 // 写法1:推荐写法,最后的()部分用于传递参数
-(function () {})();
+;(function () {})()
 // 写法2
-(function () {})();
+;(function () {})()
 
 // 以下写法JS执行引擎都是允许的
-!(function () {})();
-+(function () {})();
--(function () {})();
-~(function () {})();
+!(function () {})()
+;+(function () {})()
+;-(function () {})()
+~(function () {})()
 new (function () {
   /* code */
-})();
+})()
 new (function () {
   /* code */
-})();
+})()
 
 // 立即执行函数的this总是指向全局对象
-(function () {
-  console.log(this); // Window{...}
-})();
+;(function () {
+  console.log(this) // Window{...}
+})()
 ```
 
 为了深入理解立即执行函数请看如下示例,for 循环会遍历三次执行 setTimeout()并打印 i 的值,由于 setTimeout()是一个异步函数,所以先会执行 for 循环中的打印 i 语句,此时你会很好奇为什么 setTimeout()中打印的 i 都为 3,这是因为 i 由 var 关键字声明,表示
@@ -353,9 +353,9 @@ i 是全局的,当循环遍历至最后一次时 i 为 2,i+1=3,所以执行 setT
 ```js
 for (var i = 0; i < 3; i++) {
   setTimeout(function () {
-    console.log(i);
-  }, 0);
-  console.log("i:", i);
+    console.log(i)
+  }, 0)
+  console.log('i:', i)
 }
 /*
  * 执行结果如下:
@@ -370,9 +370,9 @@ for (var i = 0; i < 3; i++) {
 // 使用let关键字正常输出
 for (let i = 0; i < 3; i++) {
   setTimeout(function () {
-    console.log(i);
-  }, 0);
-  console.log("i:", i);
+    console.log(i)
+  }, 0)
+  console.log('i:', i)
 }
 /*
  * 执行结果如下:
@@ -387,12 +387,12 @@ for (let i = 0; i < 3; i++) {
 // 使用立即执行函数创建独立作用域正常输出
 for (var i = 0; i < 3; i++) {
   // 接收传入的i
-  (function (i) {
+  ;(function (i) {
     setTimeout(function () {
-      console.log(i);
-    }, 0);
-  })(i); // 将i传入立即执行函数,立即执行函数会创建一个独立作用域,在立即执行函数中i并不是全局的
-  console.log("i:", i);
+      console.log(i)
+    }, 0)
+  })(i) // 将i传入立即执行函数,立即执行函数会创建一个独立作用域,在立即执行函数中i并不是全局的
+  console.log('i:', i)
 }
 /*
  * 执行结果如下:
@@ -418,61 +418,61 @@ for (var i = 0; i < 3; i++) {
 
 ```js
 function print() {
-  var name = "z乘风";
+  var name = 'z乘风'
   // getInfo()使用了prinlt()中name变量,所以getInfo()是一个闭包函数
   function getInfo(str) {
-    console.log(name + str);
+    console.log(name + str)
   }
-  return getInfo("很帅");
+  return getInfo('很帅')
 }
-print(); // "z乘风很帅"
+print() // "z乘风很帅"
 ```
 
 - 2.即使外部函数已经返回,闭包仍能访问外部函数定义的变量。这说明创建它的上下文即使已经销毁,但在该上下文下定义的闭包仍然存在。
 
 ```js
 function print() {
-  var name = "z乘风";
+  var name = 'z乘风'
   function getInfo(str) {
-    console.log(name + str);
+    console.log(name + str)
   }
-  return getInfo;
+  return getInfo
 }
 // 即使print()执行后上下文记忆销毁,但print()中的getInfo()闭包函数仍存在
-var fn = print();
-fn("真帅"); // "z乘风真帅"
-fn("很拉"); // "z乘风很拉"
+var fn = print()
+fn('真帅') // "z乘风真帅"
+fn('很拉') // "z乘风很拉"
 ```
 
 - 3.闭包可以更新外部变量的值。
 
 ```js
 function print() {
-  var count = 0;
+  var count = 0
   function setCount(newCount) {
-    count = newCount;
-    console.log(count);
+    count = newCount
+    console.log(count)
   }
-  return setCount;
+  return setCount
 }
-var setCount = print();
-setCount(1); // 1
-setCount(2); // 2
+var setCount = print()
+setCount(1) // 1
+setCount(2) // 2
 ```
 
 ### 7.1 从作用域深入理解闭包
 
 ```js
-var scope = "global scope";
+var scope = 'global scope'
 function checkscope() {
-  var scope = "local scope";
+  var scope = 'local scope'
   function f() {
-    return scope;
+    return scope
   }
-  return f;
+  return f
 }
-var foo = checkscope(); // foo指向函数f
-foo(); // local scope
+var foo = checkscope() // foo指向函数f
+foo() // local scope
 ```
 
 上面示例的执行步骤如下:
@@ -491,7 +491,7 @@ foo(); // local scope
   ```js
   fContext = {
     Scope: [AO, checkscopeContext.AO, globalContext.VO],
-  };
+  }
   ```
 
   f 函数不仅保存了 f 函数上下文的 AO(活动对象),也保存了 checkscope 函数上下文和全局上下文的 AO,即使 checkscopeContext 被销毁了,但是 JavaScript 依然会让 checkscopeContext.AO(活动对象)活在内存中,f 函数依然可以通过 f 函数的作用域链找到它。**简单来说闭包函数保存了上层函数的执行上下文活动对象,即使上层函数执行后上下文被销毁,上层函数的活动对象仍存活在内存中,通过闭包函数的作用域链就可以访问上层函数的变量,而这就是闭包实现的关键**。
@@ -505,17 +505,17 @@ foo(); // local scope
 ```js
 function fn() {
   for (var i = 0; i < 3; i++) {}
-  console.log(i); // 3 即使在for作用域外层仍能访问i
+  console.log(i) // 3 即使在for作用域外层仍能访问i
 }
-fn();
+fn()
 
 // 利用立即执行函数模拟块级作用域
 function fn() {
-  (function () {
+  ;(function () {
     for (var i = 0; i < 3; i++) {}
     // 通过闭包+立即执行函数创建一个独立作用域,i具有了块级作用域,仅作用于与for作用域内,外部无法访问
-    console.log(i); // undefined
-  })();
+    console.log(i) // undefined
+  })()
 }
 ```
 
@@ -524,26 +524,26 @@ function fn() {
 ```js
 const cache = (function () {
   // 创建缓存对象
-  const obj = {};
+  const obj = {}
   return function () {
     // 将函数参数列表转为数组,也可以通过Array.from(arguments)转为数组
-    const arr = Array.prototype.slice.call(arguments, 0);
+    const arr = Array.prototype.slice.call(arguments, 0)
     // 使用参数元素以逗号为缓存key
-    const key = arr.join(",");
+    const key = arr.join(',')
     // 判断是否命中缓存,若命中缓存则直接从缓存中返回结果,否则对计算结果进行缓存
     if (obj[key]) {
-      console.log("命中缓存");
-      return obj[key];
+      console.log('命中缓存')
+      return obj[key]
     }
-    const result = arr.reduce((cur, item) => cur + item);
+    const result = arr.reduce((cur, item) => cur + item)
     // 缓存计算结果
-    obj[key] = result;
-    return result;
-  };
-})();
+    obj[key] = result
+    return result
+  }
+})()
 
-cache(1, 2, 3); // 6
-cache(1, 2, 3); // "命中缓存" 6
+cache(1, 2, 3) // 6
+cache(1, 2, 3) // "命中缓存" 6
 ```
 
 - **私有变量**。javascript 中没有私有成员的概念,我们可以把函数当做一个范围,函数内的变量就是私有变量,在外部无法引用。
@@ -551,18 +551,18 @@ cache(1, 2, 3); // "命中缓存" 6
 ```js
 function Person() {
   // 闭包特性使name变成一个私有变量,外部函数无法访问
-  var name = "default";
+  var name = 'default'
   this.getName = function () {
-    return name;
-  };
+    return name
+  }
   this.setName = function (name) {
-    this.name = name;
-  };
+    this.name = name
+  }
 }
-const p = new Person();
-console.log(p.getName()); // default
-console.log(p.setName("z乘风"));
-console.log(p.getName()); // z乘风
+const p = new Person()
+console.log(p.getName()) // default
+console.log(p.setName('z乘风'))
+console.log(p.getName()) // z乘风
 ```
 
 ### 7.3 闭包函数与立即执行函数的区别
@@ -588,20 +588,20 @@ JavaScript 中的 with 关键字用于简化代码,允许在不重复指定对�
 
 ```js
 with (expression) {
-  statement(s);
+  statement(s)
 }
 ```
 
 其中 expression 可以是任何可以返回对象的表达式,statement(s)是在 with 语句中执行的代码块。
 
 ```js
-var obj = { a: 1, b: 2, c: 3 };
+var obj = { a: 1, b: 2, c: 3 }
 
 // 使用`with`
 with (obj) {
-  console.log(a);
-  console.log(b);
-  console.log(c);
+  console.log(a)
+  console.log(b)
+  console.log(c)
 }
 ```
 

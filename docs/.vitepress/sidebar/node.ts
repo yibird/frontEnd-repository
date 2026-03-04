@@ -1,6 +1,6 @@
 export default {
-  text: "NodeJS",
+  text: 'NodeJS',
   collapsible: true,
   collapsed: true,
   items: [],
-};
+}

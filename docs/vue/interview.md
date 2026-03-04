@@ -38,19 +38,19 @@ MVVM 是 Model-View-ViewModel 的简写。它本质上就是 MVC 的改进版。
 ```js
 // 判断两个vnode的标签和key是否相同 如果相同 就可以认为是同一节点就地复用
 function isSameVnode(oldVnode, newVnode) {
-  return oldVnode.tag === newVnode.tag && oldVnode.key === newVnode.key;
+  return oldVnode.tag === newVnode.tag && oldVnode.key === newVnode.key
 }
 
 // 根据key来创建老的儿子的index映射表  类似 {'a':0,'b':1} 代表key为'a'的节点在第一个位置 key为'b'的节点在第二个位置
 function makeIndexByKey(children) {
-  let map = {};
+  let map = {}
   children.forEach((item, index) => {
-    map[item.key] = index;
-  });
-  return map;
+    map[item.key] = index
+  })
+  return map
 }
 // 生成的映射表
-let map = makeIndexByKey(oldCh);
+let map = makeIndexByKey(oldCh)
 ```
 
 ### v-for 指令与 v-if 指令优先级?为什么 v-for 优先级高于 v-if?
@@ -59,8 +59,8 @@ v-for 指令的优先级高于 v-if 指令,官方并不推荐 v-for 与 v-if 同
 
 ```js
 // vue-template-compiler是一个可以将Vue模板编译为渲染函数的工具库
-const compiler = require("vue-template-compiler");
-const template = `<div v-if="false" v-for="n in 3"></div>`;
+const compiler = require('vue-template-compiler')
+const template = `<div v-if="false" v-for="n in 3"></div>`
 /**
  * compile用于编译模板字符串并返回已编译的 JavaScript 代码,返回对象格式如下:
  * {
@@ -71,8 +71,8 @@ const template = `<div v-if="false" v-for="n in 3"></div>`;
     errors:Array<string>  // 模板语法错误，如果任何
    } 
  */
-const ast = compiler.compile(template);
-console.log(ast.render);
+const ast = compiler.compile(template)
+console.log(ast.render)
 // 结果:with(this){return _l((3),function(n){return (false)?_c('div'):_e()})}
 
 /**

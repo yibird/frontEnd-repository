@@ -24,8 +24,8 @@ document.getElementById(idSelector):可以根据 id 选择器获取一个元素�
 <div id="root"></div>
 
 <script>
-  const root = document.getElementById("root");
-  console.log(root); // <div id="root"></div>;
+  const root = document.getElementById('root')
+  console.log(root) // <div id="root"></div>;
 </script>
 ```
 
@@ -42,8 +42,8 @@ document.getElementBysClassName(classSelector):可以根据 class 选择器获�
 
 <script>
   // 返回一个DOM元素数组,这是一个类数组,可以通过Array.from()转为数组
-  const divArr = document.getElementsByClassName("div");
-  console.log(divArr); // HTMLCollection(2) [div.div, div.div]
+  const divArr = document.getElementsByClassName('div')
+  console.log(divArr) // HTMLCollection(2) [div.div, div.div]
 </script>
 ```
 
@@ -60,8 +60,8 @@ document.getElementsByName(nameAttr):根据元素的 name 属性值获取一组 
 
 <!-- js -->
 <script>
-  const pArr = document.getElementsByName("section");
-  console.log(pArr); // HTMLCollection(2)[(p, p)];
+  const pArr = document.getElementsByName('section')
+  console.log(pArr) // HTMLCollection(2)[(p, p)];
 </script>
 ```
 
@@ -76,8 +76,8 @@ document.getElementsByTagName(tagName):根据元素标签名称获取一组 DOM 
   <p>2</p>
 </div>
 <script>
-  const pArr = document.getElementsByTagName("p");
-  console.log(pArr); // HTMLCollection(2)[(p, p)];
+  const pArr = document.getElementsByTagName('p')
+  console.log(pArr) // HTMLCollection(2)[(p, p)];
 </script>
 ```
 
@@ -97,17 +97,17 @@ document.querySelector(selector):可以根据选择器获取一个元素。docum
   /* querySelector()只能获取单个元素,如要获取多个元素可使用querySelectorAll() */
 
   // 根据id选择器获取元素
-  const root = document.querySelector("#root");
-  console.log(root); // <div id="root">0</div>
+  const root = document.querySelector('#root')
+  console.log(root) // <div id="root">0</div>
 
   // 根据class选择器获取元素 const div = document.querySelector(".div");
-  console.log(div); // <div class="div">1</div>
+  console.log(div) // <div class="div">1</div>
 
-  const rootArr = document.querySelectorAll("#root");
-  console.log(rootArr); // NodeList [div#root]
+  const rootArr = document.querySelectorAll('#root')
+  console.log(rootArr) // NodeList [div#root]
 
-  const divRoot = document.querySelectorAll(".div");
-  console.log(divRoot); // NodeList(2) [div.div, div.div]
+  const divRoot = document.querySelectorAll('.div')
+  console.log(divRoot) // NodeList(2) [div.div, div.div]
 </script>
 ```
 
@@ -116,8 +116,8 @@ document.querySelector(selector):可以根据选择器获取一个元素。docum
 document.documentElement 用于获取 html 标签。document.body 用于获取 body 标签。
 
 ```js
-console.log(document.body); // <body>...</body>
-console.log(document.documentElement); // <html>...</html>
+console.log(document.body) // <body>...</body>
+console.log(document.documentElement) // <html>...</html>
 ```
 
 ## 2.Element 的属性与方法
@@ -161,7 +161,7 @@ MutationObserver 相较于 Mutation Events 性能要更好,Mutation Events 是�
 
 <script>
   function randomStr() {
-    return Math.random().toString(36).slice(2);
+    return Math.random().toString(36).slice(2)
   }
 
   window.onload = () => {
@@ -196,18 +196,18 @@ MutationObserver 相较于 Mutation Events 性能要更好,Mutation Events 是�
           attributeName,
           attributeNamespace,
           oldValue,
-        } = item;
-        console.log(type);
-        console.log(target);
-        console.log(addedNodes);
-        console.log(removedNodes);
-        console.log(previousSibling);
-        console.log(nextSibling);
-        console.log(attributeName);
-        console.log(attributeNamespace);
-        console.log(oldValue);
-      });
-    });
+        } = item
+        console.log(type)
+        console.log(target)
+        console.log(addedNodes)
+        console.log(removedNodes)
+        console.log(previousSibling)
+        console.log(nextSibling)
+        console.log(attributeName)
+        console.log(attributeNamespace)
+        console.log(oldValue)
+      })
+    })
     const observeOptions = {
       /**
        * 是否观察指定DOM树下所有节点,默认为false
@@ -221,51 +221,51 @@ MutationObserver 相较于 Mutation Events 性能要更好,Mutation Events 是�
        * 是否观察DOM元素属性发生变化,默认为false
        */
       attributes: true,
-    };
+    }
 
-    const $ = (selector) => document.querySelector(selector);
+    const $ = (selector) => document.querySelector(selector)
 
     // 观察document.body节点发生变化
-    observer.observe(document.body, observeOptions);
-    const ul = $("ul"),
-      addBtn = $(".add"),
-      addAttrBtn = $(".addAttr"),
-      stopBtn = $(".stop"),
-      startBtn = $(".start"),
-      getBtn = $(".getMutations");
+    observer.observe(document.body, observeOptions)
+    const ul = $('ul'),
+      addBtn = $('.add'),
+      addAttrBtn = $('.addAttr'),
+      stopBtn = $('.stop'),
+      startBtn = $('.start'),
+      getBtn = $('.getMutations')
 
     function addElement() {
-      const li = document.createElement("li");
-      li.innerText = "item_" + randomStr();
-      ul.appendChild(li);
+      const li = document.createElement('li')
+      li.innerText = 'item_' + randomStr()
+      ul.appendChild(li)
     }
     function addAttribute() {
-      const li = document.querySelectorAll("li")[0];
-      li.setAttribute("style", "color:red;font-size:20px;");
+      const li = document.querySelectorAll('li')[0]
+      li.setAttribute('style', 'color:red;font-size:20px;')
     }
 
     // takeRecords()例子
     function getMutations() {
       for (let i = 0; i < 10; i++) {
         setTimeout(() => {
-          addElement();
+          addElement()
           // 返回已检测到但尚未由观察者的回调函数处理的所有匹配DOM更改的列表
-          console.log(observer.takeRecords());
-        }, 300);
+          console.log(observer.takeRecords())
+        }, 300)
       }
     }
 
     // 添加元素
-    addBtn.onclick = addElement;
+    addBtn.onclick = addElement
     // 添加属性
-    addAttrBtn.onclick = addAttribute;
+    addAttrBtn.onclick = addAttribute
     // 停止观察,停止观察后即使被观察的DOM发生变化,也不会执行MutationObserver回调函数
-    stopBtn.onclick = () => observer.disconnect();
+    stopBtn.onclick = () => observer.disconnect()
     // 重新观察
-    startBtn.onclick = () => observer.observe(document.body, observeOptions);
+    startBtn.onclick = () => observer.observe(document.body, observeOptions)
     // 获取未被回调函数处理的DOM更改的列表
-    getBtn.onclick = getMutations;
-  };
+    getBtn.onclick = getMutations
+  }
 </script>
 ```
 
@@ -305,13 +305,13 @@ ResizeObserver 接口可以监听到 Element 的内容区域或 SVGElement 的�
   }
 </style>
 <script>
-  const $ = (selector) => document.querySelector(selector);
-  const container = $(".container"),
-    child = $(".child"),
-    changeBtn = $(".change"),
-    changeChildBtn = $(".changeChild"),
-    stopBtn = $(".stop"),
-    endBtn = $(".end");
+  const $ = (selector) => document.querySelector(selector)
+  const container = $('.container'),
+    child = $('.child'),
+    changeBtn = $('.change'),
+    changeChildBtn = $('.changeChild'),
+    stopBtn = $('.stop'),
+    endBtn = $('.end')
 
   function callback(entries) {
     entries.forEach((item) => {
@@ -323,36 +323,36 @@ ResizeObserver 接口可以监听到 Element 的内容区域或 SVGElement 的�
        * right(返回 DOMRect 的右坐标值,通常与 x + width 相同)、left(返回 DOMRect 的左坐标值,
        * 通常与 x​​​​​​​ 相同)。
        */
-      const { target, contentRect } = item;
-      console.log(target);
-      console.log(contentRect);
-    });
+      const { target, contentRect } = item
+      console.log(target)
+      console.log(contentRect)
+    })
   }
-  const observer = new ResizeObserver(callback);
+  const observer = new ResizeObserver(callback)
 
   // 监听container元素尺寸变化
-  observer.observe(container, { box: "content-box" });
+  observer.observe(container, { box: 'content-box' })
   // 监听child元素尺寸变化
-  observer.observe(child, { box: "content-box" });
+  observer.observe(child, { box: 'content-box' })
 
   // 改变container元素尺寸
   changeBtn.onclick = () => {
-    container.style.width = `${container.offsetWidth + 10}px`;
-    container.style.height = `${container.offsetHeight + 10}px`;
-  };
+    container.style.width = `${container.offsetWidth + 10}px`
+    container.style.height = `${container.offsetHeight + 10}px`
+  }
   // 改变container child元素尺寸
   changeChildBtn.onclick = () => {
-    child.style.width = `${child.offsetWidth + 2}px`;
-    child.style.height = `${child.offsetHeight + 2}px`;
-  };
+    child.style.width = `${child.offsetWidth + 2}px`
+    child.style.height = `${child.offsetHeight + 2}px`
+  }
 
   stopBtn.onclick = () => {
-    observer.disconnect();
-  };
+    observer.disconnect()
+  }
 
   endBtn.onclick = () => {
-    observer.unobserve(container);
-  };
+    observer.unobserve(container)
+  }
 </script>
 ```
 
@@ -443,19 +443,19 @@ IntersectionObserver 接口提供了一种异步观察目标元素与其祖先�
   }
 </style>
 <script>
-  const $ = (selector) => document.querySelector(selector);
-  const left = $(".left"),
-    right = $(".left"),
-    leftBox = $(".left-box"),
-    rightBox = $(".right-box"),
-    title = $(".title"),
-    leftBtn1 = $(".left-btn1"),
-    leftBtn2 = $(".left-btn2"),
-    rightBtn1 = $(".right-btn1"),
-    rightBtn2 = $(".right-btn2"),
-    stopBtn = $(".stop"),
-    endLeftBtn = $(".end-left"),
-    endRightBtn = $(".end-right");
+  const $ = (selector) => document.querySelector(selector)
+  const left = $('.left'),
+    right = $('.left'),
+    leftBox = $('.left-box'),
+    rightBox = $('.right-box'),
+    title = $('.title'),
+    leftBtn1 = $('.left-btn1'),
+    leftBtn2 = $('.left-btn2'),
+    rightBtn1 = $('.right-btn1'),
+    rightBtn2 = $('.right-btn2'),
+    stopBtn = $('.stop'),
+    endLeftBtn = $('.end-left'),
+    endRightBtn = $('.end-right')
 
   function callback(entries, observer) {
     entries.forEach((item) => {
@@ -480,40 +480,40 @@ IntersectionObserver 接口提供了一种异步观察目标元素与其祖先�
         rootBounds,
         target,
         time,
-      } = item;
-      console.log(item);
+      } = item
+      console.log(item)
       if (isIntersecting) {
-        const elName = Array.from(item.target.classList).join("");
-        title.innerText = `${elName}是否与viewport相交:${isIntersecting}`;
+        const elName = Array.from(item.target.classList).join('')
+        title.innerText = `${elName}是否与viewport相交:${isIntersecting}`
         setTimeout(() => {
-          const selector = `.${elName.substring(0, elName.indexOf("-"))}`;
-          scrollToTop($(selector), 0);
-        }, 1000);
+          const selector = `.${elName.substring(0, elName.indexOf('-'))}`
+          scrollToTop($(selector), 0)
+        }, 1000)
       }
-    });
+    })
   }
-  const observer = new IntersectionObserver(callback);
+  const observer = new IntersectionObserver(callback)
 
   // 监听left-box和right-box元素是否与视窗相交
-  observer.observe(leftBox);
-  observer.observe(rightBox);
+  observer.observe(leftBox)
+  observer.observe(rightBox)
 
   const scrollToTop = (el, top) => {
     el.scrollTo({
       top,
-      behavior: "smooth",
-    });
-  };
+      behavior: 'smooth',
+    })
+  }
 
-  leftBtn1.onclick = () => scrollToTop($(".left"), 0);
-  leftBtn2.onclick = () => scrollToTop($(".left"), 300);
-  rightBtn1.onclick = () => scrollToTop($(".right"), 0);
-  rightBtn2.onclick = () => scrollToTop($(".right"), 300);
+  leftBtn1.onclick = () => scrollToTop($('.left'), 0)
+  leftBtn2.onclick = () => scrollToTop($('.left'), 300)
+  rightBtn1.onclick = () => scrollToTop($('.right'), 0)
+  rightBtn2.onclick = () => scrollToTop($('.right'), 300)
 
   stopBtn.onclick = () => {
-    observer.disconnect();
-  };
-  endLeftBtn.onclick = () => observer.unobserve(leftBox);
-  endRightBtn.onclick = () => observer.unobserve(rightBox);
+    observer.disconnect()
+  }
+  endLeftBtn.onclick = () => observer.unobserve(leftBox)
+  endRightBtn.onclick = () => observer.unobserve(rightBox)
 </script>
 ```

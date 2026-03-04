@@ -49,13 +49,13 @@ obj.name="zchengfeng"
 ```js
 function computeMaxCallStackSize() {
   try {
-    return 1 + computeMaxCallStackSize();
+    return 1 + computeMaxCallStackSize()
   } catch (e) {
     // Call stack overflow
-    return 1;
+    return 1
   }
 }
-console.log(computeMaxCallStackSize()); // 11390
+console.log(computeMaxCallStackSize()) // 11390
 ```
 
 函数调用会在内存形成一个"调用记录",又称"调用帧"(call frame),保存调用位置和内部变量等信息。函数在内部调用该函数本身被称为递归,而递归是极为消耗内存的,因为需要同时保存成千上百个调用帧,很容易发生"栈溢出"错误(stack overflow)。对于递归调用可以通过 ES6 提供的尾递归来节省所耗用的栈空间。
@@ -64,35 +64,35 @@ console.log(computeMaxCallStackSize()); // 11390
 
 ```js
 function f() {
-  let m = 1;
-  let n = 2;
-  return g(m + n);
+  let m = 1
+  let n = 2
+  return g(m + n)
 }
-f();
+f()
 
 // 等同于
 function f() {
-  return g(3);
+  return g(3)
 }
-f();
+f()
 
 // 等同于
-g(3);
+g(3)
 ```
 
 尾调用优化是指当在外层函数尾部调用函数时,只保留内部函数的调用栈。如果所有函数都是尾调用,那么完全可以做到每次执行时,调用帧只有一项,这将大大节省内存。注意:**只有不再用到外层函数的内部变量,内层函数的调用帧才会取代外层函数的调用帧,否则就无法进行"尾调用优化"。目前只有 Safari 浏览器支持尾调用优化,Chrome 和 Firefox 都不支持**。
 
 ```js
 function addOne(a) {
-  var one = 1;
+  var one = 1
   function inner(b) {
-    return b + one;
+    return b + one
   }
   /**
    * 尾调用inner函数不会进行尾调用优化,因为内层函数inner内部
    * 使用了外层函数addOne的one变量
    */
-  return inner(a);
+  return inner(a)
 }
 ```
 
@@ -101,10 +101,10 @@ function addOne(a) {
 ```js
 // 递归调用,计算n个乘阶,复杂度为O(n)
 function factorial(n) {
-  if (n === 1) return 1;
-  return n * factorial(n - 1);
+  if (n === 1) return 1
+  return n * factorial(n - 1)
 }
-factorial(5); // 120
+factorial(5) // 120
 
 /**
  * 尾递归调用,由于只保留一个调用记录,复杂度为O(1)。尾递归的调用往往需要改写递归,
@@ -112,10 +112,10 @@ factorial(5); // 120
  * 该函数的入参,当满足终止递归条件时则返回该入参。
  */
 function factorial(n, total) {
-  if (n === 1) return total;
-  return factorial(n - 1, n * total);
+  if (n === 1) return total
+  return factorial(n - 1, n * total)
 }
-factorial(5, 1); // 120
+factorial(5, 1) // 120
 ```
 
 ## 2.类型判断
@@ -127,16 +127,16 @@ factorial(5, 1); // 120
 `typeof` 操作符用于检测变量的类型并返回变量的类型值。它有 2 种使用方式:`typeof(表达式)`和`typeof 变量名`,第一种是对表达式做运算,第二种是对变量做运算。**typeof 操作符在判断 Null 和 Array 类型时都为 object,所以 typeof 常用于 Function 类型的判断**。
 
 ```js
-console.log(typeof 123); //number
-console.log(typeof 123); //number
-console.log(typeof "zxp"); //string
-console.log(typeof true); //boolean
-console.log(typeof undefined); //undefined
-console.log(typeof null); //object
-console.log(typeof []); //object
-console.log(typeof {}); //object
-console.log(typeof function () {}); //function
-console.log(typeof class Person {}); //function
+console.log(typeof 123) //number
+console.log(typeof 123) //number
+console.log(typeof 'zxp') //string
+console.log(typeof true) //boolean
+console.log(typeof undefined) //undefined
+console.log(typeof null) //object
+console.log(typeof []) //object
+console.log(typeof {}) //object
+console.log(typeof function () {}) //function
+console.log(typeof class Person {}) //function
 ```
 
 **为什么 typeof 判断 null 类型是 object?**
@@ -157,11 +157,11 @@ console.log(typeof class Person {}); //function
 instanceof 操作符用于判断变量是否属于某个对象的实例。注意:**instanceof 操作符在判断 Array 和 Function 类型时都为 true**。
 
 ```js
-console.log([] instanceof Array); //true
-console.log([] instanceof Object); //true
-console.log({} instanceof Object); //true
-console.log(function () {} instanceof Function); //true
-console.log(function () {} instanceof Object); //true
+console.log([] instanceof Array) //true
+console.log([] instanceof Object) //true
+console.log({} instanceof Object) //true
+console.log(function () {} instanceof Function) //true
+console.log(function () {} instanceof Object) //true
 ```
 
 **instanceof 原理剖析:**
@@ -172,7 +172,7 @@ console.log(function () {} instanceof Object); //true
 // 手写instanceof
 function instanceof_of(L, R) {
   //拿到L的__proto__,它指向父对象实例的prototype
-  L = L.__proto__;
+  L = L.__proto__
   //不停向上查找原型
   while (true) {
     /**
@@ -180,20 +180,20 @@ function instanceof_of(L, R) {
      * 就立马终止,说明L instanceof R 的结果为false
      */
     if (L === null) {
-      return false;
+      return false
     }
     //如果L.__proto__===R.prototype 则说明匹配到了,返回true
     if (L === R.prototype) {
-      return true;
+      return true
     }
     //没有匹配到就一直向上查找,直到匹配到为止
-    L = L.__proto__;
+    L = L.__proto__
   }
 }
 //使用instanceof_of方法
-console.log(instanceof_of({}, Object)); // true
-console.log(instanceof_of([], Object)); // true
-console.log(instanceof_of([], Array)); // true
+console.log(instanceof_of({}, Object)) // true
+console.log(instanceof_of([], Object)) // true
+console.log(instanceof_of([], Array)) // true
 ```
 
 ### 2.4 类型判断的几种方式
@@ -203,79 +203,78 @@ console.log(instanceof_of([], Array)); // true
 
 ```js
 // 从下面可以看出返回[object xxx]中的xxx就是变量的类型
-console.log(Object.prototype.toString.call("")); // [object String]
-console.log(Object.prototype.toString.call(null)); // [object Null]
-console.log(Object.prototype.toString.call([])); // [object Array]
-console.log(Object.prototype.toString.call({})); // [object Object]
+console.log(Object.prototype.toString.call('')) // [object String]
+console.log(Object.prototype.toString.call(null)) // [object Null]
+console.log(Object.prototype.toString.call([])) // [object Array]
+console.log(Object.prototype.toString.call({})) // [object Object]
 
 // 封装成函数:判断obj是否是type类型
 function isType(obj, type) {
-  const typeinof = Object.prototype.toString.call(obj);
-  return typeinof.substring(8, typeinof.length - 1) === type;
+  const typeinof = Object.prototype.toString.call(obj)
+  return typeinof.substring(8, typeinof.length - 1) === type
 }
 
 // 测试
-console.log(isType({}, "Object")); // true
-console.log(isType([], "Object")); // false
-console.log(isType(null, "Object")); // false
+console.log(isType({}, 'Object')) // true
+console.log(isType([], 'Object')) // false
+console.log(isType(null, 'Object')) // false
 
 // 封装成一个函数(使用高阶函数特性),判断obj是否是type类型
-const isType = (obj) => (type) =>
-  Object.prototype.toString.call(obj) === `[object ${type}]`;
+const isType = (obj) => (type) => Object.prototype.toString.call(obj) === `[object ${type}]`
 
 // 测试
-console.log(isType("123")("String")); // true
-console.log(isType("123")("Number")); // false
-console.log(isType({})("Object")); // true
-console.log(isType({})("Object"));
+console.log(isType('123')('String')) // true
+console.log(isType('123')('Number')) // false
+console.log(isType({})('Object')) // true
+console.log(isType({})('Object'))
 ```
 
 - 通过构造器判断类型。注意:**`undefined`和`null`类型并没有构造器,因此访问`constructor`属性时会出现 TypeError 错误**。
 
 ```js
-var a = 123;
-console.log(a.constructor === Number); // true
-var s = "zxp";
-console.log(s.constructor === String); // true
-var b = false;
-console.log(b.constructor === Boolean); // true
-var obj = {};
-console.log(obj.constructor === Object); // true
-var arr = [];
-console.log(arr.constructor === Array); // true
-var fn = function () {};
-console.log(fn.constructor === Function); // true
+var a = 123
+console.log(a.constructor === Number) // true
+var s = 'zxp'
+console.log(s.constructor === String) // true
+var b = false
+console.log(b.constructor === Boolean) // true
+var obj = {}
+console.log(obj.constructor === Object) // true
+var arr = []
+console.log(arr.constructor === Array) // true
+var fn = function () {}
+console.log(fn.constructor === Function) // true
 
-var nul = null;
-console.log(fn.constructor === Function); // TypeError: Cannot read properties of null (reading 'constructor')
+var nul = null
+console.log(fn.constructor === Function) // TypeError: Cannot read properties of null (reading 'constructor')
 
-var udef = undefined;
-console.log(udef.constructor === Object); // TypeError: Cannot read properties of null (reading 'constructor')
+var udef = undefined
+console.log(udef.constructor === Object) // TypeError: Cannot read properties of null (reading 'constructor')
 ```
 
 - 通过 `typeof` 获取表达式类型:
 
 ```js
-console.log(typeof 123); //number
-console.log(typeof 123); //number
-console.log(typeof "zxp"); //string
-console.log(typeof true); //boolean
-console.log(typeof undefined); //undefined
-console.log(typeof null); //object
-console.log(typeof []); //object
-console.log(typeof {}); //object
-console.log(typeof function () {}); //function
-console.log(typeof class Person {}); //function
+console.log(typeof 123) //number
+console.log(typeof 123) //number
+console.log(typeof 'zxp') //string
+console.log(typeof true) //boolean
+console.log(typeof undefined) //undefined
+console.log(typeof null) //object
+console.log(typeof []) //object
+console.log(typeof {}) //object
+console.log(typeof function () {}) //function
+console.log(typeof class Person {}) //function
 ```
 
 - 通过 `instanceof` 判断表达式是否属于某个类型的实例:
 
 ```js
-console.log([] instanceof Array); //true
-console.log([] instanceof Object); //true
-console.log({} instanceof Object); //true
-console.log(function () {} instanceof Function); //true
-console.log(function () {} instanceof Object); //true
+console.log([] instanceof Array) //true
+console.log([] instanceof Object) //true
+console.log({} instanceof Object) //true
+console.log(function () {} instanceof Function) //true
+console.log(function () {} instanceof Object) //true
 ```
 
 ### 2.4 总结
@@ -296,41 +295,41 @@ console.log(function () {} instanceof Object); //true
 
 ```js
 // 由于使用字符串连接符(+),会把1调用String()转为字符串。下面代码等同:String(1) + "true"
-console.log(1 + "true"); // 1true
+console.log(1 + 'true') // 1true
 
 // 等同于:1 + Number(true) = 1+1=2
-console.log(1 + true); // 2
+console.log(1 + true) // 2
 
 // 等同于:1+Number(undefined)=1+NaN=NaN
-console.log(1 + undefined); // NaN
+console.log(1 + undefined) // NaN
 
 // 等同于:1+Number(null)= 1 + 0 = 1
-console.log(1 + null); // 1
+console.log(1 + null) // 1
 ```
 
 - 使用关系运算符时(例如:+、-、\*、/、%、++、--、<、>、==、<=、>=、===、!=、!==),会把其他数据类型通过 Number()转换为 number 类型在进行比较。如果关系运算符两侧均为 string 类型时并不是按照 Number()转为数字,而是根据字符串对应的 unicode 编码来转成数字后进行比较。
 
 ```js
 // 等同于:Number("2") > 10
-console.log("2" > 10); // false
+console.log('2' > 10) // false
 
 /*
  * 由于关系运算符两侧都是string类型,则会根据字符串对应的unicode编码转为数字后进行比较,
  * "2".charCodeAt()的值为50,"10".charCodeAt()的值为49。
  */
-console.log("2" > "10"); // true
+console.log('2' > '10') // true
 
 // 当有多个字符串将从左到右依次比较。
 // 先比较"a"和“b”,a.charCodeAt()为97,"b".charCodeAt()的值为98,"b" > "a" 可直接得出结果
-console.log("abc" > "b"); // false
-console.log("abc" > "aad"); // true
+console.log('abc' > 'b') // false
+console.log('abc' > 'aad') // true
 
 // 特殊情况1(无视规则):如果数据类型是undefind或null,可直接得出固定结果
-console.log(undefined == undefined); // true
-console.log(undefined == null); // true
-console.log(null == null);
+console.log(undefined == undefined) // true
+console.log(undefined == null) // true
+console.log(null == null)
 // 特殊情况2(无视规则):NaN与任何类型比较都是NaN
-console.log(NaN == NaN); // false
+console.log(NaN == NaN) // false
 ```
 
 - 复杂数据类型进行隐式转换时会先转为 String,然后再转成 Number 进行运算。对于数组或对象首先会调用 valueOf()获取其原始值,然后调用 toString()转为字符串,最后通过 Number()强转为数字进行运算;对于布尔会调用 Number()将布尔类型强转为数字类型进行运算。
@@ -378,12 +377,12 @@ if(a == 1 && a == 2 && a == 3){
 
 ```js
 // [].valueOf().toString()得到空字符串,Number('') == 0 成立
-console.log([] == 0); // true
+console.log([] == 0) // true
 
 /*
  * 由于JS中逻辑运算符的优先级高于关系运算符,所以![]的结果为true(空数组强转为布尔类型为true,空数组取反结果为false),0会被强转为布尔值,结果为false, 所以 false == false成立
  */
-console.log(![] == 0); // false
+console.log(![] == 0) // false
 
 /*
  * 复制类型比较会通过valueOf()获取原始值,再通过toString()转为字符串,最后通过Number()强转为数字进行比较,
@@ -391,20 +390,20 @@ console.log(![] == 0); // false
  * {}根据规则得到Number({}.valueOf().toString()) => Number('[object Object]')
  * Number(false) == Number('[object Object]') 不成立故返回false
  */
-console.log({} == !{});
+console.log({} == !{})
 // 由于对象是引用类型,引用类型存储在堆中,栈中存储着指向堆对应数据的地址,它们的地址不一样,故为false
-console.log({} == {}); // false
+console.log({} == {}) // false
 
 /*
  * []根据规则得到Number([].valueOf().toString()) => Number(''),![]根据规则得到Number(false)。
  * Number('')和Number(false)强转为数字的结果都为0,故 Number('') == Number(false) 成立
  */
-console.log([] == ![]); // true
+console.log([] == ![]) // true
 // 由于数组是引用类型,引用类型存储在堆中,栈中存储着指向堆对应数据的地址,它们的地址不一样,故为false
-console.log([] == []); // false
+console.log([] == []) // false
 
-console.log({}.valueOf().toString()); // '[object Object]'
-console.log([].valueOf().toString()); // ''
+console.log({}.valueOf().toString()) // '[object Object]'
+console.log([].valueOf().toString()) // ''
 ```
 
 ### 3.2 `==` 与 `===`的区别?
@@ -428,9 +427,9 @@ console.log([].valueOf().toString()); // ''
 - 如果两个值都是 null,或是 undefined,那么相等。
 
 ```js
-console.log(11 == "11"); // true
+console.log(11 == '11') // true
 // === 不会进行隐式转换
-console.log(11 === "11"); // false
+console.log(11 === '11') // false
 ```
 
 ### 3.3 显示类型转换
@@ -439,47 +438,47 @@ console.log(11 === "11"); // false
 
 ```js
 // String()默认值
-console.log(String()); // ''
+console.log(String()) // ''
 // Number强转String
-console.log(String(1)); // '1'
+console.log(String(1)) // '1'
 // Boolean强转String
-console.log(String(true)); // 'true'
+console.log(String(true)) // 'true'
 // Null强转String
-console.log(String(null)); // 'null'
+console.log(String(null)) // 'null'
 // Undefined强转String
-console.log(String(undefined)); // 'undefined'
+console.log(String(undefined)) // 'undefined'
 // Symbol强转String
-console.log(String(Symbol(1))); // 'Symbol(1)'
+console.log(String(Symbol(1))) // 'Symbol(1)'
 // Bitint强转String
-console.log(String(Bigint(1))); // '1'
+console.log(String(Bigint(1))) // '1'
 // Object强转String
-console.log(String({ name: "z乘风" })); // '[object Object]'
+console.log(String({ name: 'z乘风' })) // '[object Object]'
 // Array强转String
-console.log(String([1, 2, 3])); // '1,2,3'
+console.log(String([1, 2, 3])) // '1,2,3'
 
 // Number()默认值
-console.log(Number()); // 0
+console.log(Number()) // 0
 // String强转Number
-console.log(Number("1")); // 1
-console.log(Number("a")); // NaN   强转失败显示NaN
+console.log(Number('1')) // 1
+console.log(Number('a')) // NaN   强转失败显示NaN
 // Boolean强转Number
-console.log(Number(true)); // 1
-console.log(Number(false)); // 0
+console.log(Number(true)) // 1
+console.log(Number(false)) // 0
 // Object强转Number
-console.log(Number({ name: "111" })); // NaN
+console.log(Number({ name: '111' })) // NaN
 
 // Boolean()默认值
-console.log(Boolean()); // false
+console.log(Boolean()) // false
 // String强转Boolean
-console.log(Boolean("")); // false
-console.log(Boolean("z")); // true
+console.log(Boolean('')) // false
+console.log(Boolean('z')) // true
 // Number强转Boolean
-console.log(Boolean(0)); // false
-console.log(Boolean(1)); // true
+console.log(Boolean(0)) // false
+console.log(Boolean(1)) // true
 // Null强转Boolean
-console.log(Boolean(null)); // false
+console.log(Boolean(null)) // false
 // Undefined强转Boolean
-console.log(Boolean(undefined)); // false
+console.log(Boolean(undefined)) // false
 ```
 
 #### 3.3.2 string 转 number
@@ -489,18 +488,18 @@ console.log(Boolean(undefined)); // false
 
 ```js
 // 把'2'看做十进制数(默认),然后返回该值转换为十进制数的结果
-console.log(parseInt("2")); // 2
+console.log(parseInt('2')) // 2
 
 // 把'2'看做2进制,'2'的二进制转十进制失败,所以结果为NaN
-console.log(parseInt("2", 2)); // NaN
+console.log(parseInt('2', 2)) // NaN
 // 把'123'看做5进制,'123'五进制转换十进制的值为38,即1*5^2 + 2*5^1 + 3*5^0 = 38
-console.log(parseInt("123", 5)); // 38
+console.log(parseInt('123', 5)) // 38
 
 // 把'FXX123'看做16进制,'FXX123'16进制转换10进制的为15
-console.log(parseInt("FXX123", 16)); // 15
+console.log(parseInt('FXX123', 16)) // 15
 
 // 不是数值转换失败
-console.log(parseInt("Hello", 8)); // NaN
+console.log(parseInt('Hello', 8)) // NaN
 
 /*
  * 面试题:请问下面示例中输出什么结果?
@@ -512,25 +511,25 @@ console.log(parseInt("Hello", 8)); // NaN
  * parseInt(2,1)表示2会被看做一进制转换为十进制,一进制只能用0来表示,无法表示2,所以转换失败返回NaN。
  * parseInt(3,2)表示3会被看做二进制转换为十进制,二进制只能用0和1来表示,无法表示3,所以转换失败返回NaN。
  */
-console.log([1, 2, 3].map(parseInt)); // [1,NaN,NaN]
+console.log([1, 2, 3].map(parseInt)) // [1,NaN,NaN]
 
-console.log(parseFloat("123.11")); // 123.11
-console.log(parseFloat("")); // NaN
+console.log(parseFloat('123.11')) // 123.11
+console.log(parseFloat('')) // NaN
 ```
 
 ## 4.JavaScript 中浮点数精度问题
 
 ```ts
 // 预期结果是0.4
-console.log(0.1 + 0.3); // 0.30000000000000004
+console.log(0.1 + 0.3) // 0.30000000000000004
 // 预期结果是0.8
-console.log(0.1 + 0.7); // 0.7999999999999999
+console.log(0.1 + 0.7) // 0.7999999999999999
 // 预期结果是0.9
-console.log(0.3 + 0.6); // 0.8999999999999999
+console.log(0.3 + 0.6) // 0.8999999999999999
 // 预期结果是1.3
-console.log(0.6 + 0.7); // 1.2999999999999998
+console.log(0.6 + 0.7) // 1.2999999999999998
 // 预期结果是2.6
-console.log(1.2 + 1.4); // 2.5999999999999996
+console.log(1.2 + 1.4) // 2.5999999999999996
 // ...
 ```
 
@@ -573,19 +572,16 @@ IEEE 754 规定了四种表示浮点数值的方式:单精确度(32 位)、双�
 
 ```js
 function add(a, b) {
-  const maxLen = Math.max(
-    a.toString().split(".")[1].length,
-    b.toString().split(".")[1].length
-  );
-  const base = 10 * maxLen;
-  const bigA = BigInt(base * a);
-  const bigB = BigInt(base * b);
+  const maxLen = Math.max(a.toString().split('.')[1].length, b.toString().split('.')[1].length)
+  const base = 10 * maxLen
+  const bigA = BigInt(base * a)
+  const bigB = BigInt(base * b)
   /*
    * 有问题,BigInt相除结果如果包含小数则会被截断取整,
    * 例如 3n / 10n的结果为0n
    */
-  const bigRes = (bigA + bigB) / BigInt(base);
-  return Number(bigRes);
+  const bigRes = (bigA + bigB) / BigInt(base)
+  return Number(bigRes)
 }
 ```
 
@@ -593,9 +589,9 @@ function add(a, b) {
 
 ```js
 function isEqual(a, b) {
-  return Math.abs(a - b) < Number.EPSILON;
+  return Math.abs(a - b) < Number.EPSILON
 }
-isEqual(0.1 + 0.2, 0.3); // true
+isEqual(0.1 + 0.2, 0.3) // true
 ```
 
 - **转为字符串计算**。
@@ -603,31 +599,31 @@ isEqual(0.1 + 0.2, 0.3); // true
 ```js
 const addStrings = function (num1, num2) {
   let i = num1.length - 1,
-    j = num2.length - 1;
-  const res = [];
-  let carry = 0;
+    j = num2.length - 1
+  const res = []
+  let carry = 0
   while (i >= 0 || j >= 0) {
-    const n1 = i >= 0 ? Number(num1[i]) : 0;
-    const n2 = j >= 0 ? Number(num2[j]) : 0;
-    const sum = n1 + n2 + carry;
-    res.unshift(sum % 10);
-    carry = Math.floor(sum / 10);
-    i--;
-    j--;
+    const n1 = i >= 0 ? Number(num1[i]) : 0
+    const n2 = j >= 0 ? Number(num2[j]) : 0
+    const sum = n1 + n2 + carry
+    res.unshift(sum % 10)
+    carry = Math.floor(sum / 10)
+    i--
+    j--
   }
   if (carry) {
-    res.unshift(carry);
+    res.unshift(carry)
   }
-  return res.join("");
-};
-function isEqual(a, b, sum) {
-  const [insStr1, deciStr1] = a.toString().split(".");
-  const [insStr2, deciStr2] = b.toString().split(".");
-  const inteSum = addStrings(insStr1, insStr2);
-  const deciSum = addStrings(deciStr1, deciStr2);
-  return inteSum + "." + deciSum === String(sum);
+  return res.join('')
 }
-console.log(isEqual(0.1, 0.2, 0.3)); // true
+function isEqual(a, b, sum) {
+  const [insStr1, deciStr1] = a.toString().split('.')
+  const [insStr2, deciStr2] = b.toString().split('.')
+  const inteSum = addStrings(insStr1, insStr2)
+  const deciSum = addStrings(deciStr1, deciStr2)
+  return inteSum + '.' + deciSum === String(sum)
+}
+console.log(isEqual(0.1, 0.2, 0.3)) // true
 ```
 
 ## 5.Symbol 与 BigInt
@@ -674,11 +670,11 @@ if (type === types.super) {
 - **防止属性名称冲突**。当向一个全局对象中添加属性时,不明确对象是否包含该属性,很容易发生属性覆盖。而使用 Symbol 作为对象属性可以避免这个问题,因为它的独一无二的特性。
 
 ```js
-var globalObj = { name: "haha" };
-globalObj["name"] = "hehe"; // 覆盖name属性值
+var globalObj = { name: 'haha' }
+globalObj['name'] = 'hehe' // 覆盖name属性值
 
-var symbolName = Symbol("name");
-globalObj[symbolName] = "xixi"; // {name:'hehe',Symbol(name):'xixi'} 不会覆盖,Symbol是唯一的
+var symbolName = Symbol('name')
+globalObj[symbolName] = 'xixi' // {name:'hehe',Symbol(name):'xixi'} 不会覆盖,Symbol是唯一的
 ```
 
 ### 5.2 BigInt
@@ -698,23 +694,23 @@ console.log(0.5n); // SyntaxError: Invalid or unexpected token,Bigint只能是�
 - 两个 BigInt 进行相除时,对于具有小数的结果会被截断取整。
 
 ```js
-cosole.log(4n / 2n); // 2n
-console.log(5n / 2n); // 2n
-console.log(7n / 2n); // 3n
-console.log(21n / 4n); // 5n
-console.log(23n / 4n); // 5n
+cosole.log(4n / 2n) // 2n
+console.log(5n / 2n) // 2n
+console.log(7n / 2n) // 3n
+console.log(21n / 4n) // 5n
+console.log(23n / 4n) // 5n
 ```
 
 - 任何 BigInt 值与`JSON.stringify()`一起使用都会引发`TypeError`异常,因为默认情况下 BigInt 值不会在 JSON 中序列化,但可以将 BigInt 值转为字符串再进行序列化。
 
 ```js
 function replacer(key, value) {
-  return key === "big" ? value.toString() : value;
+  return key === 'big' ? value.toString() : value
 }
 const data = {
   number: 1,
-  big: BigInt("18014398509481982"),
-};
-const str = JSON.stringify(data, replacer);
-console.log(str); // '{"number":1,"big":"18014398509481982"}'
+  big: BigInt('18014398509481982'),
+}
+const str = JSON.stringify(data, replacer)
+console.log(str) // '{"number":1,"big":"18014398509481982"}'
 ```

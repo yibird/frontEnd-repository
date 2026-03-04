@@ -117,62 +117,62 @@ IntersectionObserverEntry 对象具有如下属性:
       /*
        * entry.intersectionRatio用于判断监听的元素是否可见,大于0为可见,小于0为不可见
        */
-      console.log("监听元素是否可见:", entry.intersectionRatio > 0); // true,上面div是可见的
+      console.log('监听元素是否可见:', entry.intersectionRatio > 0) // true,上面div是可见的
 
       /**
        * 可以使用entry.isIntersecting来判断监听的元素是否可见,可见返回true,否则返回false。
        * entry.isIntersecting的值从false变为true时表示从不可见状态转变为可见状态,
        * entry.isIntersecting的值从true变为false时表示从可见状态转变为不可见状态。
        */
-      console.log("监听元素是否可见:", entry.isIntersecting);
+      console.log('监听元素是否可见:', entry.isIntersecting)
       // 获取与根区域相交的目标元素,如果监听的元素为可见那么entry.target就是监听的元素
-      console.log("获取与根区域相交的目标元素:", entry.target);
-    });
-  });
+      console.log('获取与根区域相交的目标元素:', entry.target)
+    })
+  })
 
   //------------- IntersectionObserver对象的方法
-  const container = document.getElementById("container");
+  const container = document.getElementById('container')
 
   /**
    * observe()用于监听元素,只有监听了元素且监听元素可见部分穿过了一个或多个阈(thresholds)
    * 时才会执行 IntersectionObserver构造函数中的回调函数
    */
-  containerObserver.observe(container);
+  containerObserver.observe(container)
 
   /**
    * IntersectionObserver 的disconnect()方法终止对所有目标元素可见性变化的观察
    */
-  containerObserver.disconnect();
+  containerObserver.disconnect()
   /**
    * IntersectionObserver 的方法takeRecords()返回一个 IntersectionObserverEntry
    * 对象数组,每个对象的目标元素都包含每次相交的信息,可以显式通过调用此方法或隐式地
    * 通过观察者的回调自动调用.
    */
-  containerObserver.takeRecords();
+  containerObserver.takeRecords()
   /*
    * unobserve()方法命令IntersectionObserver停止对一个元素的观察。
    */
-  containerObserver.unobserve(container);
+  containerObserver.unobserve(container)
 
   //-------------IntersectionObserver对象的属性;
   /**
    * IntersectionObserver.root,用于设置所监听对象的具体祖先元素(element)。
    * 如果未传入值或值为null,则默认使用顶级文档的视窗。root属性是只读的
    */
-  containerObserver.root = document.body;
+  containerObserver.root = document.body
   /**
    * IntersectionObserver.rootMargin,计算交叉时添加到根(root)边界盒bounding box(en-US)的
    * 矩形偏移量，可以有效的缩小或扩大根的判定范围从而满足计算需要。此属性返回的值可能与调用构造
    * 函数时指定的值不同，因此可能需要更改该值，以匹配内部要求。所有的偏移量均可用像素(pixel)(px)
    * 或百分(percentage)(%)来表达,默认值为"0px 0px 0px 0px"。rootMargin是只读的。
    */
-  containerObserver.rootMargin = "0px 0px 0px 0px";
+  containerObserver.rootMargin = '0px 0px 0px 0px'
   /**
    * IntersectionObserver.thresholds一个包含阈值的列表, 按升序排列,列表中的每个阈值都是监听
    * 对象的交叉区域与边界区域的比率。当监听对象的任何阈值被越过时，都会生成一个通知(Notification)。
    * 如果构造器未传入值,则默认值为0。
    **/
-  containerObserver.thresholds = 0;
+  containerObserver.thresholds = 0
 </script>
 ```
 
@@ -345,30 +345,30 @@ IntersectionObserver 实现懒加载:
 </body>
 <script>
   const lazyImageHandler = () => {
-    if ("IntersectionObserver" in window) {
+    if ('IntersectionObserver' in window) {
       const lazyImageObserve = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry, index) => {
           // 如果元素可见
           if (entry.intersectionRatio > 0) {
-            let lazyImage = entry.target;
+            let lazyImage = entry.target
             // 如果目标图片已经设置过了src就忽略监听
             if (!lazyImage.src) {
-              lazyImage.src = lazyImage.getAttribute("dataset-src");
+              lazyImage.src = lazyImage.getAttribute('dataset-src')
               // 设置src后取消监听图片元素
-              lazyImageObserve.unobserve(lazyImage);
+              lazyImageObserve.unobserve(lazyImage)
             }
           }
-        });
-      });
+        })
+      })
       // 获取所有图片
-      const imgsElement = document.querySelectorAll(".lazy-img");
-      const imgList = Array.prototype.slice.call(imgsElement);
+      const imgsElement = document.querySelectorAll('.lazy-img')
+      const imgList = Array.prototype.slice.call(imgsElement)
       imgList.forEach((img) => {
-        lazyImageObserve.observe(img);
-      });
+        lazyImageObserve.observe(img)
+      })
     }
-  };
-  lazyImageHandler();
+  }
+  lazyImageHandler()
 </script>
 ```
 
@@ -384,35 +384,31 @@ IntersectionObserver 实现图片懒加载具有性能佳、简单、代码量�
   class LazyImage {
     constructor(selector) {
       // 获取所有图片
-      this.imgList = this.getImageList(selector);
-      this.init();
+      this.imgList = this.getImageList(selector)
+      this.init()
     }
     getImageList(selector) {
-      return (this.imgList = Array.prototype.slice.call(
-        document.querySelectorAll(selector)
-      ));
+      return (this.imgList = Array.prototype.slice.call(document.querySelectorAll(selector)))
     }
     init() {
-      "IntersectionObserver" in window
-        ? this.observeImage()
-        : this.onScrollImage();
+      'IntersectionObserver' in window ? this.observeImage() : this.onScrollImage()
     }
     // IntersectionObserver方案加载图片
     observeImage() {
       const lazyImageObserve = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry, index) => {
           if (entry.intersectionRatio > 0) {
-            const lazyImageTarget = entry.target;
+            const lazyImageTarget = entry.target
             if (!lazyImageTarget.src) {
-              lazyImageTarget.src = lazyImageTarget.getAttribute("dataset-src");
-              lazyImageObserve.unobserve(lazyImageTarget);
+              lazyImageTarget.src = lazyImageTarget.getAttribute('dataset-src')
+              lazyImageObserve.unobserve(lazyImageTarget)
             }
           }
-        });
-      });
+        })
+      })
       this.imgList.forEach((img) => {
-        lazyImageObserve.observe(img);
-      });
+        lazyImageObserve.observe(img)
+      })
     }
 
     // onscroll方案懒加载图片
@@ -421,33 +417,33 @@ IntersectionObserver 实现图片懒加载具有性能佳、简单、代码量�
         this.imgList.forEach((img, index) => {
           // 如果图片可见且图片未设置src属性
           if (this.isElementInViewport(img) && !img.src) {
-            img.src = img.getAttribute("dataset-src");
-            this.imgList.slice(index, 1);
+            img.src = img.getAttribute('dataset-src')
+            this.imgList.slice(index, 1)
           }
-        });
-      };
+        })
+      }
       // scroll事件有时候可能遇到触底加载的场景,所以当触底加载数据时要重新获取图片列表
-      document.addEventListener("scroll", throttle(handler).bind(this));
+      document.addEventListener('scroll', throttle(handler).bind(this))
     }
     // 获取可视区域高度
     getClientHeight() {
-      const clientH = document.documentElement.clientHeight;
-      const bodyClientH = document.body.clientHeight;
+      const clientH = document.documentElement.clientHeight
+      const bodyClientH = document.body.clientHeight
       return clientH && bodyClientH
         ? bodyClientH < clientH
           ? bodyClientH
           : clientH
         : bodyClientH > clientH
-        ? bodyClientH
-        : clientH;
+          ? bodyClientH
+          : clientH
     }
     // 判断元素是否可见,通过el.getBoundingClientRect().top < getClientHeight() 表示可见
     isElementInViewport(el) {
-      if (typeof el.getBoundingClientRect !== "function") return true;
-      const rect = el.getBoundingClientRect();
-      return rect.top < this.getClientHeight();
+      if (typeof el.getBoundingClientRect !== 'function') return true
+      const rect = el.getBoundingClientRect()
+      return rect.top < this.getClientHeight()
     }
   }
-  const lazyImage = new LazyImage(".lazy-img");
+  const lazyImage = new LazyImage('.lazy-img')
 </script>
 ```

@@ -10,21 +10,21 @@
 ### 1.1 一次性渲染
 
 ```js
-<ul id="container"></ul>;
+;<ul id="container"></ul>
 
 // 记录渲染开始时间
-let now = Date.now();
+let now = Date.now()
 // 插入十万条数据
-const total = 100000;
+const total = 100000
 // 获取容器元素
-const ul = document.querySelector("#container");
+const ul = document.querySelector('#container')
 // 将数据插入容器中
 for (let i = 0; i < total; i++) {
-  let li = document.createElement("li");
-  li.innerText = `item-${i}`;
-  ul.appendChild(li);
+  let li = document.createElement('li')
+  li.innerText = `item-${i}`
+  ul.appendChild(li)
 }
-console.log("JS运行时间:", Date.now() - now); // JS运行时间:145
+console.log('JS运行时间:', Date.now() - now) // JS运行时间:145
 /**
  * 在 JS 的Event Loop(事件循环)中,当JS引擎所管理的执行栈中的事件以及所有微任务
  * 事件全部执行完后,才会触发渲染线程对页面进行渲染,而setTimeout属于宏任务,
@@ -32,8 +32,8 @@ console.log("JS运行时间:", Date.now() - now); // JS运行时间:145
  * console.log()能计算总运行时长。
  */
 setTimeout(() => {
-  console.log("总运行时间:", Date.now() - now); // 总运行时间:4101
-}, 0);
+  console.log('总运行时间:', Date.now() - now) // 总运行时间:4101
+}, 0)
 ```
 
 从执行结果来看,对于大量数据渲染的时候,JS 运算并不是性能的瓶颈,性能的瓶颈主要在于渲染阶段。
@@ -42,28 +42,28 @@ setTimeout(() => {
 
 ```js
 // 插入十万条数据
-let total = 100000;
+let total = 100000
 // 每次渲染条数
-let count = 20;
+let count = 20
 // 每条记录的索引
-let index = 0;
+let index = 0
 // 获取容器元素
-const ul = document.querySelector("#container");
+const ul = document.querySelector('#container')
 
 function shardRender(total, index) {
-  if (total <= 0) return false;
+  if (total <= 0) return false
   // 计算每页渲染多少条数
-  let pageCount = Math.min(total, count);
+  let pageCount = Math.min(total, count)
   setTimeout(() => {
     for (let i = 0; i < total; i++) {
-      let li = document.createElement("li");
-      li.innerText = `item-${i}`;
-      ul.appendChild(li);
+      let li = document.createElement('li')
+      li.innerText = `item-${i}`
+      ul.appendChild(li)
     }
-    shardRender(total - pageCount, index + pageCount);
-  }, 10);
+    shardRender(total - pageCount, index + pageCount)
+  }, 10)
 }
-shardRender(total, index);
+shardRender(total, index)
 ```
 
 分片渲染(增量渲染)比一次性渲染(全量渲染)的效率高很多,但是快速滚动容器时,可能会出现闪屏或白屏的现象。这是因为人眼看到的连续画面都是由一幅幅静止画面组成的,每幅画面称为一帧,FPS 是描述帧变化速度的物理量,帧率能够达到 50 ～ 60 FPS 的动画将会相当流畅。大多数电脑显示器的刷新频率是 60Hz,大概相当于每秒钟重绘 60 次,FPS 为 60frame/s,为这个值的设定受屏幕分辨率、屏幕尺寸和显卡的影响。大多数浏览器都会对重绘操作加以限制,不超过显示器的重绘频率,因为即使超过那个频率用户体验也不会有提升。因此,最平滑动画的最佳循环间隔是 1000ms/60,约等于 16.6ms。简单来说为了保持交互流畅,处理任务的时间不应该超过 16.6ms,超过 16.6ms 可能发生卡顿现象。
@@ -80,28 +80,28 @@ shardRender(total, index);
 
 ```js
 // 插入十万条数据
-let total = 100000;
+let total = 100000
 // 每次渲染条数
-let count = 20;
+let count = 20
 // 每条记录的索引
-let index = 0;
+let index = 0
 // 获取容器元素
-const ul = document.querySelector("#container");
+const ul = document.querySelector('#container')
 
 function shardRender(total, index) {
-  if (total <= 0) return false;
+  if (total <= 0) return false
   // 计算每页渲染多少条数
-  let pageCount = Math.min(total, count);
+  let pageCount = Math.min(total, count)
   window.requestAnimationFrame(() => {
     for (let i = 0; i < total; i++) {
-      let li = document.createElement("li");
-      li.innerText = `item-${i}`;
-      ul.appendChild(li);
+      let li = document.createElement('li')
+      li.innerText = `item-${i}`
+      ul.appendChild(li)
     }
-    shardRender(total - pageCount, index + pageCount);
-  });
+    shardRender(total - pageCount, index + pageCount)
+  })
 }
-shardRender(total, index);
+shardRender(total, index)
 ```
 
 ### 1.4 使用 DocumentFragment 优化渲染
@@ -112,31 +112,31 @@ DocumentFragment 是一个 DOM 对象,它允许将一组 DOM 节点打包在一�
 
 ```js
 // 插入十万条数据
-let total = 100000;
+let total = 100000
 // 每次渲染条数
-let count = 20;
+let count = 20
 // 每条记录的索引
-let index = 0;
+let index = 0
 // 获取容器元素
-const ul = document.querySelector("#container");
+const ul = document.querySelector('#container')
 
 function shardRender(total, index) {
-  if (total <= 0) return false;
+  if (total <= 0) return false
   // 计算每页渲染多少条数
-  let pageCount = Math.min(total, count);
+  let pageCount = Math.min(total, count)
   window.requestAnimationFrame(() => {
     // 创建文件碎片
-    const fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment()
     for (let i = 0; i < total; i++) {
-      let li = document.createElement("li");
-      li.innerText = `item-${i}`;
-      fragment.appendChild(li);
+      let li = document.createElement('li')
+      li.innerText = `item-${i}`
+      fragment.appendChild(li)
     }
-    ul.append(fragment);
-    shardRender(total - pageCount, index + pageCount);
-  });
+    ul.append(fragment)
+    shardRender(total - pageCount, index + pageCount)
+  })
 }
-shardRender(total, index);
+shardRender(total, index)
 ```
 
 ## 2.虚拟列表
@@ -163,30 +163,26 @@ shardRender(total, index);
 - 监听外部容器的滚动事件,获取外部容器的偏移距离(scrollTop),根据偏移距离计算得到可视区域的开始索引(`Math.floor(偏移距离 / 列表项长度)`)和结束索引(`开始下标 + 列表项数据量`),将偏移距离设置列表容器的滚动距离,最终截取渲染数据中从开始下标到结束下标的元素作为实际渲染数据。
 
 ```tsx
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 interface VirtualListProps {
   /**
    * @desc 列表数据
    * @default []
    */
-  data?: any[];
+  data?: any[]
   /**
    * @desc 外部容器长度
    * @default 500
    */
-  size?: number;
+  size?: number
   /**
    * @desc 列表项的长度
    * @default 50
    */
-  itemSize?: number;
+  itemSize?: number
 }
 
-const VirtualList: React.FC<VirtualListProps> = ({
-  data = [],
-  size = 500,
-  itemSize = 50,
-}) => {
+const VirtualList: React.FC<VirtualListProps> = ({ data = [], size = 500, itemSize = 50 }) => {
   const [position, setPosition] = useState({
     // 可视区域的高度
     screenHeight: 0,
@@ -196,57 +192,57 @@ const VirtualList: React.FC<VirtualListProps> = ({
     start: 0,
     // 结束索引
     end: 0,
-  });
+  })
 
   // 定义ref,用于引用外部容器
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // 计算列表总长度(纵向获取高度,横向获取宽度)
-  const listHeight = useMemo(() => data.length * itemSize, [data, itemSize]);
+  const listHeight = useMemo(() => data.length * itemSize, [data, itemSize])
   // 计算显示区域的列表项数量
   const visibleCount = useMemo(() => {
-    return Math.ceil(position.screenHeight / itemSize);
-  }, [position.screenHeight, itemSize]);
+    return Math.ceil(position.screenHeight / itemSize)
+  }, [position.screenHeight, itemSize])
   // 获取真实显示列表数据,从渲染数据中截取start到end的之间的元素,这部分元素是可见的
   const visibleData = useMemo(() => {
-    const { start, end } = position;
-    return data.slice(start, Math.min(end || visibleCount, data.length));
-  }, [data, position]);
+    const { start, end } = position
+    return data.slice(start, Math.min(end || visibleCount, data.length))
+  }, [data, position])
   // 获取偏移量设置style
   const getTransform = useMemo(() => {
-    return `translate3d(0,${position.offset}px,0)`;
-  }, [position]);
+    return `translate3d(0,${position.offset}px,0)`
+  }, [position])
 
   useEffect(() => {
     // 获取外部容器的clientHeight
-    const screenHeight = containerRef.current?.clientHeight!;
-    setPosition({ ...position, screenHeight, start: 0, end: visibleCount });
-  }, []);
+    const screenHeight = containerRef.current?.clientHeight!
+    setPosition({ ...position, screenHeight, start: 0, end: visibleCount })
+  }, [])
 
   // 处理外部容器滚动事件,可以使用节流函数优化
   const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
     // 获取当前滚动的距离
-    let scrollTop = containerRef.current?.scrollTop!;
+    let scrollTop = containerRef.current?.scrollTop!
     // 计算可视区域的开始索引和结束索引,计算可能得到小数,使用Math.floor()四舍五入
     const start = Math.floor(scrollTop / itemSize),
-      end = start + visibleCount;
+      end = start + visibleCount
     // 计算偏移量
-    const offset = scrollTop - (scrollTop % itemSize);
-    setPosition({ ...position, start, end, offset });
-  };
+    const offset = scrollTop - (scrollTop % itemSize)
+    setPosition({ ...position, start, end, offset })
+  }
 
   return (
     /** 外部容器 */
     <div
       ref={containerRef}
-      style={{ height: size, position: "relative", overflow: "auto" }}
+      style={{ height: size, position: 'relative', overflow: 'auto' }}
       onScroll={handleScroll}
     >
       {/** 容器内的占位,高度为总列表高度,用于形成滚动条 */}
       <div
         style={{
           height: listHeight,
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
@@ -256,10 +252,10 @@ const VirtualList: React.FC<VirtualListProps> = ({
       {/** list列表 */}
       <div
         style={{
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           left: 0,
-          width: "100%",
+          width: '100%',
           transform: getTransform,
         }}
       >
@@ -269,38 +265,38 @@ const VirtualList: React.FC<VirtualListProps> = ({
               key={index}
               style={{
                 height: itemSize,
-                display: "grid",
-                placeItems: "center",
-                border: "1px solid red",
-                boxSizing: "border-box",
+                display: 'grid',
+                placeItems: 'center',
+                border: '1px solid red',
+                boxSizing: 'border-box',
               }}
             >
               {item}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default VirtualList;
+export default VirtualList
 ```
 
 ::: details 使用虚拟组件
 
 ```tsx
-import React from "react";
-import VirtualList from "@/components/VirtualList";
+import React from 'react'
+import VirtualList from '@/components/VirtualList'
 
-const data = Array.from({ length: 2000 }).map((_, i) => `item-${i}`);
+const data = Array.from({ length: 2000 }).map((_, i) => `item-${i}`)
 
 export default function () {
   return (
     <div>
       <VirtualList data={data} />
     </div>
-  );
+  )
 }
 ```
 
@@ -320,44 +316,44 @@ export default function () {
 ![虚拟列表](../assets/images/virtualList03.png)
 
 ```tsx
-import React, { useState, useMemo, useRef } from "react";
-import { useMount, useUpdateEffect } from "ahooks";
-import { throttle } from "lodash-es";
+import React, { useState, useMemo, useRef } from 'react'
+import { useMount, useUpdateEffect } from 'ahooks'
+import { throttle } from 'lodash-es'
 
 export interface VirtualListProps {
   /**
    * @desc 列表数据
    * @default []
    */
-  data?: any[];
+  data?: any[]
   /**
    * @desc 外部容器长度
    * @default 500
    */
-  size?: number;
+  size?: number
   /**
    * @desc 列表项的长度
    * @default 50
    */
-  itemSize?: number;
+  itemSize?: number
   /**
    * @desc 列表项的预估长度
    * @default 50
    */
-  estimatedItemSize?: number;
+  estimatedItemSize?: number
 
   /**
    * @desc 接收缓冲区数据与可视区数据的比例
    * @default 1
    */
-  bufferScale?: number;
+  bufferScale?: number
 }
 
 interface Position {
-  index: number;
-  height: number;
-  top: number;
-  bottom: number;
+  index: number
+  height: number
+  top: number
+  bottom: number
 }
 
 /**
@@ -366,24 +362,24 @@ interface Position {
  * @param scrollTop 滚动距离
  */
 function binarySearch(positions: Position[], scrollTop: number) {
-  let start = 0;
-  let end = positions.length - 1;
-  let tempIndex = -1;
+  let start = 0
+  let end = positions.length - 1
+  let tempIndex = -1
   while (start <= end) {
-    let midIndex = parseInt((start + end) / 2 + "");
-    let midValue = positions[midIndex].bottom;
+    let midIndex = parseInt((start + end) / 2 + '')
+    let midValue = positions[midIndex].bottom
     if (midValue === scrollTop) {
-      return midIndex + 1;
+      return midIndex + 1
     } else if (midValue < scrollTop) {
-      start = midIndex + 1;
+      start = midIndex + 1
     } else if (midValue > scrollTop) {
       if (tempIndex === -1 || tempIndex > midIndex) {
-        tempIndex = midIndex;
+        tempIndex = midIndex
       }
-      end = end - 1;
+      end = end - 1
     }
   }
-  return tempIndex;
+  return tempIndex
 }
 
 const VirtualList: React.FC<VirtualListProps> = ({
@@ -394,7 +390,7 @@ const VirtualList: React.FC<VirtualListProps> = ({
   bufferScale = 1,
 }) => {
   const listRef = useRef<HTMLDivElement>(null),
-    contentRef = useRef<HTMLDivElement>(null);
+    contentRef = useRef<HTMLDivElement>(null)
 
   const [state, setState] = useState({
     // 可视区域高度
@@ -403,10 +399,10 @@ const VirtualList: React.FC<VirtualListProps> = ({
     start: 0,
     // 显示数据的结束索引
     end: 0,
-  });
+  })
 
   // 用于缓存元素的预估位置,当获取元素真实位置时更新
-  const [positions, setPositions] = useState<Position[]>([]);
+  const [positions, setPositions] = useState<Position[]>([])
   const initPositions = () => {
     const positions = data.map((item, index) => {
       return {
@@ -414,99 +410,95 @@ const VirtualList: React.FC<VirtualListProps> = ({
         height: estimatedItemSize,
         top: index * estimatedItemSize,
         bottom: (index + 1) * estimatedItemSize,
-      } as Position;
-    });
-    setPositions(positions);
-  };
+      } as Position
+    })
+    setPositions(positions)
+  }
 
   // 可视区域显示的元素数量
   const visibleCount = useMemo(() => {
-    return Math.ceil(state.screenHeight / estimatedItemSize);
-  }, [state, estimatedItemSize]);
+    return Math.ceil(state.screenHeight / estimatedItemSize)
+  }, [state, estimatedItemSize])
   // 上缓冲区数量
   const upperBufferCount = useMemo(() => {
-    return Math.min(state.start, bufferScale * visibleCount);
-  }, [bufferScale, state]);
+    return Math.min(state.start, bufferScale * visibleCount)
+  }, [bufferScale, state])
   // 下缓冲区数量
   const lowerBuffer = useMemo(() => {
-    return Math.min(data.length - state.end, bufferScale * visibleCount);
-  }, [bufferScale, state, data]);
+    return Math.min(data.length - state.end, bufferScale * visibleCount)
+  }, [bufferScale, state, data])
 
   // 可视区域显示的数据
   const visibleData = useMemo(() => {
-    const start = state.start - upperBufferCount;
-    const end = state.end + lowerBuffer;
-    return data.slice(start, end);
-  }, [state, data]);
+    const start = state.start - upperBufferCount
+    const end = state.end + lowerBuffer
+    return data.slice(start, end)
+  }, [state, data])
 
   useMount(() => {
-    initPositions();
+    initPositions()
     setState({
       ...state,
       screenHeight: listRef.current!.clientHeight,
       start: 0,
       end: visibleCount,
-    });
-  });
+    })
+  })
 
   // 根据元素集合获取每一个元素真实高度,并更新元素位置缓存
-  const getElementRealHeight = (
-    nodes: NodeListOf<HTMLElement>,
-    positions: Position[]
-  ) => {
+  const getElementRealHeight = (nodes: NodeListOf<HTMLElement>, positions: Position[]) => {
     nodes.forEach((node, index) => {
       let rect = node.getBoundingClientRect(),
-        height = rect.height;
+        height = rect.height
       // 获取预估高度
-      let oldHeight = positions[index].height;
+      let oldHeight = positions[index].height
       // 获取元素预估高度与元素真实高度的偏差值
-      let dValue = oldHeight - height;
+      let dValue = oldHeight - height
       // 如果存在偏差值,则重新计算positions中每项元素的bottom、height、top
       if (dValue) {
-        positions[index].bottom = positions[index].bottom - dValue;
-        positions[index].height = height;
+        positions[index].bottom = positions[index].bottom - dValue
+        positions[index].height = height
         for (let k = index + 1; k < positions.length; k++) {
-          positions[k].top = positions[k - 1].bottom;
-          positions[k].bottom = positions[k].bottom - dValue;
+          positions[k].top = positions[k - 1].bottom
+          positions[k].bottom = positions[k].bottom - dValue
         }
       }
-    });
-    setPositions(positions);
-    return positions;
-  };
+    })
+    setPositions(positions)
+    return positions
+  }
 
   // 获取当前的偏移量
   const setStartOffset = (el: HTMLElement, start: number) => {
     function animate() {
-      const startOffset = start >= 1 ? positions[start - 1].bottom : 0;
-      el.style.transform = `translate3d(0,${startOffset}px,0)`;
+      const startOffset = start >= 1 ? positions[start - 1].bottom : 0
+      el.style.transform = `translate3d(0,${startOffset}px,0)`
     }
-    animate();
-  };
+    animate()
+  }
 
   useUpdateEffect(() => {
-    if (!contentRef.current) return;
-    const nodes = contentRef.current.childNodes as NodeListOf<HTMLElement>;
-    const newPositions = getElementRealHeight(nodes, positions);
+    if (!contentRef.current) return
+    const nodes = contentRef.current.childNodes as NodeListOf<HTMLElement>
+    const newPositions = getElementRealHeight(nodes, positions)
     // 更新列表总高度,撑开滚动条
-    const placeholderElement = contentRef.current
-      .previousElementSibling as HTMLElement;
-    placeholderElement.style.height = newPositions.at(-1)?.bottom! + "px";
-    setStartOffset(contentRef.current, state.start);
-  }, [positions]);
+    const placeholderElement = contentRef.current.previousElementSibling as HTMLElement
+    placeholderElement.style.height = newPositions.at(-1)?.bottom! + 'px'
+    setStartOffset(contentRef.current, state.start)
+  }, [positions])
 
   // 处理外部容器滚动事件,使用节流函数优化
   const handleScroll: React.UIEventHandler<HTMLDivElement> = throttle((e) => {
-    if (!listRef.current) return;
+    if (!listRef.current) return
     // 获取当前滚动位置
-    let scrollTop = listRef.current.scrollTop;
+    let scrollTop = listRef.current.scrollTop
     // 根据滚动位置从positions中获取可视区域的开始下标
     const start = binarySearch(positions, scrollTop),
-      end = start + visibleCount;
-    console.log(start, end);
-    setState({ ...state, start, end });
-    setStartOffset(contentRef.current!, start);
-  }, 10);
+      end = start + visibleCount
+    console.log(start, end)
+    setState({ ...state, start, end })
+    setStartOffset(contentRef.current!, start)
+  }, 10)
 
   return (
     <div
@@ -523,19 +515,19 @@ const VirtualList: React.FC<VirtualListProps> = ({
             <div
               key={index}
               style={{
-                display: "grid",
-                placeItems: "center",
-                border: "1px solid red",
-                boxSizing: "border-box",
+                display: 'grid',
+                placeItems: 'center',
+                border: '1px solid red',
+                boxSizing: 'border-box',
               }}
             >
               {item}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
-export default VirtualList;
+  )
+}
+export default VirtualList
 ```

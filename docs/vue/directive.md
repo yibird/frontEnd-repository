@@ -8,25 +8,25 @@ Vue 除了提供`v-for`、`v-if`、`v-bind`、`v-html`、`v-once`、`v-model`、
 ```ts
 const focus = {
   mounted: (el) => el.focus(),
-};
+}
 export default {
   // 局部注册指令,指令只能在当前组件使用
   directives: {
     // 在模板中启用 v-focus
     focus,
   },
-};
+}
 ```
 
 :::
 ::: details 全局注册指令
 
 ```ts
-const app = createApp({});
+const app = createApp({})
 // 全局注册指令,使 v-focus 在所有组件中都可用
-app.directive("focus", {
+app.directive('focus', {
   // 省略指令钩子函数
-});
+})
 ```
 
 :::
@@ -68,34 +68,32 @@ v-clickOutside 通常用于点击目标元素外部,执行特定逻辑,例如点
 ::: details v-clickOutside 实现
 
 ```ts
-import type { App, Directive, DirectiveBinding } from "vue";
-import { throttle } from "lodash-es";
+import type { App, Directive, DirectiveBinding } from 'vue'
+import { throttle } from 'lodash-es'
 
 function getHandlers(el: HTMLElement, binding: DirectiveBinding) {
   // 使用节流函数优化
   const handler = throttle((evt: MouseEvent) => {
-    if (typeof binding.value !== "function") return;
-    const outside = !(
-      el === evt.target || el.contains(evt.target as HTMLElement)
-    );
-    binding.value(outside);
-  }, 10);
-  return { handler };
+    if (typeof binding.value !== 'function') return
+    const outside = !(el === evt.target || el.contains(evt.target as HTMLElement))
+    binding.value(outside)
+  }, 10)
+  return { handler }
 }
 
 export const clickOutside: Directive = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
-    const { handler } = getHandlers(el, binding);
-    (el as any).clickOutsideEvent = handler;
-    document.addEventListener("click", handler);
+    const { handler } = getHandlers(el, binding)
+    ;(el as any).clickOutsideEvent = handler
+    document.addEventListener('click', handler)
   },
   unmounted(el: HTMLElement) {
-    document.removeEventListener("click", (el as any).clickOutsideEvent);
+    document.removeEventListener('click', (el as any).clickOutsideEvent)
   },
-};
+}
 
 export function setupClickOutsideDirective(app: App) {
-  app.directive("clickOutside", clickOutside);
+  app.directive('clickOutside', clickOutside)
 }
 ```
 
@@ -110,25 +108,25 @@ export function setupClickOutsideDirective(app: App) {
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-const text = ref("click me...");
-const handle = (outside: boolean) => {
-  text.value = outside ? "点击了外面" : "点击容器里面";
-};
+  import { ref } from 'vue'
+  const text = ref('click me...')
+  const handle = (outside: boolean) => {
+    text.value = outside ? '点击了外面' : '点击容器里面'
+  }
 </script>
 
 <style scoped>
-.container {
-  display: grid;
-  place-items: center;
-}
-.block {
-  width: 200px;
-  height: 200px;
-  border: 1px solid red;
-  display: grid;
-  place-items: center;
-}
+  .container {
+    display: grid;
+    place-items: center;
+  }
+  .block {
+    width: 200px;
+    height: 200px;
+    border: 1px solid red;
+    display: grid;
+    place-items: center;
+  }
 </style>
 ```
 
@@ -146,32 +144,32 @@ export interface LoadingProps {
    * @desc loading 文字提示
    * @default
    */
-  tip?: string;
+  tip?: string
   /**
    * @desc loading 大小
    * @default "default"
    */
-  size?: "small" | "default" | "large";
+  size?: 'small' | 'default' | 'large'
   /**
    * @desc 是否全屏显示loading
    * @default false
    */
-  fullscreen?: boolean;
+  fullscreen?: boolean
   /**
    * @desc loading状态
    * @default false
    */
-  loading?: boolean;
+  loading?: boolean
   /**
    * @desc loading背景色
    * @default
    */
-  background?: string;
+  background?: string
   /**
    * @desc 主题
    * @default
    */
-  theme?: "dark" | "light";
+  theme?: 'dark' | 'light'
 }
 ```
 
@@ -186,44 +184,38 @@ export interface LoadingProps {
     :style="[background ? `background-color: ${background}` : '']"
     v-show="loading"
   >
-    <a-spin
-      v-bind="$attrs"
-      :tip="tip"
-      :size="size"
-      :spinning="loading"
-      style="margin: auto"
-    />
+    <a-spin v-bind="$attrs" :tip="tip" :size="size" :spinning="loading" style="margin: auto" />
   </section>
 </template>
 <script setup lang="ts">
-import type { LoadingProps } from "./types";
-const {
-  tip = "",
-  size = "default",
-  fullscreen = false,
-  loading = false,
-  background,
-  theme,
-} = defineProps<LoadingProps>();
+  import type { LoadingProps } from './types'
+  const {
+    tip = '',
+    size = 'default',
+    fullscreen = false,
+    loading = false,
+    background,
+    theme,
+  } = defineProps<LoadingProps>()
 </script>
 <style scoped>
-.loading {
-  display: flex;
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background-color: rgb(240 242 245 / 40%);
-}
-.container-loading {
-  position: absolute;
-}
-.full-loading {
-  position: fixed;
-}
+  .loading {
+    display: flex;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgb(240 242 245 / 40%);
+  }
+  .container-loading {
+    position: absolute;
+  }
+  .full-loading {
+    position: fixed;
+  }
 </style>
 ```
 
@@ -232,9 +224,9 @@ const {
 ::: details createLoading
 
 ```ts
-import { VNode, defineComponent, createVNode, render, reactive, h } from "vue";
-import Loading from "./Loading.vue";
-import type { LoadingProps } from "./types";
+import { VNode, defineComponent, createVNode, render, reactive, h } from 'vue'
+import Loading from './Loading.vue'
+import type { LoadingProps } from './types'
 
 /**
  * 创建Loading
@@ -242,69 +234,65 @@ import type { LoadingProps } from "./types";
  * @param target Loading挂载的目标元素
  * @param wait 是否等待
  */
-export function createLoading(
-  props: LoadingProps,
-  target?: HTMLElement,
-  wait = false
-) {
-  let vm: Nullable<VNode> = null;
+export function createLoading(props: LoadingProps, target?: HTMLElement, wait = false) {
+  let vm: Nullable<VNode> = null
   const data = reactive({
-    tip: "",
+    tip: '',
     loading: true,
     ...props,
-  });
+  })
   const LoadingWrap = defineComponent({
     render() {
-      return h(Loading, { ...data });
+      return h(Loading, { ...data })
     },
-  });
-  vm = createVNode(LoadingWrap);
+  })
+  vm = createVNode(LoadingWrap)
 
   // 通过render()渲染虚拟节点到目标元素
   if (wait) {
     // 处理异步情况
     setTimeout(() => {
-      render(vm, document.createElement("div"));
-    }, 0);
+      render(vm, document.createElement('div'))
+    }, 0)
   } else {
-    render(vm, document.createElement("div"));
+    render(vm, document.createElement('div'))
   }
 
   // 打开方法,将虚拟节点的真实DOM插入到目标元素
   function open(target: HTMLElement = document.body) {
     if (!vm || !vm.el) {
-      return;
+      return
     }
-    target.appendChild(vm.el as HTMLElement);
+    target.appendChild(vm.el as HTMLElement)
   }
 
   // 关闭方法,获取vm对应的真实DOM节点父节点,并移除对应的真实DOM节点
   function close() {
     if (vm?.el && vm.el.parentNode) {
-      vm.el.parentNode.removeChild(vm.el);
+      vm.el.parentNode.removeChild(vm.el)
     }
   }
 
   if (target) {
-    open(target);
+    open(target)
   }
   return {
     vm,
     close,
     open,
     setTip: (tip: string) => {
-      data.tip = tip;
+      data.tip = tip
     },
     setLoading: (loading: boolean) => {
-      data.loading = loading;
+      data.loading = loading
     },
     get loading() {
-      return data.loading;
+      return data.loading
     },
     get $el() {
-      return vm?.el as HTMLElement;
+      return vm?.el as HTMLElement
     },
-  };
+  }
 }
 ```
 
@@ -313,48 +301,48 @@ export function createLoading(
 ::: details v-loading 实现
 
 ```ts
-import { App, Directive, DirectiveBinding } from "vue";
-import { createLoading } from "/@/components/Loading";
+import { App, Directive, DirectiveBinding } from 'vue'
+import { createLoading } from '/@/components/Loading'
 
 export const loading: Directive = {
   mounted(el, binding: DirectiveBinding) {
     // 从挂载元素的自定义属性上获取createLoading()所需参数
-    const tip = el.getAttribute("loading-tip"),
-      background = el.getAttribute("loading-background"),
-      size = el.getAttribute("loading-size");
-    const fullscreen = !!binding.modifiers.fullscreen;
+    const tip = el.getAttribute('loading-tip'),
+      background = el.getAttribute('loading-background'),
+      size = el.getAttribute('loading-size')
+    const fullscreen = !!binding.modifiers.fullscreen
     const instance = createLoading(
       {
         tip,
         background,
-        size: size || "default",
+        size: size || 'default',
         loading: !!binding.value,
         fullscreen,
       },
-      fullscreen ? document.body : el
-    );
+      fullscreen ? document.body : el,
+    )
     // 容器loading设置挂载元素为相对布局,这可能会影响挂载元素
     if (!fullscreen) {
-      el.style.position = "relative";
+      el.style.position = 'relative'
     }
-    el.instance = instance;
+    el.instance = instance
   },
   updated(el, binding) {
-    const instance = el.instance;
-    if (!instance) return;
-    instance.setTip(el.getAttribute("loading-tip"));
+    const instance = el.instance
+    if (!instance) return
+    instance.setTip(el.getAttribute('loading-tip'))
     // 如果指定绑定的值更新前和更新后不一致,则重新设置loading状态
     if (binding.oldValue !== binding.value) {
-      instance.setLoading?.(binding.value && !instance.loading);
+      instance.setLoading?.(binding.value && !instance.loading)
     }
   },
   unmounted(el) {
-    el?.instance?.close();
+    el?.instance?.close()
   },
-};
+}
 
 export function setupLoadingDirective(app: App) {
-  app.directive("loading", loading);
+  app.directive('loading', loading)
 }
 ```
 
@@ -367,9 +355,7 @@ export function setupLoadingDirective(app: App) {
   <div v-loading.fullscreen="state.fullscreenLoading">
     <div>
       <a-button @click="handleContainerLoading(true)">容器loading</a-button>
-      <a-button @click="handleContainerLoading(false)"
-        >取消容器loading</a-button
-      >
+      <a-button @click="handleContainerLoading(false)">取消容器loading</a-button>
       <a-button @click="handleFullscreenLoading">全屏loading</a-button>
     </div>
     {{ state.containerLoading }}
@@ -377,27 +363,27 @@ export function setupLoadingDirective(app: App) {
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
-const state = reactive({
-  containerLoading: false,
-  fullscreenLoading: false,
-});
-const handleContainerLoading = (containerLoading: boolean) => {
-  Object.assign(state, { containerLoading });
-};
-const handleFullscreenLoading = () => {
-  state.fullscreenLoading = true;
-  setTimeout(() => (state.fullscreenLoading = false), 2000);
-};
+  import { reactive } from 'vue'
+  const state = reactive({
+    containerLoading: false,
+    fullscreenLoading: false,
+  })
+  const handleContainerLoading = (containerLoading: boolean) => {
+    Object.assign(state, { containerLoading })
+  }
+  const handleFullscreenLoading = () => {
+    state.fullscreenLoading = true
+    setTimeout(() => (state.fullscreenLoading = false), 2000)
+  }
 </script>
 <style scoped>
-.container {
-  width: 200px;
-  height: 200px;
-  display: grid;
-  place-items: center;
-  border: 1px solid red;
-}
+  .container {
+    width: 200px;
+    height: 200px;
+    display: grid;
+    place-items: center;
+    border: 1px solid red;
+  }
 </style>
 ```
 
@@ -418,7 +404,7 @@ v-copy 指令用于实现一键复制文本内容,用于鼠标右键粘贴。实
 ::: details v-copy 实现
 
 ```ts
-import type { App, Directive, DirectiveBinding } from "vue";
+import type { App, Directive, DirectiveBinding } from 'vue'
 
 export const copy: Directive = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
@@ -427,47 +413,45 @@ export const copy: Directive = {
      * 第三项为拷贝失败处理函数
      */
     if (!Array.isArray(binding.value)) {
-      throw new Error(
-        "Parameter type error, directive parameter should be an array"
-      );
+      throw new Error('Parameter type error, directive parameter should be an array')
     }
-    const [value, successCallback, failCallback] = binding.value;
+    const [value, successCallback, failCallback] = binding.value
     if (!value) {
-      console.log("无复制内容");
-      return;
+      console.log('无复制内容')
+      return
     }
 
     const handler = () => {
       // 动态创建 textarea 标签
-      const textarea = document.createElement("textarea");
+      const textarea = document.createElement('textarea')
       // 将该textarea的readonly设为true,防止IOS下自动唤起键盘,同时将textarea移出可视区域
-      textarea.readOnly = true;
-      textarea.style.position = "absolute";
-      textarea.style.left = "-9999px";
+      textarea.readOnly = true
+      textarea.style.position = 'absolute'
+      textarea.style.left = '-9999px'
       // 将拷贝的内容赋值给textarea填充
-      textarea.value = value;
+      textarea.value = value
       // 将 textarea 插入到 body 中
-      document.body.appendChild(textarea);
+      document.body.appendChild(textarea)
       // 选中值并复制
-      textarea.select();
-      if (document.execCommand("Copy")) {
-        typeof successCallback === "function" && successCallback();
+      textarea.select()
+      if (document.execCommand('Copy')) {
+        typeof successCallback === 'function' && successCallback()
       } else {
-        typeof failCallback === "function" && failCallback();
+        typeof failCallback === 'function' && failCallback()
       }
       // 移除文本域
-      document.body.removeChild(textarea);
-    };
-    (el as any).clickEvent = handler;
-    el.addEventListener("click", handler);
+      document.body.removeChild(textarea)
+    }
+    ;(el as any).clickEvent = handler
+    el.addEventListener('click', handler)
   },
   unmounted(el: HTMLElement) {
-    el.removeEventListener("click", (el as any).clickEvent);
+    el.removeEventListener('click', (el as any).clickEvent)
   },
-};
+}
 
 export function setupCopyDirective(app: App) {
-  app.directive("copy", copy);
+  app.directive('copy', copy)
 }
 ```
 
@@ -477,20 +461,18 @@ export function setupCopyDirective(app: App) {
 
 ```vue
 <template>
-  <a-button v-copy="[text, handleCopySuccess, handleCopyFail]">
-    copy text
-  </a-button>
+  <a-button v-copy="[text, handleCopySuccess, handleCopyFail]"> copy text </a-button>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-import { message } from "ant-design-vue";
-const text = ref("你是一头猪");
-function handleCopySuccess() {
-  message.success("Copy Success");
-}
-function handleCopyFail() {
-  message.error("Copy Fail");
-}
+  import { ref } from 'vue'
+  import { message } from 'ant-design-vue'
+  const text = ref('你是一头猪')
+  function handleCopySuccess() {
+    message.success('Copy Success')
+  }
+  function handleCopyFail() {
+    message.error('Copy Fail')
+  }
 </script>
 ```
 
@@ -502,80 +484,77 @@ v-lazyLoad 指令支持图片懒加载,只加载可见区域的图片。图片�
 ::: details v-lazyLoad 实现
 
 ```ts
-import { throttle } from "lodash-es";
-import { App, Directive } from "vue";
+import { throttle } from 'lodash-es'
+import { App, Directive } from 'vue'
 
 // 图片默认src
-let defaultSrc = "";
+let defaultSrc = ''
 
 class LazyLoadImage {
   static init(el: HTMLElement, src: string, defaultSrc: string) {
-    el.setAttribute("data-src", src);
-    defaultSrc && el.setAttribute("src", defaultSrc);
+    el.setAttribute('data-src', src)
+    defaultSrc && el.setAttribute('src', defaultSrc)
   }
   static observeImage(el: HTMLImageElement) {
     const observer = new IntersectionObserver((entries) => {
       // 从自定义data-src属性上获取src
-      const src = el.dataset.src;
+      const src = el.dataset.src
       // 判断元素是否在可视区域
       if (entries[0].isIntersecting && src && !el.src) {
-        el.src = src;
-        el.removeAttribute("data-src");
-        observer.unobserve(el);
+        el.src = src
+        el.removeAttribute('data-src')
+        observer.unobserve(el)
       }
-    });
-    observer.observe(el);
+    })
+    observer.observe(el)
   }
   static listenerScroll(el: HTMLImageElement) {
     const handler = throttle(() => {
-      const isInViewport = LazyLoadImage.isInViewport(
-        el,
-        this.getClientHeight()
-      );
+      const isInViewport = LazyLoadImage.isInViewport(el, this.getClientHeight())
       // 判断元素是否可见
       if (isInViewport) {
         // 从自定义data-src属性上获取src
-        const src = el.dataset.src;
+        const src = el.dataset.src
         if (src && !el.src) {
-          el.src = src;
-          el.removeAttribute("data-src");
+          el.src = src
+          el.removeAttribute('data-src')
         }
       }
-    }, 10);
-    el.addEventListener("scroll", handler);
+    }, 10)
+    el.addEventListener('scroll', handler)
   }
   // 获取容器可视区域高度
   static getClientHeight() {
-    const clientH = document.documentElement.clientHeight;
-    const bodyClientH = document.body.clientHeight;
+    const clientH = document.documentElement.clientHeight
+    const bodyClientH = document.body.clientHeight
     if (clientH && bodyClientH) {
-      return bodyClientH < clientH ? bodyClientH : clientH;
+      return bodyClientH < clientH ? bodyClientH : clientH
     }
-    return bodyClientH > clientH ? bodyClientH : clientH;
+    return bodyClientH > clientH ? bodyClientH : clientH
   }
   // 判断元素是否可见,通过el.getBoundingClientRect().top < height 表示可见
   static isInViewport(el: HTMLElement, height: number) {
-    if (typeof el.getBoundingClientRect !== "function") return true;
-    const rect = el.getBoundingClientRect();
-    return rect.top < height;
+    if (typeof el.getBoundingClientRect !== 'function') return true
+    const rect = el.getBoundingClientRect()
+    return rect.top < height
   }
 }
 
 export const lazyLoad: Directive = {
   beforeMount(el, binding) {
-    LazyLoadImage.init(el, binding.value, defaultSrc);
+    LazyLoadImage.init(el, binding.value, defaultSrc)
   },
   mounted(el, binding) {
-    "IntersectionObserver" in window
+    'IntersectionObserver' in window
       ? LazyLoadImage.observeImage(el)
-      : LazyLoadImage.listenerScroll(el);
+      : LazyLoadImage.listenerScroll(el)
   },
-};
+}
 
 export function setupLazyLoadDirective(app: App) {
   // 获取Vue实例上的全局属性
-  defaultSrc = app.config.globalProperties.defaultSrc;
-  app.directive("lazyLoad", lazyLoad);
+  defaultSrc = app.config.globalProperties.defaultSrc
+  app.directive('lazyLoad', lazyLoad)
 }
 ```
 
@@ -590,16 +569,15 @@ export function setupLazyLoadDirective(app: App) {
   </div>
 </template>
 <script setup lang="ts">
-const src =
-  "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png";
+  const src = 'https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png'
 </script>
 <style scoped>
-.image {
-  width: 300px;
-  height: 200px;
-  margin-top: 1000px;
-  border: 1px solid red;
-}
+  .image {
+    width: 300px;
+    height: 200px;
+    margin-top: 1000px;
+    border: 1px solid red;
+  }
 </style>
 ```
 
@@ -618,45 +596,45 @@ v-longPress 指令可以实现长按触发相应的事件。实现思路如下:
 ::: details v-longPress 实现
 
 ```ts
-import { App, Directive, DirectiveBinding } from "vue";
+import { App, Directive, DirectiveBinding } from 'vue'
 
 export const longPress: Directive = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
-    if (typeof binding.value !== "function") {
-      throw new Error("The directive value is not a function");
+    if (typeof binding.value !== 'function') {
+      throw new Error('The directive value is not a function')
     }
-    const handler = (e: MouseEvent) => binding.value(e);
-    let pressTimer: NodeJS.Timeout | null = null;
+    const handler = (e: MouseEvent) => binding.value(e)
+    let pressTimer: NodeJS.Timeout | null = null
     const start = (e: Event) => {
       // 如果触发的事件是点击事件,并且是鼠标按键是否是左键则直接返回
-      if (e.type === "click" && (e as MouseEvent).button !== 0) return;
+      if (e.type === 'click' && (e as MouseEvent).button !== 0) return
       if (pressTimer === null) {
-        pressTimer = setTimeout(() => handler(e as MouseEvent), 2000);
+        pressTimer = setTimeout(() => handler(e as MouseEvent), 2000)
       }
-    };
+    }
     const cancel = () => {
       if (pressTimer !== null) {
-        clearTimeout(pressTimer);
-        pressTimer = null;
+        clearTimeout(pressTimer)
+        pressTimer = null
       }
-    };
-    (el as any).clickEvent = cancel;
+    }
+    ;(el as any).clickEvent = cancel
     // 添加事件监听器
-    el.addEventListener("mousedown", start);
-    el.addEventListener("touchstart", start);
+    el.addEventListener('mousedown', start)
+    el.addEventListener('touchstart', start)
     // 取消计时器
-    el.addEventListener("click", cancel);
-    el.addEventListener("mouseout", cancel);
-    el.addEventListener("touchend", cancel);
-    el.addEventListener("touchcancel", cancel);
+    el.addEventListener('click', cancel)
+    el.addEventListener('mouseout', cancel)
+    el.addEventListener('touchend', cancel)
+    el.addEventListener('touchcancel', cancel)
   },
   unmounted(el: HTMLElement) {
-    el.removeEventListener("click", (el as any).clickEvent);
+    el.removeEventListener('click', (el as any).clickEvent)
   },
-};
+}
 
 export function setupLongPressDirective(app: App) {
-  app.directive("longPress", longPress);
+  app.directive('longPress', longPress)
 }
 ```
 
@@ -671,9 +649,9 @@ export function setupLongPressDirective(app: App) {
   </div>
 </template>
 <script setup lang="ts">
-const handler = (e: MouseEvent) => {
-  console.log("longPress event: ", e);
-};
+  const handler = (e: MouseEvent) => {
+    console.log('longPress event: ', e)
+  }
 </script>
 ```
 
@@ -685,45 +663,41 @@ v-debounce 提供防抖功能,常用于快速点击、resize 事件优化。
 ::: details v-debounce 实现
 
 ```ts
-import type { App, Directive, DirectiveBinding } from "vue";
+import type { App, Directive, DirectiveBinding } from 'vue'
 
-let timer: NodeJS.Timeout | null = null;
+let timer: NodeJS.Timeout | null = null
 
 function getHandlers(binding: DirectiveBinding) {
-  const delay = Number.isInteger(parseInt(binding.arg!))
-    ? parseInt(binding.arg!)
-    : 10;
+  const delay = Number.isInteger(parseInt(binding.arg!)) ? parseInt(binding.arg!) : 10
   const handler = () => {
     if (timer) {
-      clearTimeout(timer);
+      clearTimeout(timer)
     }
     timer = setTimeout(() => {
-      if (typeof binding.value === "function") {
-        binding.value();
+      if (typeof binding.value === 'function') {
+        binding.value()
       }
-    }, delay);
-  };
-  return { handler };
+    }, delay)
+  }
+  return { handler }
 }
 
 export const debounce: Directive = {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
     if (binding.arg && !Number.isInteger(parseInt(binding.arg))) {
-      console.error(
-        "v-debounce parameter error,The parameter should be a number"
-      );
+      console.error('v-debounce parameter error,The parameter should be a number')
     }
-    const { handler } = getHandlers(binding);
-    (el as any).clickEvent = handler;
-    el.addEventListener("click", handler);
+    const { handler } = getHandlers(binding)
+    ;(el as any).clickEvent = handler
+    el.addEventListener('click', handler)
   },
   unmounted(el: HTMLElement) {
-    el.removeEventListener("click", (el as any).clickEvent);
+    el.removeEventListener('click', (el as any).clickEvent)
   },
-};
+}
 
 export function setupDebounceDirective(app: App) {
-  app.directive("debounce", debounce);
+  app.directive('debounce', debounce)
 }
 ```
 
@@ -738,9 +712,9 @@ export function setupDebounceDirective(app: App) {
   </div>
 </template>
 <script setup lang="ts">
-const handler = () => {
-  console.log("click button...");
-};
+  const handler = () => {
+    console.log('click button...')
+  }
 </script>
 ```
 
@@ -752,37 +726,35 @@ v-permission 用于权限的判断控制元素的显示。在实际业务中通�
 ::: details v-permission 实现
 
 ```ts
-import { App, Directive, DirectiveBinding } from "vue";
-import { intersection } from "lodash-es";
+import { App, Directive, DirectiveBinding } from 'vue'
+import { intersection } from 'lodash-es'
 
 // 权限列表
-const permissions = ["add", "delete", "update", "query", "import", "export"];
+const permissions = ['add', 'delete', 'update', 'query', 'import', 'export']
 
 function checkPermission(value: string | string[], permissions: string[]) {
   if (Array.isArray(value)) {
     // 获取两个数组的交集
-    return intersection(permissions, value).length > 0;
+    return intersection(permissions, value).length > 0
   }
-  return permissions.includes(value);
+  return permissions.includes(value)
 }
 
 export const permission: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
-    const permission = binding.value || "";
-    console.log("permission:", permission);
-    if (typeof permission !== "string" && !Array.isArray(permission)) {
-      throw new Error(
-        "parameter error,The parameter must be a string or an array of strings"
-      );
+    const permission = binding.value || ''
+    console.log('permission:', permission)
+    if (typeof permission !== 'string' && !Array.isArray(permission)) {
+      throw new Error('parameter error,The parameter must be a string or an array of strings')
     }
-    const hasPermission = checkPermission(permission, permissions);
+    const hasPermission = checkPermission(permission, permissions)
     if (!hasPermission) {
-      el.parentNode && el.parentNode.removeChild(el);
+      el.parentNode && el.parentNode.removeChild(el)
     }
   },
-};
+}
 export function setupPermissionDirective(app: App) {
-  app.directive("permission", permission);
+  app.directive('permission', permission)
 }
 ```
 
@@ -818,82 +790,82 @@ export interface WatermarkProps {
    * @desc 水印宽度
    * @default 120
    */
-  width?: number;
+  width?: number
   /**
    * @desc 水印高度
    * @default 60
    */
-  height?: number;
+  height?: number
   /**
    * @desc 绘制水印时旋转的角度
    * @default -22
    */
-  rotate?: number;
+  rotate?: number
   /**
    * @desc 图片源,优先使用图片渲染水印
    * @default
    */
-  image?: string;
+  image?: string
   /**
    * @desc 图片宽度
    * @default 120
    */
-  imageWidth?: number;
+  imageWidth?: number
   /**
    * @desc 图片高度
    * @default 64
    */
-  imageHeight?: number;
+  imageHeight?: number
   /**
    * @desc 水印元素的z-index
    * @default 2000
    */
-  zIndex?: number;
+  zIndex?: number
   /**
    * @desc 水印文字内容
    * @default
    */
-  content?: string;
+  content?: string
   /**
    * @desc 水印文字大小
    * @default 14
    */
-  fontSize?: number | string;
+  fontSize?: number | string
   /**
    * @desc 水印文字颜色
    * @default 'rgba(0,0,0,.15)'
    */
-  fontColor?: string;
+  fontColor?: string
   /**
    * @desc 水印文字系列
    * @default 'PingFang SC'
    */
-  fontFamily?: string;
+  fontFamily?: string
   /**
    * @desc 水印文字样式
    * @default 'normal'
    */
-  fontStyle?: string;
+  fontStyle?: string
   /**
    * @desc 水印文字粗细
    * @default 'normal'
    */
-  fontWeight?: string;
+  fontWeight?: string
   /**
    * @desc 水印之间的水平间距
    * @default 24
    */
-  gapX?: number;
+  gapX?: number
   /**
    * @desc 水印之间的垂直间距
    * @default 48
    */
-  gapY?: number;
+  gapY?: number
   /**
    * @desc 是否覆盖整个页面
    * @default false
    */
-  fullPage?: boolean;
+  fullPage?: boolean
 }
 ```
 
@@ -902,9 +874,9 @@ export interface WatermarkProps {
 ::: details v-watermark 实现
 
 ```ts
-import { App, Directive, DirectiveBinding } from "vue";
-import { isObject } from "/@/utils/is";
-import { WatermarkProps } from "/@/components/Watermark";
+import { App, Directive, DirectiveBinding } from 'vue'
+import { isObject } from '/@/utils/is'
+import { WatermarkProps } from '/@/components/Watermark'
 
 const defaultProps: WatermarkProps = {
   width: 120,
@@ -913,16 +885,16 @@ const defaultProps: WatermarkProps = {
   imageWidth: 120,
   imageHeight: 64,
   zIndex: 2000,
-  content: "",
+  content: '',
   fontSize: 14,
-  fontColor: "rgba(0,0,0,.15)",
-  fontStyle: "normal",
-  fontFamily: "PingFang SC",
-  fontWeight: "normal",
+  fontColor: 'rgba(0,0,0,.15)',
+  fontStyle: 'normal',
+  fontFamily: 'PingFang SC',
+  fontWeight: 'normal',
   gapX: 24,
   gapY: 48,
   fullPage: false,
-};
+}
 
 function init(el: HTMLElement, props: WatermarkProps) {
   const {
@@ -933,104 +905,104 @@ function init(el: HTMLElement, props: WatermarkProps) {
     imageWidth = 120,
     imageHeight = 64,
     zIndex = 2000,
-    content = "",
+    content = '',
     fontSize = 14,
-    fontColor = "rgba(0,0,0,.15)",
-    fontStyle = "normal",
-    fontFamily = "PingFang SC",
-    fontWeight = "normal",
+    fontColor = 'rgba(0,0,0,.15)',
+    fontStyle = 'normal',
+    fontFamily = 'PingFang SC',
+    fontWeight = 'normal',
     gapX = 24,
     gapY = 48,
     fullPage = false,
-  } = props;
+  } = props
   return new Promise((resolve, reject) => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
     if (!ctx) {
-      reject("The current environment does not support canvas");
-      return;
+      reject('The current environment does not support canvas')
+      return
     }
     // 获取屏幕像素比、canvas宽高、水印宽高
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = window.devicePixelRatio || 1
     const canvasWidth = `${(gapX + width) * ratio}px`,
-      canvasHeight = `${(gapY + height) * ratio}px`;
+      canvasHeight = `${(gapY + height) * ratio}px`
     const markWidth = width * ratio,
-      markHeight = height * ratio;
+      markHeight = height * ratio
 
-    canvas.setAttribute("width", canvasWidth);
-    canvas.setAttribute("height", canvasHeight);
+    canvas.setAttribute('width', canvasWidth)
+    canvas.setAttribute('height', canvasHeight)
 
     // 处理图片水印
     if (image) {
       // 重新映射画布上的 (0,0) 位置
-      ctx.translate(markWidth / 2, markHeight / 2);
+      ctx.translate(markWidth / 2, markHeight / 2)
       // 旋转指定角度
-      ctx.rotate((Math.PI / 180) * Number(rotate));
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.referrerPolicy = "no-referrer";
-      img.src = image;
+      ctx.rotate((Math.PI / 180) * Number(rotate))
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.referrerPolicy = 'no-referrer'
+      img.src = image
       img.onload = () => {
-        console.log("xxxx");
+        console.log('xxxx')
         // 绘制图片
         ctx.drawImage(
           img,
           (-imageWidth * ratio) / 2,
           (-imageHeight * ratio) / 2,
           imageWidth * ratio,
-          imageHeight * ratio
-        );
+          imageHeight * ratio,
+        )
         // 恢复canvas
-        ctx.restore();
+        ctx.restore()
         // 返回canvas转base64
-        resolve(canvas.toDataURL());
-      };
-      return;
+        resolve(canvas.toDataURL())
+      }
+      return
     }
 
     // 处理文字水印
     if (content) {
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
-      ctx.translate(markWidth / 2, markHeight / 2);
-      ctx.rotate((Math.PI / 180) * Number(rotate));
-      const markSize = Number(fontSize) * ratio;
-      ctx.font = `${fontStyle} normal ${fontWeight} ${markSize}px/${markHeight}px ${fontFamily}`;
-      ctx.fillStyle = fontColor;
-      ctx.fillText(content, 0, 0);
-      ctx.restore();
-      resolve(canvas.toDataURL());
+      ctx.textBaseline = 'middle'
+      ctx.textAlign = 'center'
+      ctx.translate(markWidth / 2, markHeight / 2)
+      ctx.rotate((Math.PI / 180) * Number(rotate))
+      const markSize = Number(fontSize) * ratio
+      ctx.font = `${fontStyle} normal ${fontWeight} ${markSize}px/${markHeight}px ${fontFamily}`
+      ctx.fillStyle = fontColor
+      ctx.fillText(content, 0, 0)
+      ctx.restore()
+      resolve(canvas.toDataURL())
     }
   }).then((base64Url) => {
-    el.style.position = fullPage ? "fixed" : "absolute";
-    el.style.left = "0";
-    el.style.right = "0";
-    el.style.top = "0";
-    el.style.bottom = "0";
-    el.style.pointerEvents = "none";
-    el.style.backgroundRepeat = "repeat";
-    el.style.zIndex = zIndex + "";
-    el.style.backgroundSize = `${gapX + width}px`;
-    el.style.backgroundImage = `url(${base64Url})`;
-  });
+    el.style.position = fullPage ? 'fixed' : 'absolute'
+    el.style.left = '0'
+    el.style.right = '0'
+    el.style.top = '0'
+    el.style.bottom = '0'
+    el.style.pointerEvents = 'none'
+    el.style.backgroundRepeat = 'repeat'
+    el.style.zIndex = zIndex + ''
+    el.style.backgroundSize = `${gapX + width}px`
+    el.style.backgroundImage = `url(${base64Url})`
+  })
 }
 
 export const waterMarker: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     if (!isObject(binding.value || {})) {
-      throw new Error("The directive parameter must be an object");
+      throw new Error('The directive parameter must be an object')
     }
-    const props = Object.assign(defaultProps, binding.value);
-    init(el, props);
+    const props = Object.assign(defaultProps, binding.value)
+    init(el, props)
   },
   updated(el: HTMLElement, binding: DirectiveBinding) {
-    const props = Object.assign(defaultProps, binding.value);
-    init(el, props);
+    const props = Object.assign(defaultProps, binding.value)
+    init(el, props)
   },
-};
+}
 
 export function setupWaterMarkerDirective(app: App) {
-  app.directive("waterMarker", waterMarker);
+  app.directive('waterMarker', waterMarker)
 }
 ```
 
@@ -1047,37 +1019,31 @@ export function setupWaterMarkerDirective(app: App) {
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-const randomNumber = (max: number) => Math.floor(Math.random() * max) + 1;
-const contents = [
-  "你是一头猪",
-  "你是一只狗",
-  "你是一条蛇",
-  "你是一个人",
-  "你是一坨屎",
-];
-const content = ref(contents[0]);
-const image = ref("");
-const handleClick = (type: string) => {
-  if (type === "content") {
-    image.value = "";
-    content.value = contents[randomNumber(4)];
-    return;
+  import { ref } from 'vue'
+  const randomNumber = (max: number) => Math.floor(Math.random() * max) + 1
+  const contents = ['你是一头猪', '你是一只狗', '你是一条蛇', '你是一个人', '你是一坨屎']
+  const content = ref(contents[0])
+  const image = ref('')
+  const handleClick = (type: string) => {
+    if (type === 'content') {
+      image.value = ''
+      content.value = contents[randomNumber(4)]
+      return
+    }
+    image.value =
+      'https://img11.360buyimg.com/imagetools/jfs/t1/57345/6/20069/8019/62b995cdEd96fef03/51d3302dfeccd1d2.png'
   }
-  image.value =
-    "https://img11.360buyimg.com/imagetools/jfs/t1/57345/6/20069/8019/62b995cdEd96fef03/51d3302dfeccd1d2.png";
-};
 </script>
 <style scoped>
-.page {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.block {
-  width: 100%;
-  height: 100%;
-}
+  .page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .block {
+    width: 100%;
+    height: 100%;
+  }
 </style>
 ```
 
@@ -1095,53 +1061,49 @@ v-draggable 指令允许拖拽目标元素。实现思路:
 ::: details v-draggable 实现
 
 ```ts
-import { App, Directive } from "vue";
+import { App, Directive } from 'vue'
 
 export const draggable: Directive = {
   mounted(el: HTMLElement) {
-    el.style.cursor = "move";
+    el.style.cursor = 'move'
     // 不允许用户选择内容
-    el.style.userSelect = "none";
+    el.style.userSelect = 'none'
     el.onmousedown = function (e) {
       // 记录移动前的坐标位置
       const disX = e.pageX - el.offsetLeft,
-        disY = e.pageY - el.offsetTop;
+        disY = e.pageY - el.offsetTop
       document.onmousemove = function (e) {
         // 获取移动后的坐标
         let x = e.pageX - disX,
-          y = e.pageY - disY;
+          y = e.pageY - disY
         // 获取最大的移动坐标
-        const maxX =
-            document.body.clientWidth -
-            parseInt(window.getComputedStyle(el).width),
-          maxY =
-            document.body.clientHeight -
-            parseInt(window.getComputedStyle(el).height);
+        const maxX = document.body.clientWidth - parseInt(window.getComputedStyle(el).width),
+          maxY = document.body.clientHeight - parseInt(window.getComputedStyle(el).height)
         // 坐标最大最小边界判断
         if (x < 0) {
-          x = 0;
+          x = 0
         } else if (x > maxX) {
-          x = maxX;
+          x = maxX
         }
         if (y < 0) {
-          y = 0;
+          y = 0
         } else if (y > maxY) {
-          y = maxY;
+          y = maxY
         }
-        el.style.left = x + "px";
-        el.style.top = y + "px";
-      };
+        el.style.left = x + 'px'
+        el.style.top = y + 'px'
+      }
       document.onmouseup = function () {
-        document.onmousemove = document.onmouseup = null;
-      };
-    };
+        document.onmousemove = document.onmouseup = null
+      }
+    }
   },
   unmounted(el) {
-    el.onmousedown = null;
+    el.onmousedown = null
   },
-};
+}
 export function setupDraggableDirective(app: App) {
-  app.directive("draggable", draggable);
+  app.directive('draggable', draggable)
 }
 ```
 
@@ -1156,24 +1118,24 @@ export function setupDraggableDirective(app: App) {
 </template>
 <script setup lang="ts"></script>
 <style scoped>
-.page {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.container {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-.block {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  display: grid;
-  place-items: center;
-  border: 1px solid red;
-}
+  .page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .container {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .block {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    display: grid;
+    place-items: center;
+    border: 1px solid red;
+  }
 </style>
 ```
 
@@ -1184,10 +1146,9 @@ export function setupDraggableDirective(app: App) {
 v-emoji 指令用于可以禁止输入 emoji 表情。
 
 ```ts
-import { Directive } from "vue";
+import { Directive } from 'vue'
 
-const regRule =
-  /[^\u4E00-\u9FA5|\d|\a-zA-Z|\r\n\s,.?!，。？！…—&$=()-+/*{}[\]]|\s/g;
+const regRule = /[^\u4E00-\u9FA5|\d|\a-zA-Z|\r\n\s,.?!，。？！…—&$=()-+/*{}[\]]|\s/g
 
 /**
  * 查找指定type的元素,如果传入DOM元素的类型和type相同则直接返回该元素,否则通过querySelector()
@@ -1196,10 +1157,8 @@ const regRule =
  * @param type 元素的类型
  */
 const findElement = (parent: HTMLElement, type: string): HTMLElement | null => {
-  return parent.tagName.toLowerCase() === type
-    ? parent
-    : parent.querySelector(type);
-};
+  return parent.tagName.toLowerCase() === type ? parent : parent.querySelector(type)
+}
 
 /**
  * 触发在指定DOM元素上指定type事件
@@ -1207,28 +1166,28 @@ const findElement = (parent: HTMLElement, type: string): HTMLElement | null => {
  * @param type 触发的事件类型
  */
 const trigger = (el: HTMLElement, type: string) => {
-  const e = document.createEvent("HTMLEvents");
-  e.initEvent(type, true, true);
-  el.dispatchEvent(e);
-};
+  const e = document.createEvent('HTMLEvents')
+  e.initEvent(type, true, true)
+  el.dispatchEvent(e)
+}
 
 export const emoji: Directive = {
   beforeMount(el) {
     // 查找input元素
-    const inputEl = findElement(el, "input") as HTMLInputElement;
-    if (!inputEl) return;
-    el.$inputEl = inputEl;
-    (inputEl as any).handler = () => {
+    const inputEl = findElement(el, 'input') as HTMLInputElement
+    if (!inputEl) return
+    el.$inputEl = inputEl
+    ;(inputEl as any).handler = () => {
       // 获取input输入值
-      const value = inputEl.value;
-      inputEl.value = value.replaceAll(regRule, "");
+      const value = inputEl.value
+      inputEl.value = value.replaceAll(regRule, '')
       // 替换emoji表情后触发input事件
-      trigger(inputEl, "input");
-    };
-    inputEl.addEventListener("keyup", (inputEl as any).handler);
+      trigger(inputEl, 'input')
+    }
+    inputEl.addEventListener('keyup', (inputEl as any).handler)
   },
   unmounted(el) {
-    el.$inputEl.removeEventListener("keyup", el.$inputEl.handler);
+    el.$inputEl.removeEventListener('keyup', el.$inputEl.handler)
   },
-};
+}
 ```

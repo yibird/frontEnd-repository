@@ -354,46 +354,46 @@ canvas 绘制水印原理是创建一个 Canvas 元素,利用 canvas 绘制图�
 ### 5.1 基于 React 封装 Watermark 组件
 
 ```tsx
-import React, { CSSProperties, useMemo, useState, useEffect } from "react";
+import React, { CSSProperties, useMemo, useState, useEffect } from 'react'
 export interface WatermarkProps {
   // 水印宽度,默认:120
-  width?: number;
+  width?: number
   // 水印高度,默认:60
-  height?: number;
+  height?: number
   // 绘制水印时旋转的角度,默认:-22
-  rotate?: number;
+  rotate?: number
   // 图片源,优先使用图片渲染水印
-  image?: string;
+  image?: string
   // 图片宽度,默认:120
-  imageWidth?: number;
+  imageWidth?: number
   // 图片高度,默认:64
-  imageHeight?: number;
+  imageHeight?: number
   // 水印元素的z-index,默认:2000
-  zIndex?: number;
+  zIndex?: number
   // 水印文字内容
-  content?: string;
+  content?: string
   // 水印文字大小
-  fontSize?: number | string;
+  fontSize?: number | string
   // 水印文字颜色
-  fontColor?: string;
+  fontColor?: string
   // 水印文字系列,默认:'PingFang SC'
-  fontFamily?: string;
+  fontFamily?: string
   // 水印文字样式,默认:'normal'
-  fontStyle?: string;
+  fontStyle?: string
   // 水印文字粗细,默认:'normal'
-  fontWeight?: string;
+  fontWeight?: string
   // 水印之间的水平间距,默认24
-  gapX?: number;
+  gapX?: number
   // 水印之间的垂直间距,默认:48
-  gapY?: number;
+  gapY?: number
   // 是否覆盖整个页面,默认false
-  fullPage?: boolean;
+  fullPage?: boolean
   // class名称
-  className?: string;
+  className?: string
   // 样式
-  style?: React.CSSProperties;
+  style?: React.CSSProperties
   // 子节点
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 function Watermark({
@@ -404,73 +404,73 @@ function Watermark({
   imageWidth = 120,
   imageHeight = 64,
   zIndex = 2000,
-  content = "",
+  content = '',
   fontSize = 14,
-  fontColor = "rgba(0,0,0,.15)",
-  fontStyle = "normal",
-  fontFamily = "PingFang SC",
-  fontWeight = "normal",
+  fontColor = 'rgba(0,0,0,.15)',
+  fontStyle = 'normal',
+  fontFamily = 'PingFang SC',
+  fontWeight = 'normal',
   gapX = 24,
   gapY = 48,
   fullPage,
   style,
   className,
 }: WatermarkProps) {
-  const [base64Url, setBase64Url] = useState("");
+  const [base64Url, setBase64Url] = useState('')
   const init = () => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
     if (!ctx) {
-      throw new Error("当前环境不支持canvas");
+      throw new Error('当前环境不支持canvas')
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = window.devicePixelRatio || 1
     const canvasWidth = `${(gapX + width) * ratio}px`,
-      canvasHeight = `${(gapY + height) * ratio}px`;
+      canvasHeight = `${(gapY + height) * ratio}px`
     const markWidth = width * ratio,
-      markHeight = height * ratio;
+      markHeight = height * ratio
 
-    canvas.setAttribute("width", canvasWidth);
-    canvas.setAttribute("height", canvasHeight);
+    canvas.setAttribute('width', canvasWidth)
+    canvas.setAttribute('height', canvasHeight)
 
     if (image) {
-      ctx.translate(markWidth / 2, markHeight / 2);
-      ctx.rotate((Math.PI / 180) * Number(rotate));
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.referrerPolicy = "no-referrer";
-      img.src = image;
-      console.log("image", image);
+      ctx.translate(markWidth / 2, markHeight / 2)
+      ctx.rotate((Math.PI / 180) * Number(rotate))
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.referrerPolicy = 'no-referrer'
+      img.src = image
+      console.log('image', image)
       img.onload = () => {
         ctx.drawImage(
           img,
           (-imageWidth * ratio) / 2,
           (-imageHeight * ratio) / 2,
           imageWidth * ratio,
-          imageHeight * ratio
-        );
-        ctx.restore();
-        console.log("canvas.toDataURL()", canvas.toDataURL());
-        setBase64Url(canvas.toDataURL());
-      };
-      return;
+          imageHeight * ratio,
+        )
+        ctx.restore()
+        console.log('canvas.toDataURL()', canvas.toDataURL())
+        setBase64Url(canvas.toDataURL())
+      }
+      return
     }
 
     if (content) {
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
-      ctx.translate(markWidth / 2, markHeight / 2);
-      ctx.rotate((Math.PI / 180) * Number(rotate));
-      const markSize = Number(fontSize) * ratio;
-      ctx.font = `${fontStyle} normal ${fontWeight} ${markSize}px/${markHeight}px ${fontFamily}`;
-      ctx.fillStyle = fontColor;
-      ctx.fillText(content, 0, 0);
-      ctx.restore();
-      setBase64Url(canvas.toDataURL());
+      ctx.textBaseline = 'middle'
+      ctx.textAlign = 'center'
+      ctx.translate(markWidth / 2, markHeight / 2)
+      ctx.rotate((Math.PI / 180) * Number(rotate))
+      const markSize = Number(fontSize) * ratio
+      ctx.font = `${fontStyle} normal ${fontWeight} ${markSize}px/${markHeight}px ${fontFamily}`
+      ctx.fillStyle = fontColor
+      ctx.fillText(content, 0, 0)
+      ctx.restore()
+      setBase64Url(canvas.toDataURL())
     }
-  };
+  }
 
   useEffect(() => {
-    init();
+    init()
   }, [
     gapX,
     gapY,
@@ -487,30 +487,30 @@ function Watermark({
     fontSize,
     fontFamily,
     fullPage,
-  ]);
+  ])
 
   const getStyle = useMemo((): CSSProperties => {
     const styleProp: CSSProperties = {
-      position: fullPage ? "fixed" : "absolute",
+      position: fullPage ? 'fixed' : 'absolute',
       left: 0,
       right: 0,
       top: 0,
       bottom: 0,
-      pointerEvents: "none",
-      backgroundRepeat: "repeat",
+      pointerEvents: 'none',
+      backgroundRepeat: 'repeat',
       zIndex,
       backgroundSize: `${gapX + width}px`,
       backgroundImage: `url(${base64Url})`,
       ...style,
-    };
-    return styleProp;
-  }, [gapX, width, base64Url, zIndex, fullPage]);
+    }
+    return styleProp
+  }, [gapX, width, base64Url, zIndex, fullPage])
 
-  return <div style={getStyle} className={className}></div>;
+  return <div style={getStyle} className={className}></div>
 }
-Watermark.displayName = "Watermark";
+Watermark.displayName = 'Watermark'
 
-export default Watermark;
+export default Watermark
 ```
 
 ### 5.2 基于 Vue 封装 Watermark 组件

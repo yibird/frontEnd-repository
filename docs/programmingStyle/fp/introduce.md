@@ -6,27 +6,27 @@
 简单来说**函数式编程是一种以函数为主体的编程范式,推荐使用函数来抽象对数据的操作,从而消除副作用和减少对数据的改变**。例如要遍历一个数组,命令式编程的操作是通过 for 或 while 循环对数组遍历,在函数式编程中对数组的遍历可以抽象成一个 forEach 函数,数组可以通过该函数对数组的每个元素进行遍历,除此之外,forEach 还可以抽象成 map、set 结构的遍历操作,相比较命令式编程,函数式编程更加简洁。
 
 ```javascript
-const arr = [1, 2, 3, 4, 5];
+const arr = [1, 2, 3, 4, 5]
 
 // 命令式编程遍历数组
 for (let i = 0, len = arr.length; i < len; i++) {
   // 元素+1会产生副作用导致arr状态变化,因为数组是引用类型
-  arr[i] += 1;
+  arr[i] += 1
   // 打印:2、3、4、5、6
-  console.log(arr[i]);
+  console.log(arr[i])
 }
 // [2, 3, 4, 5, 6]
-console.log(arr);
+console.log(arr)
 
 // 函数式编程遍历数组
 arr.forEach((item) => {
   // 元素+1不会产生副作用导致arr状态变化,因为forEach是一个纯函数,item是一个新对象,并非指向arr中的元素
-  item += 1;
+  item += 1
   // 打印:2、3、4、5、6
-  console.log(item);
-});
+  console.log(item)
+})
 // [1,2,3,4,5]
-console.log(arr);
+console.log(arr)
 ```
 
 ### 1.1 函数式编程工具库
@@ -56,7 +56,7 @@ console.log(arr);
 
 ```javascript
 // 需要计算arr数组中每个元素的平方
-const arr = [1, 2, 3, 4, 5];
+const arr = [1, 2, 3, 4, 5]
 
 /*
  * 命令式编程写法:命令式编程通过for、if、switch等语句来控制程序的流程走向,
@@ -66,10 +66,10 @@ const arr = [1, 2, 3, 4, 5];
  * 推荐做法是不应该直接操作arr,而且对arr进行一份拷贝。
  */
 for (let i = 0, len = arr.length; i < len; i++) {
-  arr[i] = Math.pow(arr[i], 2);
+  arr[i] = Math.pow(arr[i], 2)
 }
 // [1, 4, 9, 16, 25]
-console.log(arr);
+console.log(arr)
 
 /*
  * 函数式编程写法:函数式编程通过map、filter、reducer等操作符来控制流程的走向,
@@ -77,9 +77,9 @@ console.log(arr);
  * ,filter用于做数据的过滤。map()最终会返回一个新的数组结果集,并不会修改原数组(arr),
  * 即使其他代码依赖于arr,也不会影响到其他代码,所以map是无副作用的一个纯函数。
  */
-const result = arr.map((item) => Math.pow(item, 2));
+const result = arr.map((item) => Math.pow(item, 2))
 // [1, 4, 9, 16, 25]
-console.log(result);
+console.log(result)
 ```
 
 ### 2.2 纯函数
@@ -104,14 +104,14 @@ console.log(result);
 
 ```javascript
 // 不具备引用透明性的函数,add()函数内部使用了全局变量x,一旦全局变量x发生变化,add()函数的结果也会受影响
-let x = 2;
+let x = 2
 function add(y) {
-  return x + y;
+  return x + y
 }
 
 // 具备引用透明性的函数,add()函数的结果取决于函数的入参参数x和y
 function add(x, y) {
-  return x + y;
+  return x + y
 }
 ```
 
@@ -124,24 +124,24 @@ function add(x, y) {
 
 ```javascript
 // 不可变数据错误的例子,执行sortDesc()函数会对入参数组arr进行倒序排序,由于入参属于引用类型,该函数执行后会影响函数的入参arr
-const arr = [1, 23, 4, 5, 0, 11, 8, 2];
+const arr = [1, 23, 4, 5, 0, 11, 8, 2]
 const sortDesc = function (arr) {
   return arr.sort(function (a, b) {
-    return b - a;
-  });
-};
-console.log(sortDesc(arr)); // [23, 11, 8, 5, 4, 2, 1, 0]
-console.log(arr); // [23, 11, 8, 5, 4, 2, 1, 0]
+    return b - a
+  })
+}
+console.log(sortDesc(arr)) // [23, 11, 8, 5, 4, 2, 1, 0]
+console.log(arr) // [23, 11, 8, 5, 4, 2, 1, 0]
 
 // 不可变数据正确的例子,执行sortDesc()函数会对入参数组arr进行倒序排序,由于函数内部对入参arr进行了浅拷贝,因此该函数执行后并不会影响函数的入参arr
 const sortDesc = function (arr) {
   // 使用扩展运算符对arr进行浅拷贝,也可以使用Array.slice()浅拷贝数组
   return [...arr].sort(function (a, b) {
-    return b - a;
-  });
-};
-console.log(sortDesc(arr)); // [23, 11, 8, 5, 4, 2, 1, 0]
-console.log(arr); // [1, 23, 4, 5, 0, 11, 8, 2]
+    return b - a
+  })
+}
+console.log(sortDesc(arr)) // [23, 11, 8, 5, 4, 2, 1, 0]
+console.log(arr) // [1, 23, 4, 5, 0, 11, 8, 2]
 ```
 
 ## 3.函数式的优点
@@ -165,37 +165,37 @@ console.log(arr); // [1, 23, 4, 5, 0, 11, 8, 2]
 // 声明函数
 function fn1() {}
 // 声明匿名函数
-const fn2 = function () {};
+const fn2 = function () {}
 // 声明箭头函数,ES6新特性
-const fn3 = () => {};
+const fn3 = () => {}
 // 通过new Function()实例化函数,new Function()最后一个入参将作为函数体,其余入参都是函数参数
-const add = new Function("a", "b", "return a + b;");
+const add = new Function('a', 'b', 'return a + b;')
 // 3
-add(1, 2);
+add(1, 2)
 
 // ----------------- 函数参数
 
 // str是函数的形参
 const fn4 = (str) => {
-  console.log(str);
-};
+  console.log(str)
+}
 // 'hello'是函数的实参
-fn4("hello");
+fn4('hello')
 
 // 参数的形参列表
 function fn5() {
   // arguments用于获取函数的形参列表,返回一个类数组
-  console.log(arguments);
+  console.log(arguments)
 }
 // Arguments(3) [1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ]
-fn5(1, 2, 3);
+fn5(1, 2, 3)
 
 // 参数的形参列表,ES6新特性剩余参数
 const fn6 = (...args) => {
-  console.log(args);
-};
+  console.log(args)
+}
 // [1, 2, 3]
-fn6(1, 2, 3);
+fn6(1, 2, 3)
 ```
 
 #### 4.2.1 高阶函数
@@ -209,67 +209,67 @@ fn6(1, 2, 3);
  * 函数是一个基于输入的且尚未求值的不可变值。
  */
 function applyOpration(a, b, opt) {
-  return opt(a, b);
+  return opt(a, b)
 }
-const plus = (a, b) => a + b;
-const minus = (a, b) => a - b;
-const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
+const plus = (a, b) => a + b
+const minus = (a, b) => a - b
+const multiply = (a, b) => a * b
+const divide = (a, b) => a / b
 
-applyOpration(1, 2, plus); // 3
-applyOpration(3, 2, minus); // 1
-applyOpration(1, 2, multiply); // 2
-applyOpration(6, 3, divide); // 2
+applyOpration(1, 2, plus) // 3
+applyOpration(3, 2, minus) // 1
+applyOpration(1, 2, multiply) // 2
+applyOpration(6, 3, divide) // 2
 ```
 
 通过组合一些小的高阶函数可以创建有意义的表达式,能简化很多繁琐的程序。例如打印住在深圳的人员名单:
 
 ```javascript
 const p1 = {
-  name: "James",
+  name: 'James',
   age: 24,
   address: {
-    city: "shenzheng",
+    city: 'shenzheng',
   },
-};
+}
 const p2 = {
-  name: "Allen",
+  name: 'Allen',
   age: 30,
   address: {
-    city: "beijing",
+    city: 'beijing',
   },
-};
+}
 const p3 = {
-  name: "Jack",
+  name: 'Jack',
   age: 18,
   address: {
-    city: "guangzhou",
+    city: 'guangzhou',
   },
-};
+}
 
 // 打印住在深圳的人员名单,命令式写法
 function printPeopleInshenzheng(people) {
   for (let i = 0, len = people.length; i < len; i++) {
-    if (people[i].address.city === "shenzheng") {
-      console.log(people[i]);
+    if (people[i].address.city === 'shenzheng') {
+      console.log(people[i])
     }
   }
 }
-printPeopleInshenzheng([p1, p2, p3]);
+printPeopleInshenzheng([p1, p2, p3])
 
 // 打印住在深圳的人员名单,函数式写法。
 // action()的职责仅对person进行打印
 function action(person) {
-  if (person.address.city === "shenzheng") {
-    console.log(person);
+  if (person.address.city === 'shenzheng') {
+    console.log(person)
   }
 }
 function printPeople(people, action) {
   for (let i = 0, len = people.length; i < len; i++) {
-    action(people[i]);
+    action(people[i])
   }
 }
-printPeople([p1, p2, p3], action);
+printPeople([p1, p2, p3], action)
 ```
 
 JS 语言中显著的命名模式之一是使用 multiper(乘以)、comparator(比较)以及 action(行为),由于函数是一等公民,可以给变量赋值,基于高阶函数的特性,上述例子还可以重构。
@@ -278,12 +278,12 @@ JS 语言中显著的命名模式之一是使用 multiper(乘以)、comparator(�
 function printPeople(people, selector, pinter) {
   people.forEach((item) => {
     if (selector(item)) {
-      pinter(item);
+      pinter(item)
     }
-  });
+  })
 }
-const isShenzheng = (person) => person.address.city === "shenzheng";
-printPeople([p1, p2, p3], isShenzheng, console.log);
+const isShenzheng = (person) => person.address.city === 'shenzheng'
+printPeople([p1, p2, p3], isShenzheng, console.log)
 
 /*
  *

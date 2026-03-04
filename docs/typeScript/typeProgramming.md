@@ -6,9 +6,9 @@
 
 ```ts
 // const断言后arr的类型为 readonly ["haha", 123]
-const arr = ["haha", 123] as const;
+const arr = ['haha', 123] as const
 // type ArrFirst = "haha"
-type ArrFirst = typeof arr[0];
+type ArrFirst = (typeof arr)[0]
 ```
 
 :::
@@ -22,14 +22,14 @@ type ArrFirst = typeof arr[0];
  */
 
 // const断言后arr的类型为 readonly ["haha", 123]
-const arr = ["haha", 123] as const;
+const arr = ['haha', 123] as const
 /**
  * T为传入的数组类型,如果T可赋值为readonly [infer F, ...infer O],则通过ES6数组解构
  * 首个元素和剩余元素,再通过infer关键字推断首个元素类型为F,最终返回F,否则返回any。
  */
-type First<T> = T extends readonly [infer F, ...infer O] ? F : any;
+type First<T> = T extends readonly [infer F, ...infer O] ? F : any
 // type ArrFirst = "haha"
-type ArrFirst = First<typeof arr>;
+type ArrFirst = First<typeof arr>
 ```
 
 :::

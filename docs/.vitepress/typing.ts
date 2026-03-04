@@ -1,2 +1,2 @@
 import { DefaultTheme } from 'vitepress'
-export type Sidebar = DefaultTheme.Config["sidebar"];
+export type Sidebar = DefaultTheme.Config['sidebar']
