@@ -1,0 +1,1 @@
+import{_ as t,o as e,c as a}from"./chunks/framework.DSUZxldK.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"react/zustand.md","filePath":"react/zustand.md","lastUpdated":1772656051000}'),r={name:"react/zustand.md"};function s(n,c,o,d,p,_){return e(),a("div")}const f=t(r,[["render",s]]);export{m as __pageData,f as default};
