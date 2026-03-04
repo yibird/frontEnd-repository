@@ -131,7 +131,7 @@ export default {
   methods: {
     changeVisible() {
       // 通过触发 "update:visible" 事件修改父组件的visible为true
-      this.$emit('update:visible', true);
+      this.$emit("update:visible", true);
     },
   },
 };
@@ -183,7 +183,7 @@ let map = makeIndexByKey(oldCh);
 
 ```js
 // vue-template-compiler是一个可以将Vue模板编译为渲染函数的工具库
-const compiler = require('vue-template-compiler');
+const compiler = require("vue-template-compiler");
 const template = `<div v-if="false" v-for="n in 3"></div>`;
 /**
  * compile用于编译模板字符串并返回已编译的 JavaScript 代码,返回对象格式如下:
@@ -234,7 +234,7 @@ console.log(ast.render);
 
 ```js
 <template>
-  <div v-if='true' v-for='n in 3'></div>
+  <div v-if="true" v-for="n in 3"></div>
 </template>;
 
 // 编译结果如下:
@@ -252,7 +252,7 @@ import {
   createElementVNode as _createElementVNode,
   // 用于创建一个注释虚拟节点
   createCommentVNode as _createCommentVNode,
-} from 'vue';
+} from "vue";
 function render(_ctx, _cache) {
   return true
     ? (_openBlock(),
@@ -260,14 +260,14 @@ function render(_ctx, _cache) {
         _Fragment,
         { key: 0 },
         _renderList(3, (n) => {
-          return _createElementVNode('div');
+          return _createElementVNode("div");
         }),
-        64 /* STABLE_FRAGMENT */
+        64 /* STABLE_FRAGMENT */,
       ))
-    : _createCommentVNode('v-if', true);
+    : _createCommentVNode("v-if", true);
 }
 __sfc__.render = render;
-__sfc__.__file = 'App.vue';
+__sfc__.__file = "App.vue";
 export default __sfc__;
 ```
 
@@ -276,7 +276,7 @@ export default __sfc__;
 
 ```js
 <template>
-  <div v-if='false' v-for='n in 3'></div>
+  <div v-if="false" v-for="n in 3"></div>
 </template>;
 
 // 编译结果如下:
@@ -294,7 +294,7 @@ import {
   createElementVNode as _createElementVNode,
   // 用于创建一个注释虚拟节点
   createCommentVNode as _createCommentVNode,
-} from 'vue';
+} from "vue";
 function render(_ctx, _cache) {
   return false
     ? (_openBlock(),
@@ -302,14 +302,14 @@ function render(_ctx, _cache) {
         _Fragment,
         { key: 0 },
         _renderList(3, (n) => {
-          return _createElementVNode('div');
+          return _createElementVNode("div");
         }),
-        64 /* STABLE_FRAGMENT */
+        64 /* STABLE_FRAGMENT */,
       ))
-    : _createCommentVNode('v-if', true);
+    : _createCommentVNode("v-if", true);
 }
 __sfc__.render = render;
-__sfc__.__file = 'App.vue';
+__sfc__.__file = "App.vue";
 export default __sfc__;
 ```
 
@@ -363,7 +363,7 @@ new Vue({
   },
   mounted() {
     this.timer = setInterval(() => {
-      console.log('clear...');
+      console.log("clear...");
     }, 1000);
   },
   beforeDestroy() {
@@ -380,9 +380,9 @@ new Vue({
 new Vue({
   mounted() {
     const timer = setInterval(() => {
-      console.log('clear');
+      console.log("clear");
     }, 1000);
-    this.$once('hook:beforeDestroy', () => {
+    this.$once("hook:beforeDestroy", () => {
       clearInterval(timer);
     });
   },
@@ -400,14 +400,14 @@ Vue.js 中的 $nextTick() 方法用于在 DOM 更新之后执行一个回调函�
 
 ```js
 new Vue({
-  el: '#app',
-  data: { message: 'Hello Vue.js!' },
+  el: "#app",
+  data: { message: "Hello Vue.js!" },
   methods: {
     updateMessage() {
-      this.message = 'Hello World!';
+      this.message = "Hello World!";
       this.$nextTick(function () {
         // 在下次 DOM 更新循环结束后执行
-        this.$refs.message.innerHTML = 'Updated!';
+        this.$refs.message.innerHTML = "Updated!";
       });
     },
   },
@@ -421,9 +421,9 @@ new Vue({
 ::: details $nextTick()源码
 
 ```ts
-import { noop } from 'shared/util';
-import { handleError } from './error';
-import { isIE, isIOS, isNative } from './env';
+import { noop } from "shared/util";
+import { handleError } from "./error";
+import { isIE, isIOS, isNative } from "./env";
 
 // 是否使用微任务
 export let isUsingMicroTask = false;
@@ -451,7 +451,7 @@ function flushCallbacks() {
 
 let timerFunc;
 // 如果当前环境支持Promise,则使用Promise.then()执行刷新任务队列
-if (typeof Promise !== 'undefined' && isNative(Promise)) {
+if (typeof Promise !== "undefined" && isNative(Promise)) {
   const p = Promise.resolve();
   timerFunc = () => {
     p.then(flushCallbacks);
@@ -467,10 +467,10 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 // 如果当前环境支持MutationObserver,则使用MutationObserver()执行刷新任务队列
 else if (
   !isIE &&
-  typeof MutationObserver !== 'undefined' &&
+  typeof MutationObserver !== "undefined" &&
   (isNative(MutationObserver) ||
     // PhantomJS and iOS 7.x
-    MutationObserver.toString() === '[object MutationObserverConstructor]')
+    MutationObserver.toString() === "[object MutationObserverConstructor]")
 ) {
   let counter = 1;
   const observer = new MutationObserver(flushCallbacks);
@@ -485,7 +485,7 @@ else if (
   isUsingMicroTask = true;
 }
 // 如果当前环境支持setImmediate,则使用setImmediate()执行刷新任务队列
-else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
+else if (typeof setImmediate !== "undefined" && isNative(setImmediate)) {
   timerFunc = () => {
     setImmediate(flushCallbacks);
   };
@@ -507,7 +507,7 @@ export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
       try {
         cb.call(ctx);
       } catch (e: any) {
-        handleError(e, ctx, 'nextTick');
+        handleError(e, ctx, "nextTick");
       }
     } else if (_resolve) {
       _resolve(ctx);
@@ -517,7 +517,7 @@ export function nextTick(cb?: (...args: any[]) => any, ctx?: object) {
     pending = true;
     timerFunc();
   }
-  if (!cb && typeof Promise !== 'undefined') {
+  if (!cb && typeof Promise !== "undefined") {
     return new Promise((resolve) => {
       _resolve = resolve;
     });
@@ -623,7 +623,7 @@ router.afterEach((to, from) => {});
 const router = new VueRouter({
   routes: [
     {
-      path: '/foo',
+      path: "/foo",
       component: Foo,
       beforeEnter: (to, from, next) => {
         // ...
@@ -696,27 +696,27 @@ const Foo = {
 function render(ctx) {
   return (
     openBlock(),
-    createBlock('div', null, [
+    createBlock("div", null, [
       /*
        * 当前虚拟节点是静态节点,更新时创建虚拟DOM会带来性能开销和内存占用,
        * 因此可以将该节点静态提升到渲染函数外
        */
-      createVNode('p', null, 'static text'),
-      createVNode('p', null, ctx.title, 1 /* TEXT */),
+      createVNode("p", null, "static text"),
+      createVNode("p", null, ctx.title, 1 /* TEXT */),
     ])
   );
 }
 
 //--- 静态提升后的例子
 // 将静态节点提升到渲染函数外,渲染函数重新执行时并不会重新创建静态虚拟节点,从而避免了额外开销
-const hoist1 = createVNode('p', null, 'static text');
+const hoist1 = createVNode("p", null, "static text");
 function render(ctx) {
   return (
     openBlock(),
-    createBlock('div', null, [
+    createBlock("div", null, [
       // 引用静态节点
       hoist1,
-      createVNode('p', null, ctx.title, 1 /* TEXT */),
+      createVNode("p", null, ctx.title, 1 /* TEXT */),
     ])
   );
 }
@@ -762,7 +762,7 @@ function render(ctx) {
 ```ts
 const state = reactive({
   user: {
-    name: 'John',
+    name: "John",
     age: 30,
   },
 });
@@ -802,7 +802,7 @@ setup 语法糖和 defineComponent 都支持定义组件,两者区别如下:
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from "vue";
 export default defineComponent({
   setup(props, { expose }) {
     const count = ref(0);
@@ -825,7 +825,7 @@ export default defineComponent({
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 const count = ref(0);
 const addCount = () => {
   count.value++;
@@ -840,15 +840,15 @@ const addCount = () => {
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import SetupComponent from './SetupComponent.vue';
-import DefineComponent from './DefineComponent.vue';
+import { ref, onMounted } from "vue";
+import SetupComponent from "./SetupComponent.vue";
+import DefineComponent from "./DefineComponent.vue";
 
 const setupRef = ref();
 const defineRef = ref();
 onMounted(() => {
-  console.log('setup 语法糖:', setupRef.value);
-  console.log('defineComponent:', defineRef.value);
+  console.log("setup 语法糖:", setupRef.value);
+  console.log("defineComponent:", defineRef.value);
 });
 </script>
 ```
@@ -973,3 +973,33 @@ Suspense 是 Vue3 提供内置的一个组件,用于处理在组件树中协调�
 - shallowRef()/shallowReactive()代替 ref()/reactive()。Vue 的响应性系统默认是深度的,在数据量巨大时(大型数组或层级很深的对象时),深度响应性也会导致不小的性能负担,因为每个属性访问都将触发代理的依赖追踪。Vue 确实也为此提供了一种解决方案,通过使用 shallowRef() 和 shallowReactive() 来绕开深度响应。浅层式 API 创建的状态只在其顶层是响应式的,对所有深层的对象不会做任何处理。这使得对深层级属性的访问变得更快,但代价是,我们现在必须将所有深层级对象视为不可变的,并且只能通过替换整个根状态来触发更新
 - 使用虚拟列表:所有的前端应用中最常见的性能问题就是渲染大型列表。无论一个框架性能有多好,渲染成千上万个列表项都会变得很慢,因为浏览器需要处理大量的 DOM 节点。虚拟列表不会渲染所有 DOM 节点,仅渲染位于可视区域的数据,能避免渲染大量 DOM。当滚动可视区域时,虚拟列表会根据滚动偏移量在内存中动态计算可视区域数据,可以保证渲染不必要的 DOM 节点。
 - 使用 SSR(服务端渲染):在实际开发中,大多数采用纯客户端渲染,而纯客户端的 SPA 在首屏加载和 SEO 方面有显著的问题,因为浏览器会收到一个巨大的 HTML 空页面,只有等到 JavaScript 加载完毕才会渲染出内容。Vue 提供了一系列 API,支持将一个 Vue 应用在服务端渲染成 HTML 字符串。这能让服务器直接返回渲染好的 HTML,让用户在 JavaScript 下载完毕前就看到页面内容。Vue 之后会在客户端对应用进行“激活 (hydrate)”使其重获可交互性。这被称为服务端渲染 (SSR),它能够极大地改善应用在 Web 核心指标上的性能表现,如最大内容绘制 (LCP)。使用 SSR 可以有效地提示首页加载速度,而且有利于搜索引擎 SEO。
+
+## Vue3响应式实现原理
+
+Vue3 的响应式系统是基于 ES6 Proxy + 依赖收集（Dependency Tracking）+ 副作用函数（effect） 实现的。相比 Vue2(Object.defineProperty),Vue3 的实现更加完整、性能更好，也能支持 Map、Set 等数据结构。
+
+Vue3响应式简单实现如下:
+
+```ts
+function reactive(target) {
+  return new Proxy(target, {
+    get(target, key, receiver) {
+      // 收集依赖
+      track(target, key);
+      return Reflect.get(target, key, receiver);
+    },
+    set(target, key, value, receiver) {
+      const result = Reflect.set(target, key, value, receiver);
+      // 触发依赖
+      trigger(target, key);
+      return result;
+    },
+  });
+}
+```
+
+Vue3与Vue2响应式的区别:
+
+- Vue2使用Object.defineProperty实现对象的响应式监听,但是不支持新增/删除属性监听,而且Vue2在监听嵌套对象时使用递归的方式深度监听对象每一个属性,当对象过大或过深时可能存在性能问题。由于Object.defineProperty只能监听对象操作,无法监听数组、Set、Map,为了监听数组数据Vue2内部重写了Array原型上的7个方法。
+
+- Vue3使用Proxy实现响应式数据的监听,不仅支持监听的对象13种操作外,也天然支持数组、Set、Map等结构,对于嵌套对象Proxy天然支持按需代理,无需递归监听,因此Vue3性能比Vue2更高效、更精细。
